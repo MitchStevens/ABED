@@ -67,12 +67,14 @@ public class Game {
         for(int i = 0; i < n; i++)
             for(int j = 0; j < n; j++)
                 if(placed[i][j] != null)
-                    if(placed[i][j].gate.getParents().contains(p.gate))
+                    if(placed[i][j].gate.inputs.contains(p.gate))
                         tbr.add(placed[i][j]);
         String a = (!tbr.isEmpty())? tbr.get(0).gate.getClass().getSimpleName(): "none";
         System.out.println(p.gate.getClass().getSimpleName()+" has children: "+a);
         return tbr;
     }
+    
+    
     
     @Override
     public String toString(){
@@ -88,12 +90,12 @@ public class Game {
         return tbr;
     }
     
-    public void relationships(){
-        for(int i = 0; i < n; i++)
-            for(int j = 0; j < n; j++)
-                if(placed[i][j] != null)
-                    getChildren(placed[i][j]);
-
-    }
+//    public void relationships(){
+//        for(int i = 0; i < n; i++)
+//            for(int j = 0; j < n; j++)
+//                if(placed[i][j] != null)
+//                    getChildren(placed[i][j]);
+//
+//    }
 	
 }

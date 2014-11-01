@@ -6,10 +6,8 @@ import java.util.List;
 
 import javafx.geometry.Bounds;
 import javafx.scene.*;
-import javafx.scene.control.Label;
 import javafx.scene.image.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 
 public class Piece extends Parent{
@@ -22,7 +20,7 @@ public class Piece extends Parent{
     public double mousex;				// where the cursor's x-position is
     public double mousey;				// where the cursor's y-position is
     private boolean dragging = false;	// whether the tile is currently being dragged
-    private Square closest;
+    public Square closest;
     private Text text = new Text();
 	
     public Piece(Gate g){
@@ -94,7 +92,7 @@ public class Piece extends Parent{
             setLayoutY(getLayoutY() + event.getSceneY() - mousey);
             mousex = event.getSceneX();
             mousey = event.getSceneY();
-            //Square newClosest = ABEDGUI.getBoard().getClosest(getLayoutX(), getLayoutY());
+            Square newClosest = (Square)ABEDGUI.getBoard().getClosest(getLayoutX(), getLayoutY());
             if(closest != newClosest){
                 if(closest != null) closest.setFill(Square.defColor);
                 closest = newClosest;
@@ -130,24 +128,24 @@ public class Piece extends Parent{
     public void changePos(Square s){
         if(s == null){
             this.delPiece();
-            System.out.println(ABEDGUI.getBoard().currentGame.toString());
+            System.out.println(ABEDGUI.currentGame.toString());
             return;
         }
         
-        Game temp = ABEDGUI.getBoard().currentGame;
+        Game temp = ABEDGUI.currentGame;
         if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != this)
             return;
         if(i != null && j != null)
-            ABEDGUI.getBoard().currentGame.placed[i][j] = null;
+            ABEDGUI.currentGame.placed[i][j] = null;
         i = s.i;
         j = s.j;
-        ABEDGUI.getBoard().currentGame.placed[s.i][s.j] = this;
+        ABEDGUI.currentGame.placed[s.i][s.j] = this;
         setLayoutX(s.x);
         setLayoutY(s.y);
     }
     
     public void delPiece(){
-        try{ ABEDGUI.getBoard().currentGame.placed[i][j] = null;}
+        try{ ABEDGUI.currentGame.placed[i][j] = null;}
         catch(NullPointerException ex){}
         ABEDGUI.getBoard().root.getChildren().remove(this);
 

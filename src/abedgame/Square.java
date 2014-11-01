@@ -6,8 +6,6 @@
 package abedgame;
 
 import javafx.animation.FillTransition;
-import javafx.event.EventHandler;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;

@@ -1,0 +1,106 @@
+class Or extends Gate{
+	
+    public Or(){
+        this.inputs = new ArrayList<>(2);
+        this.outputs = new ArrayList<>(1);
+    }
+
+    @Override
+    public boolean outputAtDir(int dir) {
+        return dir == rot %4 && eval();
+    }
+    
+    @Override
+    public void parentCheck(int i, int j){
+        try{
+            if(ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+2)%4).gate.outputAtDir(rot))
+                parent1 = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+2)%4).gate;
+            else throw new NullPointerException();
+        }catch(NullPointerException ex) {
+            parent1 = null;
+        }
+        try{
+            if(ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+3)%4).gate.outputAtDir((rot+1)%4))
+                parent2 = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+3)%4).gate;
+            else throw new NullPointerException();
+        }catch(NullPointerException ex) {
+            parent2 = null;
+        }
+    }
+    
+    @Override
+    public Image getSprite(){
+        int p1 = 0; int p2 = 0;
+        try{ p1 = parent1.eval()? 1: 0; }
+        catch(NullPointerException np){}
+        try{ p2 = parent2.eval()? 1: 0; }
+        catch(NullPointerException np){}
+        
+        return new Image("images/And"+p1+p2+".bmp");
+    }
+        
+    @Override
+    public boolean eval(){
+        if(parent1 != null && parent2 != null)
+            return parent1.eval() || parent2.eval();
+        else return false;
+    }
+
+    @Override
+    public String toString(){
+        if(parent1 != null && parent2 != null)
+            return "("+parent1.toString()+"v"+parent2.toString()+")";
+        else return null;
+    }
+}
+
+class Not extends Gate{
+	
+    public Not(){
+        this.rot = 0;
+        this.inputs = new ArrayList<>(1);
+        this.outputs = new ArrayList<>(1);
+    }
+    
+    @Override
+    public boolean outputAtDir(int dir) {
+        return dir == rot %4 && eval();
+    }
+
+    @Override
+    public void parentCheck(int i, int j){
+        try{
+            if(ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+2)%4).gate.outputAtDir(rot)){
+                inputs.set(0, ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, (rot+2)%4).gate);
+            } else throw new NullPointerException();
+        }catch(NullPointerException ex) {}
+    }
+    
+    @Override
+    public void childCheck(int i, int j){
+        try{
+            if(ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot%4).gate.outputAtDir(rot +2)){
+                inputs.add(ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot %4).gate);
+            } else throw new NullPointerException();
+        }catch(NullPointerException ex) { }
+    }
+    
+    @Override
+    public Image getSprite(){
+        return new Image("images/Not"+(eval()? "0": "1")+".bmp");
+    }
+        
+    @Override
+    public boolean eval(){
+        if(inputs.get(0) != null)
+            return !inputs.get(0).eval();
+        else return true;
+    }
+	
+    @Override
+    public String toString(){
+        if(inputs.get(0) != null)
+            return "~"+inputs.get(0).toString();
+        else return null;
+    }
+}

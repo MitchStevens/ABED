@@ -27,16 +27,16 @@ public class ABEDGUI extends Application{
     public Group root;
     Scene scene;
 
-    public double GAME_MARGIN = 50;
-    public double GAP = 0;
+    public static double GAME_MARGIN = 50;
+    public static double GAP = 0;
 	
-    public double boardWidth = 1024;
-    public double boardHeight = 768;
+    public static double boardWidth = 1024;
+    public static double boardHeight = 768;
     public static double tileSize = 0;
-    public int numTiles = 6;
+    public static int numTiles = 6;
 	
-    public Game currentGame = new Game(numTiles);
-    public List<Square> allSquares;
+    public static Game currentGame = new Game(6);
+    public static List<Square> allSquares;
 	
     public static Accordion sideBar;
     public static Pane abedPane;
@@ -143,7 +143,7 @@ public class ABEDGUI extends Application{
         return board;
     }
 	
-    public Square getClosest(double x, double y){
+    public Object getClosest(double x, double y){
 	Square closest = null;
 	double minDist = Double.MAX_VALUE;
 	for(Square s : allSquares)
@@ -153,7 +153,7 @@ public class ABEDGUI extends Application{
             }
         return minDist < tileSize? closest: null;				
     }
-	
+    
     public static void open() {Application.launch();}
     public static void main(String[] args) { launch(args); }
 }
