@@ -11,7 +11,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 /**
- *
  * @author Mitch
  */
 public class Square extends Rectangle{
@@ -26,8 +25,8 @@ public class Square extends Rectangle{
         this.x = x;
         this.y = y;
         //double size = ABEDGUI.getBoard().tileSize;
-        this.setHeight(abedGame.ABEDGUI.tileSize);
-        this.setWidth(abedGame.ABEDGUI.tileSize);
+        this.setHeight(ABEDGUI.tileSize);
+        this.setWidth(ABEDGUI.tileSize);
         this.setStroke(Color.LIGHTGREY);
         //this.setStrokeWidth(1);
         this.i = i;

@@ -1,4 +1,4 @@
-package abedGame;
+package abedgame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +35,7 @@ public class ABEDGUI extends Application{
     public static double tileSize = 0;
     public static int numTiles = 6;
 	
-    public static Game currentGame = new Game(6);
+    public Game currentGame = new Game(6);
     public static List<Square> allSquares;
 	
     public static Accordion sideBar;
@@ -90,7 +90,7 @@ public class ABEDGUI extends Application{
                 temp.setOnMousePressed(event -> {
                         Gate g = null;
                         try {
-                            g = (Gate)Class.forName("abedGame."+s).newInstance();
+                            g = (Gate)Class.forName("abedgame."+s).newInstance();
                         } catch (ClassNotFoundException ex) {
                             System.err.println(s+" is not a class, fuckstick.");
                         } catch (IllegalAccessException ex) {

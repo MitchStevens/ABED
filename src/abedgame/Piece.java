@@ -1,8 +1,4 @@
-package abedGame;
-
-import java.nio.file.FileVisitResult;
-import java.util.ArrayList;
-import java.util.List;
+package abedgame;
 
 import javafx.geometry.Bounds;
 import javafx.scene.*;
@@ -36,7 +32,7 @@ public class Piece extends Parent{
 			+ "-fx-fill: White;"
 			+ "-fx-stroke: black;"
 			+ "-fx-stroke-width: 1;");
-	Bounds b = text.getLayoutBounds();
+	//Bounds b = text.getLayoutBounds();
 	text.setLayoutX(0);
 	text.setLayoutY(ABEDGUI.tileSize);
 	this.getChildren().add(text);
@@ -108,19 +104,17 @@ public class Piece extends Parent{
                 changePos(closest);
             } else {
                 switch(gate.getClass().getSimpleName()){
-                    case "Input": gate.isOn ^= true;
+                    case "Input": ((Input)gate).isOn ^= true;
                 }
             }
             if(closest != null) closest.setFill(Square.defColor);
-            //ABEDGUI.getBoard().currentGame.tick(this);
+            ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
         
         this.setOnScroll(event -> {
-            if(event.getDeltaY() > 0)
-                gate.rotate(-1);
-            else gate.rotate(1);
-            //ABEDGUI.getBoard().currentGame.tick(this);
+        	gate.rotate(event.getDeltaY() > 0? -1: 1);
+            ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
     }
@@ -128,24 +122,24 @@ public class Piece extends Parent{
     public void changePos(Square s){
         if(s == null){
             this.delPiece();
-            System.out.println(ABEDGUI.currentGame.toString());
+            System.out.println(ABEDGUI.getBoard().currentGame.toString());
             return;
         }
         
-        Game temp = ABEDGUI.currentGame;
+        Game temp = ABEDGUI.getBoard().currentGame;
         if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != this)
             return;
         if(i != null && j != null)
-            ABEDGUI.currentGame.placed[i][j] = null;
-        i = s.i;
-        j = s.j;
-        ABEDGUI.currentGame.placed[s.i][s.j] = this;
+            ABEDGUI.getBoard().currentGame.placed[i][j] = null;
+        i = s.i; j = s.j;
+        gate.i = s.i; gate.j = s.j;
+        ABEDGUI.getBoard().currentGame.placed[s.i][s.j] = this;
         setLayoutX(s.x);
         setLayoutY(s.y);
     }
     
     public void delPiece(){
-        try{ ABEDGUI.currentGame.placed[i][j] = null;}
+        try{ ABEDGUI.getBoard().currentGame.placed[i][j] = null;}
         catch(NullPointerException ex){}
         ABEDGUI.getBoard().root.getChildren().remove(this);
 
