@@ -57,7 +57,7 @@ public class Piece extends Parent{
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
-    private Image resample(Image input) {
+    public static Image resample(Image input) {
         final int W = (int) input.getWidth();
         final int H = (int) input.getHeight();
         final int S = 5;

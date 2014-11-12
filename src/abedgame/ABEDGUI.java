@@ -1,5 +1,8 @@
 package abedgame;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,11 +15,16 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.*;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -43,7 +51,9 @@ public class ABEDGUI extends Application{
 	
     public static Accordion sideBar;
     public static Pane abedPane;
-    public static BorderPane mainPane;
+    public static Pane menuPane;
+    public static StackPane mainPane;
+    public static BorderPane gamePane;
     private static ABEDGUI board;
 
     @Override
@@ -60,15 +70,21 @@ public class ABEDGUI extends Application{
 	
 	private void initaliseBoard(){
 		currentGame = new Game(numTiles);
-		mainPane = new BorderPane();
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+		gamePane = new BorderPane();
+		mainPane = new StackPane();
 		getSideBar();
 		getAbedPane();
-		mainPane.setRight(sideBar);
-		mainPane.setCenter(abedPane);
+		getMenuPane();
+		
+		gamePane.setRight(sideBar);
+		gamePane.setCenter(abedPane);
+		mainPane.getChildren().add(gamePane);
+		
 		mainPane.setMinHeight(boardHeight);
 		mainPane.setMinWidth(boardWidth);
 		root.getChildren().add(mainPane);
+		mainPane.getChildren().get(0).toFront();
 	}
 	
 //	public void displayGame(Game game){
@@ -155,6 +171,34 @@ public class ABEDGUI extends Application{
 	abedPane.getChildren().addAll(allSquares);
     }
 	
+    public void getMenuPane(){
+    	menuPane = new VBox();
+    	menuPane.setStyle(
+                "-fx-background-color: GRAY;"
+              + "-fx-min-width:		   "+(boardWidth-boardHeight)+";");
+    	Label title = new Label("ABED");
+    	Font DotBitC = null, DotBitCBold = null;
+    	try { DotBitC = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC.ttf")), 60);
+    		  DotBitCBold = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC Xtra Bold.ttf")), 240);}
+    	catch (FileNotFoundException e) {e.printStackTrace();}
+    	
+    	title.setFont(DotBitCBold);
+    	title.setStyle("-fx-font-weight: bold;"
+    			+ "-fx-alignment:	bottom-right;");
+    	
+    	Button playLevel = new Button("Play Levels");
+    	playLevel.setFont(DotBitC);
+    	playLevel.setOnMouseClicked(e -> {
+    		mainPane.getChildren().get(0).toFront();
+    	});
+//    	Image buttonGraphic = Piece.resample(new Image("images/button.bmp"));
+//    	playLevel.setGraphic(new ImageView(buttonGraphic));
+    	
+    	menuPane.getChildren().add(title);
+    	menuPane.getChildren().add(playLevel);
+    	mainPane.getChildren().add(menuPane);
+    }
+    
     public static ABEDGUI getBoard(){
         return board;
     }
