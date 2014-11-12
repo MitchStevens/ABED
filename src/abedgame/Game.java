@@ -20,6 +20,8 @@ public class Game {
     }
     
     public void tick(Gate gate){
+    	if(gate.i == null) return;
+    	
     	for(Gate g : gate.inputs)
     		if(g != null) g.outputCheck();
     	for(Gate g : gate.outputs)
@@ -34,6 +36,7 @@ public class Game {
     		if(g != null) g.inputCheck();
     	
     	updateGame();
+    	System.out.println(this.toString());
     }
     
     public void updateGame(){
@@ -41,9 +44,8 @@ public class Game {
     	for(Piece[] pArray : placed)
     		for(Piece p : pArray){
     			if(p == null) continue;
-    			p.updateImage();
-    		}
-    			
+    			else p.updateImage();
+    		}	
     }
     
     private boolean posAtDir(int i, int j, int dir){

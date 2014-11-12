@@ -1,9 +1,13 @@
 package abedgame;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import javafx.geometry.Bounds;
 import javafx.scene.*;
 import javafx.scene.image.*;
-import javafx.scene.image.ImageView;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Piece extends Parent{
@@ -25,26 +29,31 @@ public class Piece extends Parent{
         catch (IllegalArgumentException ex) {}
 	this.getChildren().add(image);
 		
-	text.setText(g.getClass().getSimpleName());
+	text.setText(g.getClass().getSimpleName().toUpperCase());
 	text.setStrokeWidth(2);
-	text.setStyle("-fx-font: 20px Arial;"
-                	+ "-fx-font-weight: bold;"
-			+ "-fx-fill: White;"
+	try {
+		final Font f = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC.ttf")), 24);
+		text.setFont(f);
+	} catch (FileNotFoundException e) {
+		e.printStackTrace();
+	}
+	text.setStyle("-fx-font-weight: bold;"
+			+ "-fx-fill: #7DF9FF;"
 			+ "-fx-stroke: black;"
 			+ "-fx-stroke-width: 1;");
 	//Bounds b = text.getLayoutBounds();
 	text.setLayoutX(0);
 	text.setLayoutY(ABEDGUI.tileSize);
+	
 	this.getChildren().add(text);
 	getEvents();
     }
     
     public void updateImage(){
-	image.setImage(resample(this.gate.getSprite()));
+    	image.setImage(resample(this.gate.getSprite()));
         image.setRotate(gate.rot*90);
-	image.setFitHeight(ABEDGUI.tileSize);
+        image.setFitHeight(ABEDGUI.tileSize);
         image.setFitWidth(ABEDGUI.tileSize);
-        
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
@@ -104,17 +113,21 @@ public class Piece extends Parent{
                 changePos(closest);
             } else {
                 switch(gate.getClass().getSimpleName()){
+                //Q: Is this the best way to toggle a boolean?
+                //A: HELL YEAH.
                     case "Input": ((Input)gate).isOn ^= true;
                 }
             }
             if(closest != null) closest.setFill(Square.defColor);
-            ABEDGUI.getBoard().currentGame.tick(gate);
+            //if(i != null && j != null)
+            	ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
         
         this.setOnScroll(event -> {
         	gate.rotate(event.getDeltaY() > 0? -1: 1);
-            ABEDGUI.getBoard().currentGame.tick(gate);
+            //if(i != null && j != null)
+            	ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
     }

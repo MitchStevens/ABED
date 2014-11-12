@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.animation.FillTransition;
 import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
@@ -20,6 +21,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -33,9 +36,9 @@ public class ABEDGUI extends Application{
     public static double boardWidth = 1024;
     public static double boardHeight = 768;
     public static double tileSize = 0;
-    public static int numTiles = 6;
+    public static int numTiles = 8;
 	
-    public Game currentGame = new Game(6);
+    public Game currentGame;
     public static List<Square> allSquares;
 	
     public static Accordion sideBar;
@@ -56,6 +59,7 @@ public class ABEDGUI extends Application{
 	}
 	
 	private void initaliseBoard(){
+		currentGame = new Game(numTiles);
 		mainPane = new BorderPane();
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 		getSideBar();
@@ -83,6 +87,18 @@ public class ABEDGUI extends Application{
         sideBar.setStyle(
             "-fx-background-color: GRAY;"
           + "-fx-min-width:		   "+(boardWidth-boardHeight)+";");
+        
+        Pane info = new Pane();
+        info.setMinWidth(boardWidth - boardHeight);
+        Text objective = new Text(""
+        		+ "Current objective:\n"
+        		+ "Try and fix the rotation while dragging bug.\n"
+        		+ "Slap on an intro screen for the begining of the game.\n"
+        		+ "Fix wire sprites (ugh).");
+        objective.setWrappingWidth(boardWidth - boardHeight);
+        info.getChildren().add(objective);
+        sideBar.getPanes().add(new TitledPane("Game Information", info));
+        
         for(int i = 0; i < Gate.gateNames.length; i++){
             VBox tempVBox = new VBox();
             for(String s : Gate.gateTypes[i]){
@@ -122,20 +138,20 @@ public class ABEDGUI extends Application{
     public void getAbedPane(){
 	abedPane = new Pane();
 	abedPane.setStyle(
-            "-fx-background-color: BLUE;"
-            + "-fx-padding: "+20+";");
+     	"-fx-background-color: BLUE;"
+      	+ "-fx-padding: "+20+";");
 		
 	allSquares = new ArrayList<Square>();
 	for(int i = 0; i < numTiles; i++)
-            for(int j = 0; j < numTiles; j++){
-		Square temp = new Square(
-                    GAME_MARGIN + j*(tileSize + GAP),
-                    GAME_MARGIN + i*(tileSize + GAP),
-                    i,
-                    j);
+       	for(int j = 0; j < numTiles; j++){
+       		Square temp = new Square(
+            	GAME_MARGIN + j*(tileSize + GAP),
+              	GAME_MARGIN + i*(tileSize + GAP),
+             	i,
+              	j);
                 
 		allSquares.add(temp);
-            }
+    	}
 	abedPane.getChildren().addAll(allSquares);
     }
 	
@@ -147,10 +163,10 @@ public class ABEDGUI extends Application{
 	Square closest = null;
 	double minDist = Double.MAX_VALUE;
 	for(Square s : allSquares)
-            if(s.distance(x, y) < minDist){
-		closest = s;
-		minDist = s.distance(x, y);
-            }
+		if(s.distance(x, y) < minDist){
+			closest = s;
+			minDist = s.distance(x, y);
+    	}
         return minDist < tileSize? closest: null;				
     }
     

@@ -9,17 +9,20 @@ NOTES:
     each gate has an output at direction 0 and an input at 2.
     if the gate has !=1 inputs, gate must override parentCheck()
     if the gate has !=1 outputs, gate must override childCheck()
+    
+    The reason to 
 */
 
 public abstract class Gate {
     
     public static String[][] gateTypes = new String[][]{
-	new String[] {"Input","Output","Not","And","Or"},
-        new String[] {"Single"},
-	new String[] {"Half Adder", "Adder"}};
+    	new String[] {"Input","Output","Not","And","Or"},
+		new String[] {"Single"},
+		new String[] {"Nand", "Nor", "XOR", "NXOR"},
+		new String[] {"Half Adder", "Adder"}};
 	
     public static String[] gateNames =
-        new String[] {"Basic Gates","Wires","Adders"};
+        new String[] {"Basic Gates","Rookie Combinations","Wires","Adders"};
         
     int rot;
     Integer i;
@@ -28,47 +31,43 @@ public abstract class Gate {
     Gate[] outputs;
     int[] inputDir;
     int[] outputDir;
-            
-    public void inputCheck(){
-    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+2);
-    	if(p == null) {inputs[0] = null; return;}
+    
+    public Gate singleInputCheck(int dir){
+    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+    	if(p == null) return null;
+    	
     	for(int k : p.gate.outputDir){
     		try{
-        		if((k+p.gate.rot)%4 == rot){
-        			inputs[0] = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+2).gate;
-        			return;
-        		}
-        		throw new NullPointerException();
+        		if((rot+dir+2)%4 == (p.gate.rot+k)%4)
+        			return ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir).gate;
     		}catch(NullPointerException ex) {
-    			inputs[0] = null;
+    			return null;
         	}
     	}
+		return null;
     }
     
-    public void outputCheck(){
-    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot);
-    	if(p == null) {outputs[0] = null; return;}
+    public Gate singleOutputCheck(int dir){
+    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+    	if(p == null) return null;
     	for(int k : p.gate.inputDir){
     		try{
-    			System.out.println("k: "+k+" g.rot:"+p.gate.rot+" rot: "+rot);
-        		if((k+p.gate.rot+2)%4 == rot){
-        			outputs[0] = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot).gate;
-        			return;
-        		}
-        		throw new NullPointerException();
+        		if((rot+dir+2)%4 == (p.gate.rot+k)%4)
+        			return ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir).gate;
     		}catch(NullPointerException ex) {
-    			outputs[0] = null;
+    			return null;
         	}
     	}
+		return null;
     }
+    
+    public abstract void inputCheck();
+    
+    public abstract void outputCheck();
     
     public abstract Image getSprite();
     
-    public boolean eval(){
-        if(inputs[0] == null)
-            return false;
-        else return inputs[0].eval();
-    }
+    public abstract boolean eval();
 	
     public void rotate(int r){    
         this.rot += (r % 4) + 4;
@@ -128,6 +127,11 @@ class Input extends Gate{
     public void inputCheck(){}
     
     @Override
+    public void outputCheck(){
+    	outputs[0] =  this.singleOutputCheck(0);
+    }
+    
+    @Override
     public Image getSprite(){
         return new Image("images/Input"+(isOn? "1": "0")+".bmp");
     }
@@ -149,6 +153,11 @@ class Output extends Gate{
     }
     
     @Override
+    public void inputCheck(){
+    	inputs[0] =  this.singleInputCheck(2);
+    }
+    
+    @Override
     public void outputCheck(){}
     
     @Override
@@ -160,6 +169,11 @@ class Output extends Gate{
         return new Image("images/Output"+p+".bmp");
     }
 
+    public boolean eval(){
+        if(inputs[0] == null)
+            return false;
+        else return inputs[0].eval();
+    }
 }
 
 class And extends Gate{
@@ -173,36 +187,13 @@ class And extends Gate{
     
     @Override
     public void inputCheck(){
-    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+2);
-    	if(p == null) {inputs[0] = null;}
-    	else
-	    	for(int k : p.gate.outputDir){
-	    		try{
-	        		if((k+p.gate.rot)%4 == rot){
-	        			inputs[0] = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+2).gate;
-	        			break;
-	        		}
-	        		throw new NullPointerException();
-	    		}catch(NullPointerException ex) {
-	    			inputs[0] = null;
-	        	}
-	    	}
-    	
-    	p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+3);
-    	if(p == null) {inputs[1] = null;}
-    	else
-	    	for(int k : p.gate.outputDir){
-	    		try{
-	        		if((k+p.gate.rot+3)%4 == rot){
-	        			inputs[1] = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+3).gate;
-	        			break;
-	        		}
-	        		throw new NullPointerException();
-	    		}catch(NullPointerException ex) {
-	    			inputs[1] = null;
-	        	}
-	    	}
-      
+    	inputs[0] = this.singleInputCheck(2);
+    	inputs[1] = this.singleInputCheck(3);     
+    }
+    
+    @Override
+    public void outputCheck(){
+    	outputs[0] =  this.singleOutputCheck(0);
     }
     
     @Override
@@ -233,21 +224,15 @@ class Single extends Gate{
         this.outputDir = new int[]{3, 0, 1};
     }
     
+    @Override
+    public void inputCheck(){
+    	inputs[0] =  this.singleInputCheck(2);
+    }
+    
     public void outputCheck(){
-//    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+1);
-//    	if(p == null) {outputs[0] = null;}
-//    	else
-//	    	for(int k : p.gate.outputDir){
-//	    		try{
-//	        		if((k+p.gate.rot+1)%4 == rot){
-//	        			outputs[0] = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+3).gate;
-//	        			break;
-//	        		}
-//	        		throw new NullPointerException();
-//	    		}catch(NullPointerException ex) {
-//	    			outputs[0] = null;
-//	        	}
-//	    	}
+    	outputs[0] = this.singleOutputCheck(3);
+    	outputs[1] = this.singleOutputCheck(0);
+    	outputs[2] = this.singleOutputCheck(1);
     }
     
     @Override
@@ -257,4 +242,46 @@ class Single extends Gate{
         catch(NullPointerException np){}
         return new Image("images/Single"+p+".bmp");
     }
+
+    public boolean eval(){
+        if(inputs[0] == null)
+            return false;
+        else return inputs[0].eval();
+    }
+}
+
+class Not extends Gate{
+
+    public Not(){
+        this.inputs = new Gate[]{null};
+        this.outputs = new Gate[]{null};
+        this.inputDir = new int[]{2};
+        this.outputDir = new int[]{0};
+    }
+	
+    @Override
+    public void inputCheck(){
+    	inputs[0] =  this.singleInputCheck(2);
+    }
+    
+    @Override
+    public void outputCheck(){
+    	outputs[0] =  this.singleOutputCheck(0);
+    }
+    
+	@Override
+	public Image getSprite() {
+		int p = 0;
+        try{p = inputs[0].eval()? 1: 0;}
+        catch(NullPointerException np){}
+        return new Image("images/Not"+p+".bmp");
+	}
+
+	@Override
+	public boolean eval() {
+        if(inputs[0] == null)
+            return true;
+        else return !inputs[0].eval();
+	}
+	
 }
