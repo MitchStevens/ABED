@@ -1,12 +1,18 @@
 package abedgame;
 
+import java.awt.Paint;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+import com.sun.prism.paint.Color;
+
+import javafx.event.Event;
 import javafx.geometry.Bounds;
 import javafx.scene.*;
+import javafx.scene.control.Button;
 import javafx.scene.image.*;
+import javafx.scene.input.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -22,31 +28,44 @@ public class Piece extends Parent{
     private boolean dragging = false;	// whether the tile is currently being dragged
     public Square closest;
     private Text text = new Text();
+    private Text delete;
+    private Text duplicate;
+    
 	
     public Piece(Gate g){
-        this.gate = g;
+    	this.gate = g;
         try{ updateImage(); }
         catch (IllegalArgumentException ex) {}
-	this.getChildren().add(image);
+        this.getChildren().add(image);
 		
-	text.setText(g.getClass().getSimpleName().toUpperCase());
-	text.setStrokeWidth(2);
-	try {
-		final Font f = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC.ttf")), 24);
-		text.setFont(f);
-	} catch (FileNotFoundException e) {
-		e.printStackTrace();
-	}
-	text.setStyle("-fx-font-weight: bold;"
-			+ "-fx-fill: #7DF9FF;"
-			+ "-fx-stroke: black;"
-			+ "-fx-stroke-width: 1;");
-	//Bounds b = text.getLayoutBounds();
-	text.setLayoutX(0);
-	text.setLayoutY(ABEDGUI.tileSize);
+        text.setText(g.getClass().getSimpleName().toUpperCase());
+        text.setStrokeWidth(2);
+        Font f = Font.font("Comic Sans");
+		try {
+			f = Font.loadFont(new FileInputStream(new File("src/fonts/adbxtsc.ttf")), 18);
+			text.setFont(f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		duplicate = new Text("✚ ");
+		duplicate.setLayoutX(ABEDGUI.tileSize-35);
+		duplicate.setLayoutY(15);
+		this.getChildren().add(duplicate);
+		
+		delete = new Text("✖");
+		delete.setLayoutX(ABEDGUI.tileSize-20);
+		delete.setLayoutY(15);
+		this.getChildren().add(delete);
+		
+		text.setStyle("-fx-font-weight: bold;"
+				+ "-fx-fill: #7DF9FF;");
+		//Bounds b = text.getLayoutBounds();
+		text.setLayoutX(0);
+		text.setLayoutY(ABEDGUI.tileSize);
 	
-	this.getChildren().add(text);
-	getEvents();
+		this.getChildren().add(text);
+		getEvents();
     }
     
     public void updateImage(){
@@ -120,9 +139,16 @@ public class Piece extends Parent{
             }
             if(closest != null) closest.setFill(Square.defColor);
             //if(i != null && j != null)
-            	ABEDGUI.getBoard().currentGame.tick(gate);
+          	ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
+        
+//        this.setOnKeyPressed(event ->{
+//        	if(event.getCode() == KeyCode.R){
+//        		gate.rotate(1);
+//        		ABEDGUI.getBoard().currentGame.tick(gate);
+//        	}
+//        });
         
         this.setOnScroll(event -> {
         	gate.rotate(event.getDeltaY() > 0? -1: 1);
@@ -130,16 +156,26 @@ public class Piece extends Parent{
             	ABEDGUI.getBoard().currentGame.tick(gate);
             event.consume();
         });
+        
+        duplicate.setOnMouseClicked(event -> {
+        	Piece p = this.clone();
+        	ABEDGUI.getBoard().currentGame.placePieceAtEmpty(p);
+        });
+        
+        delete.setOnMouseClicked(event -> {
+        	this.changePos(null);
+        	event.consume();
+        });
     }
     
-    public void changePos(Square s){
+    public void changePos(Square s){        
+        Game temp = ABEDGUI.getBoard().currentGame;
         if(s == null){
-            this.delPiece();
-            System.out.println(ABEDGUI.getBoard().currentGame.toString());
+        	temp.placed[i][j] = null;
+        	ABEDGUI.getBoard().root.getChildren().remove(this);
             return;
         }
         
-        Game temp = ABEDGUI.getBoard().currentGame;
         if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != this)
             return;
         if(i != null && j != null)
@@ -151,10 +187,14 @@ public class Piece extends Parent{
         setLayoutY(s.y);
     }
     
-    public void delPiece(){
-        try{ ABEDGUI.getBoard().currentGame.placed[i][j] = null;}
-        catch(NullPointerException ex){}
-        ABEDGUI.getBoard().root.getChildren().remove(this);
-
+    @Override
+    public Piece clone(){
+    	Gate g = null;
+    	try {
+			g = this.gate.getClass().newInstance();
+		} catch (InstantiationException | IllegalAccessException e) {
+			e.printStackTrace();
+		}
+    	return new Piece(g);
     }
 }

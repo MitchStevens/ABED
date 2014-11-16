@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
@@ -51,9 +52,7 @@ public class ABEDGUI extends Application{
 	
     public static Accordion sideBar;
     public static Pane abedPane;
-    public static Pane menuPane;
-    public static StackPane mainPane;
-    public static BorderPane gamePane;
+    public static BorderPane mainPane;
     private static ABEDGUI board;
 
     @Override
@@ -71,20 +70,16 @@ public class ABEDGUI extends Application{
 	private void initaliseBoard(){
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
-		gamePane = new BorderPane();
-		mainPane = new StackPane();
+		mainPane = new BorderPane();
 		getSideBar();
 		getAbedPane();
-		getMenuPane();
 		
-		gamePane.setRight(sideBar);
-		gamePane.setCenter(abedPane);
-		mainPane.getChildren().add(gamePane);
+		mainPane.setRight(sideBar);
+		mainPane.setCenter(abedPane);
 		
 		mainPane.setMinHeight(boardHeight);
 		mainPane.setMinWidth(boardWidth);
 		root.getChildren().add(mainPane);
-		mainPane.getChildren().get(0).toFront();
 	}
 	
 //	public void displayGame(Game game){
@@ -132,9 +127,7 @@ public class ABEDGUI extends Application{
                         } catch (InstantiationException ex) {
                             System.err.println("Your class "+s+" doesn't instanciate with 0 parameters, does it? Go fix that.");}
                         Piece p = new Piece(g);
-                        root.getChildren().add(p);
-                        p.setLayoutX(event.getSceneX());
-                        p.setLayoutY(event.getSceneY());
+                        currentGame.placePieceAtEmpty(p);
                     });
                 
                 temp.setOnMouseEntered(EventHandler -> {
@@ -169,34 +162,6 @@ public class ABEDGUI extends Application{
 		allSquares.add(temp);
     	}
 	abedPane.getChildren().addAll(allSquares);
-    }
-	
-    public void getMenuPane(){
-    	menuPane = new VBox();
-    	menuPane.setStyle(
-                "-fx-background-color: GRAY;"
-              + "-fx-min-width:		   "+(boardWidth-boardHeight)+";");
-    	Label title = new Label("ABED");
-    	Font DotBitC = null, DotBitCBold = null;
-    	try { DotBitC = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC.ttf")), 60);
-    		  DotBitCBold = Font.loadFont(new FileInputStream(new File("src/fonts/AuX DotBitC Xtra Bold.ttf")), 240);}
-    	catch (FileNotFoundException e) {e.printStackTrace();}
-    	
-    	title.setFont(DotBitCBold);
-    	title.setStyle("-fx-font-weight: bold;"
-    			+ "-fx-alignment:	bottom-right;");
-    	
-    	Button playLevel = new Button("Play Levels");
-    	playLevel.setFont(DotBitC);
-    	playLevel.setOnMouseClicked(e -> {
-    		mainPane.getChildren().get(0).toFront();
-    	});
-//    	Image buttonGraphic = Piece.resample(new Image("images/button.bmp"));
-//    	playLevel.setGraphic(new ImageView(buttonGraphic));
-    	
-    	menuPane.getChildren().add(title);
-    	menuPane.getChildren().add(playLevel);
-    	mainPane.getChildren().add(menuPane);
     }
     
     public static ABEDGUI getBoard(){
