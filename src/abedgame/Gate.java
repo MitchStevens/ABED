@@ -10,7 +10,7 @@ NOTES:
     if the gate has !=1 inputs, gate must override parentCheck()
     if the gate has !=1 outputs, gate must override childCheck()
     
-    The reason to 
+    COMMENT COMMENT
 */
 
 public abstract class Gate {
@@ -133,7 +133,7 @@ class Input extends Gate{
     
     @Override
     public Image getSprite(){
-        return new Image("images/Input"+(isOn? "1": "0")+".bmp");
+        return new Image("/images/Input"+(isOn? "1": "0")+".bmp");
     }
 
     @Override
@@ -166,7 +166,7 @@ class Output extends Gate{
         try{p = inputs[0].eval()? 1: 0;}
         catch(NullPointerException np){}
         
-        return new Image("images/Output"+p+".bmp");
+        return new Image("/images/Output"+p+".bmp");
     }
 
     public boolean eval(){
@@ -204,7 +204,7 @@ class And extends Gate{
         try{ p2 = inputs[1].eval()? 1: 0; }
         catch(NullPointerException np){}
         
-        return new Image("images/And"+p1+p2+".bmp");
+        return new Image("/images/And"+p1+p2+".bmp");
     }
         
     @Override
@@ -240,7 +240,7 @@ class Single extends Gate{
         int p = 0;
         try{p = inputs[0].eval()? 1: 0;}
         catch(NullPointerException np){}
-        return new Image("images/Single"+p+".bmp");
+        return new Image("/images/Single"+p+".bmp");
     }
 
     public boolean eval(){
@@ -274,7 +274,7 @@ class Not extends Gate{
 		int p = 0;
         try{p = inputs[0].eval()? 1: 0;}
         catch(NullPointerException np){}
-        return new Image("images/Not"+p+".bmp");
+        return new Image("/images/Not"+p+".bmp");
 	}
 
 	@Override
