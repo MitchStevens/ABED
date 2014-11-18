@@ -15,7 +15,10 @@ import javafx.util.Duration;
  */
 public class Square extends Rectangle{
     public static Color defColor = Color.SILVER;
+    public static Color sideColor = Color.DARKGOLDENROD;
+    public static Color nullColor = Color.BLACK;
     public static Color altColor = Color.WHITE;
+    int isSide = 0; //0 = def, 1 = side, 2 = null
     double x;
     double y;
     Integer i;
@@ -34,25 +37,33 @@ public class Square extends Rectangle{
         this.setLayoutX(x);
         this.setLayoutY(y);
         this.setFill(defColor);
-		
-        this.setOnMousePressed(event -> {
-                //flash();
-        });
     }
 	
     public void flash(){
-	this.setFill(altColor);
-	FillTransition ft = new FillTransition(Duration.millis(1000), this);
-	ft.setFromValue(altColor);
-	ft.setToValue(defColor);
-	ft.play();
+    	if(isSide == 2) return;
+//		this.setFill(altColor);
+		FillTransition ft = new FillTransition(Duration.millis(500), this);
+		ft.setFromValue(altColor);
+		switch(isSide){
+		case 0: ft.setToValue(defColor); break;
+		case 1: ft.setToValue(sideColor); break;
+		}
+		ft.play();
     }
 	
+    public void setIsOnSide(){
+    	switch(++isSide){
+    	case 0: setFill(defColor); return;
+    	case 1: setFill(sideColor); return;
+    	case 2: setFill(nullColor); return;
+    	}
+    }
+    
     //gets euclidean distance
     public double distance(double x, double y){
-	x -= this.x;
-	y -= this.y;
-	return Math.sqrt(x*x + y*y);
+		x -= this.x;
+		y -= this.y;
+		return Math.sqrt(x*x + y*y);
     }
 	
 }

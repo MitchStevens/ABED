@@ -12,6 +12,10 @@ public class Game {
         placed = new Piece[n][n];
         this.n = n;
     }
+    
+//    public boolean[] eval(){
+//    	return true;
+//    }
         
     public Game(List<Piece> pieces, int n){
         placed = new Piece[n][n];
@@ -93,18 +97,35 @@ public class Game {
     	return tbr;
     }
     
+    public int inputNum(){
+    	int tbr = 0;
+    	for(int i = 0 ; i < n; i++)
+    		for(int j = 0; j < n; j++)
+    			if(placed[i][j] != null)
+    				if(placed[i][j].gate instanceof Input)
+    					tbr++;
+    	return tbr;
+    }
+    
+    public int outputNum(){
+    	int tbr = 0;
+    	for(int i = 0 ; i < n; i++)
+    		for(int j = 0; j < n; j++)
+    			if(placed[i][j] != null)
+    				if(placed[i][j].gate instanceof Output)
+    					tbr++;
+    	return tbr;
+    }
+    
     @Override
     public String toString(){
-        String tbr = " ";
-        for(Piece[] array : placed){
-            for(Piece p : array){
-                if(p != null)
-                    tbr += p.gate.getClass().getSimpleName().charAt(0)+"  ";
-                else tbr += "*  ";
-            }
-            tbr += "\n ";
-        }
-        return tbr;
+    	List<String> tbr = new ArrayList<>();
+    	for(int i = 0 ; i < n; i++)
+    		for(int j = 0; j < n; j++)
+    			if(placed[i][j] != null)
+    				if(placed[i][j].gate instanceof Output)
+    				tbr.add(placed[i][j].gate.toString());
+    	return tbr.toString();
     }
 	
 }

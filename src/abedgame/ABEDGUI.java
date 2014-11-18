@@ -158,9 +158,13 @@ public class ABEDGUI extends Application{
               	GAME_MARGIN + i*(tileSize + GAP),
              	i,
               	j);
-                
-		allSquares.add(temp);
+       		if(i == 0 || i == numTiles-1)
+       			temp.setIsOnSide();
+       		if(j == 0 || j == numTiles-1)
+       			temp.setIsOnSide();
+       		allSquares.add(temp);
     	}
+	
 	abedPane.getChildren().addAll(allSquares);
     }
     

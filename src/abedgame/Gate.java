@@ -13,7 +13,7 @@ NOTES:
     COMMENT COMMENT
 */
 
-public abstract class Gate {
+public class Gate {
     
     public static String[][] gateTypes = new String[][]{
     	new String[] {"Input","Output","Not","And","Or"},
@@ -23,14 +23,18 @@ public abstract class Gate {
 	
     public static String[] gateNames =
         new String[] {"Basic Gates","Rookie Combinations","Wires","Adders"};
-        
+            
     int rot;
+    String name;
+    String logic;
     Integer i;
     Integer j;
     Gate[] inputs;
     Gate[] outputs;
     int[] inputDir;
     int[] outputDir;
+    
+    public Gate(){}
     
     public Gate singleInputCheck(int dir){
     	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
@@ -61,13 +65,26 @@ public abstract class Gate {
 		return null;
     }
     
-    public abstract void inputCheck();
+    public void inputCheck(){
+    	for(int i = 0; i < inputs.length; i++)
+    		inputs[i] =  this.singleOutputCheck(inputDir[i]);
+    };
     
-    public abstract void outputCheck();
+    public void outputCheck(){
+    	for(int i = 0; i < outputs.length; i++)
+    		outputs[i] =  this.singleOutputCheck(outputDir[i]);
+    };
     
-    public abstract Image getSprite();
+    public Image getSprite(){
+    	String path = "/images/"+name;
+    	for(Gate g : inputs)
+    		path += g.eval() ? "1" : "0";
+    	return new Image(path+".bmp");
+    };
     
-    public abstract boolean eval();
+    public boolean eval(){
+    	return true;
+    };
 	
     public void rotate(int r){    
         this.rot += (r % 4) + 4;
@@ -76,14 +93,7 @@ public abstract class Gate {
     
     @Override
     public String toString(){
-        String tbr = "Type: "+this.getClass().getSimpleName();
-        tbr += "\nParent(s):";
-        for(Gate g : inputs)
-        	if(g != null) tbr += "\n  "+g.getClass().getSimpleName();
-        tbr += "\nChild(ren):";
-        for(Gate g : outputs)
-        	if(g != null) tbr += "\n  "+g.getClass().getSimpleName();
-        return tbr;
+    	return this.toString();
     }
 
     @Override
@@ -141,9 +151,14 @@ class Input extends Gate{
         return isOn;
     }
 
+    @Override
+    public String toString(){
+    	return inputNum+"";
+    }
 }
 
 class Output extends Gate{
+	int outputNum;
 	
     public Output(){
         this.inputs = new Gate[]{null};
@@ -173,6 +188,11 @@ class Output extends Gate{
         if(inputs[0] == null)
             return false;
         else return inputs[0].eval();
+    }
+
+    @Override
+    public String toString(){
+    	return inputs[0] != null?inputs[0].toString():"(F)";
     }
 }
 
@@ -213,6 +233,13 @@ class And extends Gate{
             return inputs[0].eval() && inputs[1].eval();
         else return false;
     }
+    
+    @Override
+    public String toString(){
+    	if(inputs[0] != null && inputs[1] != null)
+    		return "("+inputs[0].toString()+"&"+inputs[1].toString()+")";
+    	else return "(F)";
+    }
 }
 
 class Single extends Gate{
@@ -247,6 +274,13 @@ class Single extends Gate{
         if(inputs[0] == null)
             return false;
         else return inputs[0].eval();
+    }
+    
+    @Override
+    public String toString(){
+        if(inputs[0] == null)
+            return "(F)";
+        else return inputs[0].toString();
     }
 }
 
@@ -284,4 +318,10 @@ class Not extends Gate{
         else return !inputs[0].eval();
 	}
 	
+	@Override
+	public String toString() {
+        if(inputs[0] == null)
+            return "(T)";
+        else return "(~"+inputs[0].toString()+")";
+	}
 }

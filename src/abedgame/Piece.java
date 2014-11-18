@@ -1,14 +1,8 @@
 package abedgame;
 
-import java.awt.Paint;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
-import com.sun.prism.paint.Color;
-
-import javafx.event.Event;
-import javafx.geometry.Bounds;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.image.*;
@@ -27,7 +21,8 @@ public class Piece extends Parent{
     public double mousey;				// where the cursor's y-position is
     private boolean dragging = false;	// whether the tile is currently being dragged
     public Square closest;
-    private Text text = new Text();
+    private Text gateName = new Text();
+    private Text gateNumber = new Text();
     private Text delete;
     private Text duplicate;
     
@@ -38,15 +33,9 @@ public class Piece extends Parent{
         catch (IllegalArgumentException ex) {}
         this.getChildren().add(image);
 		
-        text.setText(g.getClass().getSimpleName().toUpperCase());
-        text.setStrokeWidth(2);
         Font f = Font.font("Comic Sans");
-		try {
-			f = Font.loadFont(new FileInputStream(new File("src/fonts/adbxtsc.ttf")), 18);
-			text.setFont(f);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		try {f = Font.loadFont(new FileInputStream(new File("src/fonts/adbxtsc.ttf")), 18);}
+		catch (FileNotFoundException e) {e.printStackTrace();}
 		
 		duplicate = new Text("✚ ");
 		duplicate.setLayoutX(ABEDGUI.tileSize-35);
@@ -58,13 +47,28 @@ public class Piece extends Parent{
 		delete.setLayoutY(15);
 		this.getChildren().add(delete);
 		
-		text.setStyle("-fx-font-weight: bold;"
-				+ "-fx-fill: #7DF9FF;");
-		//Bounds b = text.getLayoutBounds();
-		text.setLayoutX(0);
-		text.setLayoutY(ABEDGUI.tileSize);
+        gateName.setText(g.getClass().getSimpleName().toUpperCase());
+        gateName.setFont(f);
+        gateName.setStrokeWidth(2);
+		gateName.setStyle("-fx-font-weight: bold;");
+		gateName.setLayoutX(0);
+		gateName.setLayoutY(ABEDGUI.tileSize);
+		
+		if(g instanceof Input){
+			((Input)gate).inputNum = ABEDGUI.getBoard().currentGame.inputNum();
+			gateNumber.setText(((Input)gate).inputNum+"");}
+		else if(g instanceof Output){
+			((Output)gate).outputNum = ABEDGUI.getBoard().currentGame.outputNum();
+			gateNumber.setText(((Output)gate).outputNum+"");}
+		else gateNumber.setText("");
+		gateNumber.setFont(f);
+        gateNumber.setStrokeWidth(2);
+		gateNumber.setStyle("-fx-font-weight: bold; -fx-font-size: 25;");
+		gateNumber.setLayoutX(5);
+		gateNumber.setLayoutY(20);
 	
-		this.getChildren().add(text);
+		this.getChildren().add(gateNumber);
+		this.getChildren().add(gateName);
 		getEvents();
     }
     
@@ -118,9 +122,8 @@ public class Piece extends Parent{
             mousey = event.getSceneY();
             Square newClosest = (Square)ABEDGUI.getBoard().getClosest(getLayoutX(), getLayoutY());
             if(closest != newClosest){
-                if(closest != null) closest.setFill(Square.defColor);
                 closest = newClosest;
-                if(newClosest != null) closest.setFill(Square.altColor);
+                if(closest != null) closest.flash();
             }
             event.consume();
         });
@@ -137,9 +140,9 @@ public class Piece extends Parent{
                     case "Input": ((Input)gate).isOn ^= true;
                 }
             }
-            if(closest != null) closest.setFill(Square.defColor);
             //if(i != null && j != null)
           	ABEDGUI.getBoard().currentGame.tick(gate);
+          	ABEDGUI.getBoard().currentGame.toString();
             event.consume();
         });
         
@@ -186,6 +189,12 @@ public class Piece extends Parent{
         setLayoutX(s.x);
         setLayoutY(s.y);
     }
+
+    @Override
+    public String toString(){
+    	return gate.name+","+gate.rot+",";
+    }
+    
     
     @Override
     public Piece clone(){
