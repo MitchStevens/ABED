@@ -1,6 +1,7 @@
 package abedgame;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -51,7 +52,7 @@ public class Gate {
     int[] outputDir;
     
     public Gate(String str){
-    	if(str.isEmpty()) return;
+    	if(str == null) return;
     	String[] data = str.split(";");
     	this.name = data[0];
     	this.logic = data[3];
@@ -83,13 +84,17 @@ public class Gate {
     	 } catch (IOException e) {
     		 System.err.println("reading file is fLIcked");
     	 }
-    	 allGates.put("Input", new Input(""));
+    	 allGates.put("Input", new Input(null));
     	 System.out.println("doing");
-    	 allGates.put("Output", new Output(""));
+    	 allGates.put("Output", new Output(null));
     }
     
     public static void readSprites(){
-    	
+    	File[] files = new File("src/images").listFiles();
+    	for(File f : files)
+    		if(f.isFile())
+    			System.out.println(f.getName().substring(0, f.getName().length() -4));
+    			
     }
     
     public Gate singleInputCheck(int dir){
@@ -200,6 +205,7 @@ class Input extends Gate{
     public Input(String s){
     	super(s);
         this.isOn = false;
+        this.name = "Input";
         this.rot = 0;
         this.inputs = new Gate[]{};
         this.outputs = new Gate[]{null};
@@ -231,7 +237,7 @@ class Input extends Gate{
     }
 
     public Object clone(){
-    	return new Input("");
+    	return new Input(null);
     }
 }
 
@@ -240,6 +246,8 @@ class Output extends Gate{
 	
     public Output(String s){
     	super(s);
+    	this.name = "Output";
+    	this.rot = 0;
         this.inputs = new Gate[]{null};
         this.outputs = new Gate[]{};
         this.inputDir = new int[]{2};
@@ -275,6 +283,6 @@ class Output extends Gate{
     }
 
     public Object clone(){
-    	return new Output("");
+    	return new Output(null);
     }
 }

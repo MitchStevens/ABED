@@ -198,10 +198,6 @@ public class Piece extends Parent{
     
     @Override
     public Piece clone(){
-    	if("Input".equals(gate.name))
-    		return new Piece(new Input(""));
-    	else if("Output".equals(gate.name))
-    		return new Piece(new Output(""));
-    	else return new Piece((Gate) Gate.allGates.get(gate.name).clone());
+    	return new Piece((Gate) Gate.allGates.get(gate.name).clone());
     }
 }

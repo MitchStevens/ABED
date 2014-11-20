@@ -69,6 +69,7 @@ public class ABEDGUI extends Application{
 	
 	private void initaliseBoard(){
 		Gate.readGates();
+		Gate.readSprites();
 		
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;

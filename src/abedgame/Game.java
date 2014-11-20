@@ -49,7 +49,9 @@ public class Game {
     		for(j = 0; j < n; j++)
     			if(placed[i][j] == null){
     				newPiece.i = i;
+    				newPiece.gate.i = i;
     				newPiece.j = j;
+    				newPiece.gate.j = j;
     				newPiece.setLayoutX(ABEDGUI.allSquares.get(i*n +j).getLayoutX());
     				newPiece.setLayoutY(ABEDGUI.allSquares.get(i*n +j).getLayoutY());
     				ABEDGUI.getBoard().root.getChildren().add(newPiece);

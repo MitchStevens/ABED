@@ -29,7 +29,7 @@ public class Logic {
 			return evalString(unbracket.get(0));
 		case 2:
 			if(unbracket.get(0).equals("~"))
-				return !evalString(unbracket.get(1));
+				return !(evalString(unbracket.get(1)));
 			else throw new Error("input string "+s+" not acceptable!");
 		case 3:
 			switch(unbracket.get(1)){
