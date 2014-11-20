@@ -24,6 +24,7 @@ public class Game {
     }
     
     public void tick(Gate gate){
+    	System.out.println("ticked");
     	if(gate.i == null) return;
     	
     	for(Gate g : gate.inputs)
@@ -40,7 +41,6 @@ public class Game {
     		if(g != null) g.inputCheck();
     	
     	updateGame();
-    	System.out.println(this.toString());
     }
     
     public void placePieceAtEmpty(Piece newPiece){

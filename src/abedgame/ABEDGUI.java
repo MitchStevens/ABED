@@ -47,7 +47,7 @@ public class ABEDGUI extends Application{
     public static double tileSize = 0;
     public static int numTiles = 8;
 	
-    public Game currentGame;
+    public Game currentGame = new Game(numTiles);
     public static List<Square> allSquares;
 	
     public static Accordion sideBar;
@@ -68,6 +68,8 @@ public class ABEDGUI extends Application{
 	}
 	
 	private void initaliseBoard(){
+		Gate.readGates();
+		
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 		mainPane = new BorderPane();
@@ -115,19 +117,12 @@ public class ABEDGUI extends Application{
             for(String s : Gate.gateTypes[i]){
                 Label temp = new Label(s);
                 temp.setOnMousePressed(event -> {
-                        Gate g = null;
-                        try {
-                            g = (Gate)Class.forName("abedgame."+s).newInstance();
-                        } catch (ClassNotFoundException ex) {
-                            System.err.println(s+" is not a class, fuckstick.");
-                        } catch (IllegalAccessException ex) {
-                            System.err.println("I...have no idea what's wrong.");
-                        } catch (InstantiationError ex) {
-                            System.err.println("Your class "+s+" doesn't instanciate with 0 parameters, does it? Go fix that.");
-                        } catch (InstantiationException ex) {
-                            System.err.println("Your class "+s+" doesn't instanciate with 0 parameters, does it? Go fix that.");}
-                        Piece p = new Piece(g);
-                        currentGame.placePieceAtEmpty(p);
+                        Gate g = (Gate) Gate.allGates.get(s).clone();
+                        if(g != null){
+                            Piece p = new Piece(g);
+                            currentGame.placePieceAtEmpty(p);
+                        } else System.err.println("gate "+s+" does not exist!");
+                        
                     });
                 
                 temp.setOnMouseEntered(EventHandler -> {

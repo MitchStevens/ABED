@@ -47,7 +47,7 @@ public class Piece extends Parent{
 		delete.setLayoutY(15);
 		this.getChildren().add(delete);
 		
-        gateName.setText(g.getClass().getSimpleName().toUpperCase());
+        gateName.setText(g.name);
         gateName.setFont(f);
         gateName.setStrokeWidth(2);
 		gateName.setStyle("-fx-font-weight: bold;");
@@ -198,12 +198,10 @@ public class Piece extends Parent{
     
     @Override
     public Piece clone(){
-    	Gate g = null;
-    	try {
-			g = this.gate.getClass().newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-    	return new Piece(g);
+    	if("Input".equals(gate.name))
+    		return new Piece(new Input(""));
+    	else if("Output".equals(gate.name))
+    		return new Piece(new Output(""));
+    	else return new Piece((Gate) Gate.allGates.get(gate.name).clone());
     }
 }

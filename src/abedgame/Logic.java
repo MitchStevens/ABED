@@ -9,7 +9,6 @@ import java.util.TreeSet;
 public class Logic {
 	String logic;
 	boolean[] inputs;
-	Set<Gate> allGates = new TreeSet<Gate>();
 	
 	public Logic(boolean[] inputs, String logic){
 		this.inputs = inputs;
@@ -39,20 +38,13 @@ public class Logic {
 			case "|":
 				return evalString(unbracket.get(0)) || evalString(unbracket.get(2));
 			default:
-				Gate g = gateExists(unbracket.get(1));
+//				Gate g = gateExists(unbracket.get(1));
 //				if(g != null)
 //					return g.eval(new boolean[] {eval(unbracket.get(0)), eval(unbracket.get(0))});
 				throw new Error("cant find operator "+unbracket.get(1));
 			}
 		default: throw new Error("something broke'd");
 		}
-	}
-	
-	public Gate gateExists(String gate){
-		for(Gate g : allGates)
-			if(g.name.equals(gate))
-				return g;
-		return null;
 	}
 	
 	public static List<String> bracketSplit(String s){
@@ -73,8 +65,8 @@ public class Logic {
 	}
 	
 	public static void main(String[] args) {
-		Logic l = new Logic(new boolean[]{true, false}, "T");
-		System.out.println(l.eval("0"));
+		Logic l = new Logic(new boolean[]{true, false}, "1");
+		System.out.println(l.eval());
 	}
 
 	
