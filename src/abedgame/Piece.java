@@ -54,10 +54,10 @@ public class Piece extends Parent{
 		gateName.setLayoutX(0);
 		gateName.setLayoutY(ABEDGUI.tileSize);
 		
-		if(g instanceof Input){
+		if("Input".equals(g.name)){
 			((Input)gate).inputNum = ABEDGUI.getBoard().currentGame.inputNum();
 			gateNumber.setText(((Input)gate).inputNum+"");}
-		else if(g instanceof Output){
+		else if("Output".equals(g.name)){
 			((Output)gate).outputNum = ABEDGUI.getBoard().currentGame.outputNum();
 			gateNumber.setText(((Output)gate).outputNum+"");}
 		else gateNumber.setText("");

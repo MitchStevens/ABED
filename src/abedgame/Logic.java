@@ -15,8 +15,11 @@ public class Logic {
 		this.logic = logic;
 	}
 	
-	public boolean eval(){
-		return evalString(logic);
+	public boolean[] eval(){
+		boolean[] tbr = new boolean[logic.split(",").length +1];
+		for(int i = 0; i < tbr.length; i++)
+			tbr[i] = evalString(logic.split(",")[i]);
+		return tbr;
 	}
 	
 	public boolean evalString(String s){

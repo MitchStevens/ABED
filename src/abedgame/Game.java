@@ -114,7 +114,7 @@ public class Game {
     	for(int i = 0 ; i < n; i++)
     		for(int j = 0; j < n; j++)
     			if(placed[i][j] != null)
-    				if(placed[i][j].gate instanceof Output)
+    				if("Output".equals(placed[i][j].gate.name))
     					tbr++;
     	return tbr;
     }
@@ -125,7 +125,7 @@ public class Game {
     	for(int i = 0 ; i < n; i++)
     		for(int j = 0; j < n; j++)
     			if(placed[i][j] != null)
-    				if(placed[i][j].gate instanceof Output)
+    				if("Output".equals(placed[i][j].gate.name))
     				tbr.add(placed[i][j].gate.toString());
     	return tbr.toString();
     }

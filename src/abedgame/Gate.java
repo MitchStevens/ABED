@@ -36,7 +36,7 @@ public class Gate {
 		new String[] {"Half Adder", "Adder"}};
 	
     public static String[] gateNames =
-        new String[] {"Basic Gates","Rookie Combinations","Wires","Adders"};
+        new String[] {"Basic Gates","Wires","Rookie Combinations","Adders"};
     
     public static Map<String, Gate> allGates = new HashMap<>();
     public static Map<String, Image> allSprites = new HashMap<>();
@@ -92,17 +92,16 @@ public class Gate {
     public static void readSprites(){
     	File[] files = new File("src/images").listFiles();
     	for(File f : files)
-    		if(f.isFile())
-    			System.out.println(f.getName().substring(0, f.getName().length() -4));
+    		if(f.isFile()){
+    			String name = f.getName().substring(0, f.getName().length() -4);
+    			System.out.println(f.getPath());
+    			allSprites.put(name, new Image(f.getPath().substring(3)));
+    			}
     			
     }
     
     public Gate singleInputCheck(int dir){
-    	Game g = ABEDGUI.getBoard().currentGame;
-    	Piece p = g.pieceAtDir(i, j, rot+dir);
-    	
-    	
-    	//
+    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
     	if(p == null) return null;
     	
     	for(int k : p.gate.outputDir){
@@ -141,20 +140,28 @@ public class Gate {
     }
     
     public Image getSprite(){
-    	String path = "/images/"+name;
+    	String path = name;
     	for(Gate g : inputs)
     		if(g != null)
-    			path += g.eval() ? "1" : "0";
+    			path += g.eval(inputs[i].indexOfGate(this)) ? "1" : "0";
     		else path += "0";
     	System.out.println(path);
-    	return new Image(path+".bmp");
+    	return allSprites.get(path);
+    }    
+    
+    protected Integer indexOfGate(Gate g){
+    	for(int i = 0; i < outputs.length; i++)
+    		if(outputs[i] == g) //We are only checking for the same reference.
+    			return i;
+    	return i;
     }
     
-    public boolean eval(){
+    public boolean eval(int output){
     	boolean[] bool = new boolean[inputs.length];
     	for(int i = 0; i < inputs.length; i++)
-    		bool[i] =  inputs[i] != null ? inputs[i].eval() : false;
-    	return new Logic(bool, logic).eval();
+    		if(inputs[i] != null)
+    			bool[i] = inputs[i].eval(inputs[i].indexOfGate(this));
+    	return new Logic(bool, logic).eval()[output];
     }
 	
     public void rotate(int r){
@@ -227,7 +234,7 @@ class Input extends Gate{
     }
 
     @Override
-    public boolean eval(){
+    public boolean eval(int i){
         return isOn;
     }
 
@@ -265,16 +272,16 @@ class Output extends Gate{
     @Override
     public Image getSprite(){
         int p = 0;
-        try{p = inputs[0].eval()? 1: 0;}
+        try{p = inputs[0].eval(inputs[0].indexOfGate(this)) ? 1: 0;}
         catch(NullPointerException np){}
         
         return new Image("/images/Output"+p+".bmp");
     }
 
-    public boolean eval(){
+    public boolean eval(int i){
         if(inputs[0] == null)
             return false;
-        else return inputs[0].eval();
+        else return inputs[0].eval(inputs[i].indexOfGate(this));
     }
 
     @Override
