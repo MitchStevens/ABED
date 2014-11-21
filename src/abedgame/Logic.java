@@ -16,7 +16,7 @@ public class Logic {
 	}
 	
 	public boolean[] eval(){
-		boolean[] tbr = new boolean[logic.split(",").length +1];
+		boolean[] tbr = new boolean[logic.split(",").length];
 		for(int i = 0; i < tbr.length; i++)
 			tbr[i] = evalString(logic.split(",")[i]);
 		return tbr;

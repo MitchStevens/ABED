@@ -71,7 +71,7 @@ public class Gate {
     
     public static void readGates(){
     	try {
-             FileReader input = new FileReader("src/data/basicGates.txt");
+             FileReader input = new FileReader("src/data/gateData.txt");
              BufferedReader bf = new BufferedReader(input);
              String line;
              
@@ -143,7 +143,7 @@ public class Gate {
     	String path = name;
     	for(Gate g : inputs)
     		if(g != null)
-    			path += g.eval(inputs[i].indexOfGate(this)) ? "1" : "0";
+    			path += g.eval(g.indexOfGate(this)) ? "1" : "0";
     		else path += "0";
     	System.out.println(path);
     	return allSprites.get(path);
@@ -153,7 +153,7 @@ public class Gate {
     	for(int i = 0; i < outputs.length; i++)
     		if(outputs[i] == g) //We are only checking for the same reference.
     			return i;
-    	return i;
+    	return null;
     }
     
     public boolean eval(int output){
