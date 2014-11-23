@@ -85,7 +85,6 @@ public class Gate {
     		 System.err.println("reading file is fLIcked");
     	 }
     	 allGates.put("Input", new Input(null));
-    	 System.out.println("doing");
     	 allGates.put("Output", new Output(null));
     }
     
@@ -94,7 +93,6 @@ public class Gate {
     	for(File f : files)
     		if(f.isFile()){
     			String name = f.getName().substring(0, f.getName().length() -4);
-    			System.out.println(f.getPath());
     			allSprites.put(name, new Image(f.getPath().substring(3)));
     			}
     			
@@ -145,7 +143,6 @@ public class Gate {
     		if(g != null)
     			path += g.eval(g.indexOfGate(this)) ? "1" : "0";
     		else path += "0";
-    	System.out.println(path);
     	return allSprites.get(path);
     }    
     
@@ -164,6 +161,15 @@ public class Gate {
     	return new Logic(bool, logic).eval()[output];
     }
 	
+    public boolean[] evalInputs(){
+    	boolean[] tbr = new boolean[inputs.length];
+    	for(int i = 0; i < inputs.length; i++)
+    		if(inputs[i] != null)
+    			tbr[i] = inputs[i].eval(inputs[i].indexOfGate(this));
+    		else tbr[i] = false;
+    	return tbr;		
+    }
+    
     public void rotate(int r){
         this.rot += (r % 4) + 4;
         this.rot %= 4;

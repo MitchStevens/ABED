@@ -19,6 +19,8 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -45,12 +47,12 @@ public class ABEDGUI extends Application{
     public static double boardWidth = 1024;
     public static double boardHeight = 768;
     public static double tileSize = 0;
-    public static int numTiles = 8;
+    public static int numTiles = 10;
 	
     public Game currentGame = new Game(numTiles);
     public static List<Square> allSquares;
 	
-    public static Accordion sideBar;
+    public static VBox sideBar;
     public static Pane abedPane;
     public static BorderPane mainPane;
     private static ABEDGUI board;
@@ -84,60 +86,49 @@ public class ABEDGUI extends Application{
 		mainPane.setMinWidth(boardWidth);
 		root.getChildren().add(mainPane);
 	}
-	
-//	public void displayGame(Game game){
-//		root.getChildren().clear();
-//		this.currentGame = game;
-//		this.currentPieces = new ArrayList<>();
-//		for(Gate g : game.allGates){
-//			Piece p = new Piece(g.getClass().getSimpleName());
-//			currentPieces.add(p);
-//			root.getChildren().add(p);
-//		}
-//	}
+
 	
     public void getSideBar(){
-        sideBar = new Accordion();
+    	sideBar = new VBox();
+    	TreeItem<Label> root = new TreeItem<>(new Label("Gates"));
         sideBar.setStyle(
             "-fx-background-color: GRAY;"
           + "-fx-min-width:		   "+(boardWidth-boardHeight)+";");
-        
-        Pane info = new Pane();
-        info.setMinWidth(boardWidth - boardHeight);
-        Text objective = new Text(""
-        		+ "Current objective:\n"
-        		+ "Try and fix the rotation while dragging bug.\n"
-        		+ "Slap on an intro screen for the begining of the game.\n"
-        		+ "Fix wire sprites (ugh).");
-        objective.setWrappingWidth(boardWidth - boardHeight);
-        info.getChildren().add(objective);
-        sideBar.getPanes().add(new TitledPane("Game Information", info));
-        
+                
         for(int i = 0; i < Gate.gateNames.length; i++){
-            VBox tempVBox = new VBox();
+            TreeItem<Label> tempTree = new TreeItem<>(new Label(Gate.gateNames[i]));
             for(String s : Gate.gateTypes[i]){
-                Label temp = new Label(s);
-                temp.setOnMousePressed(event -> {
-                        Gate g = (Gate) Gate.allGates.get(s).clone();
-                        if(g != null){
-                            Piece p = new Piece(g);
-                            currentGame.placePieceAtEmpty(p);
-                        } else System.err.println("gate "+s+" does not exist!");
-                        
-                    });
-                
-                temp.setOnMouseEntered(EventHandler -> {
-                    temp.setFont(new Font(temp.getFont().getSize() +2));
+            	Label l = new Label(s);
+            	Gate gate = (Gate) Gate.allGates.get(s);
+            	ImageView icon  = new ImageView(gate != null ? gate.getSprite() : Gate.allSprites.get("emptyGate"));
+            	
+            	l.setOnMouseClicked(event -> {
+                    Gate g = (Gate) Gate.allGates.get(s).clone();
+                    if(g != null){
+                        Piece p = new Piece(g);
+                        currentGame.placePieceAtEmpty(p);
+                    } else System.err.println("gate "+s+" does not exist!");
                 });
-                
-                temp.setOnMouseExited(event -> {
-                    temp.setFont(new Font(temp.getFont().getSize() -2));
-                });
-                
-                tempVBox.getChildren().add(temp);
+            
+            	l.setOnMouseEntered(EventHandler -> {
+            		l.setFont(new Font(l.getFont().getSize() +2));
+            	});
+            
+        		l.setOnMouseExited(event -> {
+        			l.setFont(new Font(l.getFont().getSize() -2));
+            	});
+            	
+            	TreeItem<Label> tempGate = new TreeItem<>(l);
+            	tempGate.setGraphic(icon);
+            	
+            	
+            	tempTree.getChildren().add(tempGate);
             }
-            sideBar.getPanes().add(new TitledPane(Gate.gateNames[i], tempVBox));
-        }	
+            root.getChildren().add(tempTree);
+        }
+        TreeView<Label> gateSelector = new TreeView<>(root);
+        gateSelector.setShowRoot(false);
+        sideBar.getChildren().add(gateSelector);
     }
 	
     public void getAbedPane(){
