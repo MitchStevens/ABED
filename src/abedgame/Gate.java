@@ -2,19 +2,10 @@ package abedgame;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javafx.scene.image.Image;
 
@@ -31,7 +22,7 @@ public class Gate {
     
     public static String[][] gateTypes = new String[][]{
     	new String[] {"Input","Output","Not","And","Or"},
-		new String[] {"Single"},
+		new String[] {"Single", "Double", "Split"},
 		new String[] {"Nand", "Nor", "XOR", "NXOR"},
 		new String[] {"Half Adder", "Adder"}};
 	
@@ -39,7 +30,6 @@ public class Gate {
         new String[] {"Basic Gates","Wires","Rookie Combinations","Adders"};
     
     public static Map<String, Gate> allGates = new HashMap<>();
-    public static Map<String, Image> allSprites = new HashMap<>();
             
     String name;
     String logic;
@@ -68,35 +58,17 @@ public class Gate {
 			for(int i = 0; i < outputs.length; i++)
 				outputDir[i] = Integer.parseInt(data[2].split(",")[i]);
     }
-    
-    public static void readGates(){
-    	try {
-             FileReader input = new FileReader("src/data/gateData.txt");
-             BufferedReader bf = new BufferedReader(input);
-             String line;
-             
-             while ((line = bf.readLine()) != null) {
-            	 if(line.charAt(0) == '/') continue;
-            	 Gate g = new Gate(line);
-            	 allGates.put(g.name, g);
-             }
-             bf.close();
-    	 } catch (IOException e) {
-    		 System.err.println("reading file is fLIcked");
-    	 }
-    	 allGates.put("Input", new Input(null));
-    	 allGates.put("Output", new Output(null));
-    }
-    
-    public static void readSprites(){
-    	File[] files = new File("src/images").listFiles();
-    	for(File f : files)
-    		if(f.isFile()){
-    			String name = f.getName().substring(0, f.getName().length() -4);
-    			allSprites.put(name, new Image(f.getPath().substring(3)));
-    			}
-    			
-    }
+
+//    public static void readSprites(){
+//    	File[] files = new File("src/images/").listFiles();
+//    	for(File f : files)
+//    		if(f.isFile()){
+//    			String name = f.getName().substring(0, f.getName().length() -4);
+//    			System.out.println(name);
+//    			allSprites.put(name, new Image(f.getPath().substring(3)));
+//    			}
+//    			
+//    }
     
     public Gate singleInputCheck(int dir){
     	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
@@ -116,6 +88,7 @@ public class Gate {
     public Gate singleOutputCheck(int dir){
     	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
     	if(p == null) return null;
+    	
     	for(int k : p.gate.inputDir){
     		try{
         		if((rot+dir+2)%4 == (p.gate.rot+k)%4)
@@ -138,12 +111,13 @@ public class Gate {
     }
     
     public Image getSprite(){
+    	//Create a map and put these images in it.
     	String path = name;
     	for(Gate g : inputs)
     		if(g != null)
     			path += g.eval(g.indexOfGate(this)) ? "1" : "0";
     		else path += "0";
-    	return allSprites.get(path);
+    	return new Image("/images/"+path+".bmp");
     }    
     
     protected Integer indexOfGate(Gate g){
@@ -159,15 +133,6 @@ public class Gate {
     		if(inputs[i] != null)
     			bool[i] = inputs[i].eval(inputs[i].indexOfGate(this));
     	return new Logic(bool, logic).eval()[output];
-    }
-	
-    public boolean[] evalInputs(){
-    	boolean[] tbr = new boolean[inputs.length];
-    	for(int i = 0; i < inputs.length; i++)
-    		if(inputs[i] != null)
-    			tbr[i] = inputs[i].eval(inputs[i].indexOfGate(this));
-    		else tbr[i] = false;
-    	return tbr;		
     }
     
     public void rotate(int r){

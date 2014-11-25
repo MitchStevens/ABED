@@ -1,41 +1,21 @@
 package abedgame;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javafx.animation.FillTransition;
 import javafx.application.Application;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.*;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 public class ABEDGUI extends Application{
     public Group root;
@@ -47,7 +27,7 @@ public class ABEDGUI extends Application{
     public static double boardWidth = 1024;
     public static double boardHeight = 768;
     public static double tileSize = 0;
-    public static int numTiles = 10;
+    public static int numTiles = 6;
 	
     public Game currentGame = new Game(numTiles);
     public static List<Square> allSquares;
@@ -70,9 +50,7 @@ public class ABEDGUI extends Application{
 	}
 	
 	private void initaliseBoard(){
-		Gate.readGates();
-		Gate.readSprites();
-		
+		new Reader().getGates();
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 		mainPane = new BorderPane();
@@ -100,7 +78,7 @@ public class ABEDGUI extends Application{
             for(String s : Gate.gateTypes[i]){
             	Label l = new Label(s);
             	Gate gate = (Gate) Gate.allGates.get(s);
-            	ImageView icon  = new ImageView(gate != null ? gate.getSprite() : Gate.allSprites.get("emptyGate"));
+            	ImageView icon  = new ImageView(gate != null ? gate.getSprite() : new Image("/images/emptyGate.bmp"));
             	
             	l.setOnMouseClicked(event -> {
                     Gate g = (Gate) Gate.allGates.get(s).clone();
@@ -129,6 +107,11 @@ public class ABEDGUI extends Application{
         TreeView<Label> gateSelector = new TreeView<>(root);
         gateSelector.setShowRoot(false);
         sideBar.getChildren().add(gateSelector);
+        
+        Button saveGate = new Button();
+        saveGate.setOnMouseClicked(e -> {
+        	
+        });
     }
 	
     public void getAbedPane(){
@@ -145,10 +128,8 @@ public class ABEDGUI extends Application{
               	GAME_MARGIN + i*(tileSize + GAP),
              	i,
               	j);
-       		if(i == 0 || i == numTiles-1)
-       			temp.setIsOnSide();
-       		if(j == 0 || j == numTiles-1)
-       			temp.setIsOnSide();
+       		if(i == 0 || i == numTiles-1) temp.setIsOnSide();
+       		if(j == 0 || j == numTiles-1) temp.setIsOnSide();
        		allSquares.add(temp);
     	}
 	

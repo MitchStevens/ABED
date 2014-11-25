@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import javafx.scene.*;
-import javafx.scene.control.Button;
 import javafx.scene.image.*;
-import javafx.scene.input.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
