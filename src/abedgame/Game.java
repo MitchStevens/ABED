@@ -23,24 +23,23 @@ public class Game {
     }
     
     public void tick(Gate gate){
-    	System.out.println("ticked");
     	if(gate.i == null) return;
-    	
+    		
     	for(Gate g : gate.inputs)
     		if(g != null) g.outputCheck();
     	for(Gate g : gate.outputs)
     		if(g != null) g.inputCheck();
     	
-    	gate.inputCheck();
-    	gate.outputCheck();
-    	
+    		gate.inputCheck();
+    		gate.outputCheck();
+    		
     	for(Gate g : gate.inputs)
     		if(g != null) g.outputCheck();
     	for(Gate g : gate.outputs)
     		if(g != null) g.inputCheck();
     	
     	updateGame();
-    }
+ 	}
     
     public void placePieceAtEmpty(Piece newPiece){
     	int i, j;
@@ -79,12 +78,14 @@ public class Game {
     }
     
     public Piece pieceAtDir(int i, int j, int dir){
+    	List<Square> s = ABEDGUI.allSquares;
+    	
         if(!posAtDir(i, j, dir)) return null;
             switch(dir%4){
-                case 0: return placed[i-1][j];
-                case 1: return placed[i][j+1];
-                case 2: return placed[i+1][j];
-                case 3: return placed[i][j-1];
+                case 0: s.get((i-1)*6 +j).flash();	return placed[i-1][j];
+                case 1: s.get(i*6 +j+1).flash();	return placed[i][j+1];
+                case 2: s.get((i+1)*6 +j).flash();	return placed[i+1][j];
+                case 3: s.get(i*6 +j-1).flash();	return placed[i][j-1];
                 default: throw new Error(dir+" is not a legit direction!");
             }
     } 

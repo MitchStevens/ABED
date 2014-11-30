@@ -5,42 +5,53 @@ import java.util.List;
 import java.util.ListIterator;
 
 public class Logic {
-	String logic;
-	boolean[] inputs;
 	
-	public Logic(boolean[] inputs, String logic){
-		this.inputs = inputs;
-		this.logic = logic;
-	}
-	
-	public boolean[] eval(){
-		boolean[] tbr = new boolean[logic.split(",").length];
-		for(int i = 0; i < tbr.length; i++)
-			tbr[i] = evalString(logic.split(",")[i]);
+	public static boolean[][] eval(Boolean[] inputs, Gate gate){
+		String[] str = gate.logic.split(",");
+		boolean[][] tbr = new boolean[4][];
+		
+		for(int i = 0; i < 4; i++){
+			tbr[i] = new boolean[gate.outputDir[i]];
+			String[] logic = str[i].split("#");
+			for(int j = 0; j < logic.length; j++){
+				if("_".equals(logic[j])) continue;
+				tbr[i][j] = evalString(inputs, logic[j]);
+			}
+		}
+		
 		return tbr;
 	}
 	
-	public boolean evalString(String s){
-		if(s.matches("\\d")) return inputs[Integer.parseInt(s)];
-		List<String> unbracket = bracketSplit(s);
+	public static boolean evalString(Boolean[] inputs, String logic){
+		if(logic.matches("^\\d+")) return inputs[Integer.parseInt(logic)];
+		List<String> unbracket = bracketSplit(logic);
 		
 		switch(unbracket.get(0)){
-		case "~": if(unbracket.size() == 2) return !evalString(unbracket.get(1));
-		case "|": if(unbracket.size() == 3) return evalString(unbracket.get(1)) || evalString(unbracket.get(2));
-		case "&": if(unbracket.size() == 3) return evalString(unbracket.get(1)) && evalString(unbracket.get(2));
+		case "~": if(unbracket.size() == 2) return !evalString(inputs, unbracket.get(1));
+		case "|": if(unbracket.size() == 3) return evalString(inputs, unbracket.get(1)) || evalString(inputs, unbracket.get(2));
+		case "&": if(unbracket.size() == 3) return evalString(inputs, unbracket.get(1)) && evalString(inputs, unbracket.get(2));
 		default:
 			Gate g = Gate.allGates.get(unbracket.get(0));
 			if((g = Gate.allGates.get(unbracket.get(0))) == null) return false;
-			if(g.inputs.length != unbracket.size() -1) return false;
+			if(g.inputs.size() != unbracket.size() -1) return false;
 			
 			boolean[] b = new boolean[inputs.length];
 			for(int i = 0; i < inputs.length; i++)
-				b[i] = evalString(unbracket.get(i+1));
+				b[i] = evalString(inputs, unbracket.get(i+1));
 				
-			return new Logic(b, "").evalString(g.logic);
+			return evalString(inputs, g.logic);
 		}
 	}
 	
+	public static void printArray(boolean[][] array){
+		for(int i = 0; i < 4; i++){
+			System.out.print("[");
+			for(boolean b : array[i])
+				System.out.print(b+",");
+			System.out.print("] ");
+		}
+			
+	}
 	
 	public static List<String> bracketSplit(String s){
 		//this is kind of shitty. You should fix it at some point.
@@ -78,10 +89,11 @@ public class Logic {
 		return tbr;
 	}
 	
-//	public static void main(String[] args) {
-//		Logic l = new Logic(new boolean[]{true, false}, "1");
-//		System.out.println(bracketSplit("543(0)"));
-//	}
+	public static void main(String[] args) {
+		//printArray(Logic.eval(new Boolean[]{true}, new Gate("Not;0,0,1,0;1,0,0,0;~(0),_,_,_")));
+		System.out.println("\n");
+		printArray(Logic.eval(new Boolean[]{true, true}, new Gate("And;0,0,1,1;1,0,0,0;&(0)(1),_,_,_")));
+	}
 
 	
 }

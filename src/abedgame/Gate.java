@@ -4,7 +4,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.scene.image.Image;
@@ -30,109 +33,118 @@ public class Gate {
         new String[] {"Basic Gates","Wires","Rookie Combinations","Adders"};
     
     public static Map<String, Gate> allGates = new HashMap<>();
-            
+    String data;        
     String name;
     String logic;
     Integer i;
     Integer j;
     int rot;
-    Gate[] inputs;
-    Gate[] outputs;
-    int[] inputDir;
-    int[] outputDir;
+    ArrayList<Gate> inputs = new ArrayList<Gate>();
+    int[] inputDir = new int[4];
+    ArrayList<Gate> outputs = new ArrayList<Gate>();
+    int[] outputDir = new int[4];
     
     public Gate(String str){
+    	//is there a better way of specifying size?
+    	while(inputs.size() < 4){
+    		inputs.add(null);
+    		outputs.add(null);
+    	}
     	if(str == null) return;
-    	String[] data = str.split(";");
-    	this.name = data[0];
-    	this.logic = data[3];
+    	String[] split = str.split(";");
+    	this.name = split[0];
+    	this.logic = split[3];
     	this.i = null;
     	this.j = null;
     	this.rot = 0;
-    	this.inputs = new Gate[data[1].split(",").length];
-    	this.outputs = new Gate[data[2].split(",").length];
-    	this.inputDir = new int[inputs.length];
-    		for(int i = 0; i < inputs.length; i++)
-    			inputDir[i] = Integer.parseInt(data[1].split(",")[i]);
-    	this.outputDir = new int[outputs.length];
-			for(int i = 0; i < outputs.length; i++)
-				outputDir[i] = Integer.parseInt(data[2].split(",")[i]);
+    	this.data = str;
+    	
+    	for(int i = 0; i < 4; i++)
+    		inputDir[i] = Integer.parseInt(split[1].split(",")[i]);
+       	for(int i = 0; i < 4; i++)
+    		outputDir[i] = Integer.parseInt(split[2].split(",")[i]);
+    		
+    	
     }
-
-//    public static void readSprites(){
-//    	File[] files = new File("src/images/").listFiles();
-//    	for(File f : files)
-//    		if(f.isFile()){
-//    			String name = f.getName().substring(0, f.getName().length() -4);
-//    			System.out.println(name);
-//    			allSprites.put(name, new Image(f.getPath().substring(3)));
-//    			}
-//    			
-//    }
     
     public Gate singleInputCheck(int dir){
     	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
     	if(p == null) return null;
     	
-    	for(int k : p.gate.outputDir){
-    		try{
-        		if((rot+dir+2)%4 == (p.gate.rot+k)%4)
-        			return p.gate;
-    		}catch(NullPointerException ex) {
-    			return null;
-        	}
-    	}
-		return null;
+    	for(int k = 0; k < 4; k++){
+    		if(p.gate.outputDir[k] == 0) continue;
+	    	try{
+	    		if((rot+dir+2)%4 != (p.gate.rot+k)%4) continue;
+	    		if(this.inputDir[dir] != p.gate.outputDir[k]) continue;
+	    		if(this.inputDir[dir] == 0) continue;
+	    		return p.gate;
+	    	}catch(NullPointerException ex) {
+	    		return null;
+	    	}
+	    }
+    	
+    	return null;
     }
     
     public Gate singleOutputCheck(int dir){
     	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
     	if(p == null) return null;
-    	
-    	for(int k : p.gate.inputDir){
-    		try{
-        		if((rot+dir+2)%4 == (p.gate.rot+k)%4)
-        			return ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir).gate;
-    		}catch(NullPointerException ex) {
-    			return null;
-        	}
-    	}
-		return null;
+    	for(int k = 0; k < 4; k++){
+    		if(p.gate.inputDir[k] == 0) continue;
+	    	try{
+	    		if((rot+dir+2)%4 != (p.gate.rot+k)%4) continue;
+	    		if(this.outputDir[dir] != p.gate.inputDir[k]) continue;
+	    		if(this.outputDir[dir] == 0) continue;
+	    		return p.gate;
+	    	}catch(NullPointerException ex) {
+	    		return null;
+	    	}
+	    }
+    	return null;
     }
     
     public void inputCheck(){
-    	for(int i = 0; i < inputs.length; i++)
-    		inputs[i] =  this.singleInputCheck(inputDir[i]);
+    	for(int i = 0; i < 4; i++)
+    		if(inputDir[i] > 0){
+    			inputs.set(i, this.singleInputCheck(i));}
     }
     
     public void outputCheck(){
-    	for(int i = 0; i < outputs.length; i++)
-    		outputs[i] =  this.singleOutputCheck(outputDir[i]);
+    	for(int i = 0; i < 4; i++)
+    		if(outputDir[i] > 0)
+    			outputs.set(i, this.singleOutputCheck(i));
     }
     
     public Image getSprite(){
     	//Create a map and put these images in it.
     	String path = name;
-    	for(Gate g : inputs)
-    		if(g != null)
-    			path += g.eval(g.indexOfGate(this)) ? "1" : "0";
-    		else path += "0";
+    	for(int i = 0; i < 4; i++){
+    		if(inputs.get(i) != null)
+    			for(boolean b : inputs.get(i).eval(this)){
+    				path += b ? "1" : "0";}
+    		else path += n0(inputDir[i]);
+    	}
     	return new Image("/images/"+path+".bmp");
-    }    
-    
-    protected Integer indexOfGate(Gate g){
-    	for(int i = 0; i < outputs.length; i++)
-    		if(outputs[i] == g) //We are only checking for the same reference.
-    			return i;
-    	return null;
     }
     
-    public boolean eval(int output){
-    	boolean[] bool = new boolean[inputs.length];
-    	for(int i = 0; i < inputs.length; i++)
-    		if(inputs[i] != null)
-    			bool[i] = inputs[i].eval(inputs[i].indexOfGate(this));
-    	return new Logic(bool, logic).eval()[output];
+    private String n0(int n){
+    	String tbr = "";
+    	while(n>0){tbr+="0";n--;}
+    	return tbr;
+    }
+    
+    public boolean[] eval(Gate g){
+    	List<Boolean> bList = new ArrayList<>();
+    	for(int i = 0; i < 4; i++){
+    		if(inputs.get(i) != null)
+    			for(boolean b : inputs.get(i).eval(this))
+    				bList.add(b);
+    		else
+    			for(int j = 0; j < this.inputDir[i]; j++)
+    				bList.add(false);
+    	}
+    	
+    	return Logic.eval(bList.toArray(new Boolean[0]), this)[0];
     }
     
     public void rotate(int r){
@@ -181,23 +193,17 @@ class Input extends Gate{
     boolean isOn;
     
     public Input(String s){
-    	super(s);
+    	super(null);
         this.isOn = false;
         this.name = "Input";
         this.rot = 0;
-        this.inputs = new Gate[]{};
-        this.outputs = new Gate[]{null};
-        this.inputDir = new int[]{};
-        this.outputDir = new int[]{0};
+        this.inputDir = new int[]{0, 0, 0, 0};
+        this.outputDir = new int[]{1, 0, 0, 0};
     }
         
     @Override
     public void inputCheck(){}
-    
-    @Override
-    public void outputCheck(){
-    	outputs[0] =  this.singleOutputCheck(0);
-    }
+
     
     @Override
     public Image getSprite(){
@@ -205,8 +211,8 @@ class Input extends Gate{
     }
 
     @Override
-    public boolean eval(int i){
-        return isOn;
+    public boolean[] eval(Gate g){
+        return new boolean[] {isOn};
     }
 
     @Override
@@ -223,44 +229,49 @@ class Output extends Gate{
 	int outputNum;
 	
     public Output(String s){
-    	super(s);
-    	this.name = "Output";
-    	this.rot = 0;
-        this.inputs = new Gate[]{null};
-        this.outputs = new Gate[]{};
-        this.inputDir = new int[]{2};
-        this.outputDir = new int[]{};
+    	super(null);
+        this.name = "Output";
+        this.rot = 0;
+        this.inputDir = new int[]{0, 0, 1, 0};
+        this.outputDir = new int[]{0, 0, 0, 0};
     }
     
     @Override
     public void inputCheck(){
-    	inputs[0] =  this.singleInputCheck(2);
+    	//change from default
+    	inputs.set(2, this.singleInputCheck(2));
     }
     
-    @Override
-    public void outputCheck(){}
     
     @Override
     public Image getSprite(){
         int p = 0;
-        try{p = inputs[0].eval(inputs[0].indexOfGate(this)) ? 1: 0;}
+        try{p = inputs.get(2).eval(this.inputs.get(2))[0] ? 1: 0;}
         catch(NullPointerException np){}
         
         return new Image("/images/Output"+p+".bmp");
     }
-
-    public boolean eval(int i){
-        if(inputs[0] == null)
-            return false;
-        else return inputs[0].eval(inputs[i].indexOfGate(this));
+    
+    @Override
+    public boolean[] eval(Gate g){
+    	//An output never actually needs to be evaluated.
+    	return null;
     }
 
     @Override
     public String toString(){
-    	return inputs[0] != null?inputs[0].toString():"(F)";
+    	return inputs.get(2) != null ? inputs.get(2).toString() : "(F)";
     }
 
     public Object clone(){
     	return new Output(null);
     }
 }
+
+
+
+
+
+
+
+

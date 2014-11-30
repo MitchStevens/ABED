@@ -51,6 +51,7 @@ public class ABEDGUI extends Application{
 	
 	private void initaliseBoard(){
 		new Reader().getGates();
+		
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 		mainPane = new BorderPane();
@@ -65,7 +66,6 @@ public class ABEDGUI extends Application{
 		root.getChildren().add(mainPane);
 	}
 
-	
     public void getSideBar(){
     	sideBar = new VBox();
     	TreeItem<Label> root = new TreeItem<>(new Label("Gates"));
