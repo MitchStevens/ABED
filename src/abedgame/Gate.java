@@ -67,40 +67,59 @@ public class Gate {
     	
     }
     
+    private static int mod4(int i){
+    	i %= 4; i += 4;
+    	return i %= 4;
+    }
+    
     public Gate singleInputCheck(int dir){
-    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
-    	if(p == null) return null;
-    	
-    	for(int k = 0; k < 4; k++){
-    		if(p.gate.outputDir[k] == 0) continue;
-	    	try{
-	    		if((rot+dir+2)%4 != (p.gate.rot+k)%4) continue;
-	    		if(this.inputDir[dir] != p.gate.outputDir[k]) continue;
-	    		if(this.inputDir[dir] == 0) continue;
-	    		return p.gate;
-	    	}catch(NullPointerException ex) {
-	    		return null;
-	    	}
-	    }
-    	
-    	return null;
+    	 Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+    	 if(p == null) return null;
+    	 int pDir = pDir(p);
+    	 
+    	 try{
+    		if(mod4(rot+dir+2) != mod4(p.gate.rot+pDir)) return null;
+    	 	if(this.inputDir[dir] != p.gate.outputDir[pDir]) return null;
+    	 	if(this.inputDir[dir] == 0) return null;
+    	 	return p.gate;
+    	 }catch(NullPointerException ex) {
+    		 return null;
+    	 }
     }
     
     public Gate singleOutputCheck(int dir){
-    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
-    	if(p == null) return null;
-    	for(int k = 0; k < 4; k++){
-    		if(p.gate.inputDir[k] == 0) continue;
-	    	try{
-	    		if((rot+dir+2)%4 != (p.gate.rot+k)%4) continue;
-	    		if(this.outputDir[dir] != p.gate.inputDir[k]) continue;
-	    		if(this.outputDir[dir] == 0) continue;
-	    		return p.gate;
-	    	}catch(NullPointerException ex) {
-	    		return null;
-	    	}
-	    }
-    	return null;
+   	 Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+   	 if(p == null) return null;
+   	 int pDir = pDir(p);
+   	 
+   	 try{
+   		if(mod4(rot+dir+2) != mod4(p.gate.rot+pDir)) return null;
+   	 	if(this.outputDir[dir] != p.gate.inputDir[pDir]) return null;
+   	 	if(this.outputDir[dir] == 0) return null;
+   	 	return p.gate;
+   	 }catch(NullPointerException ex) {
+   		 return null;
+   	 }
+    }
+    
+    private int pDir(Piece p){
+    	for(int i = 0; i < 4; i++){
+    		Piece temp = ABEDGUI.getBoard().currentGame.pieceAtDir(p.i, p.j, i);
+    		if(temp != null)
+    			if(temp.gate == this)
+    				return mod4(i-p.gate.rot);
+    	}
+    	return 0;
+    }
+    
+    private int gDir(Gate g){
+    	for(int i = 0; i < 4; i++){
+    		if(this.outputs.get(i) != null)
+    			if(this.outputs.get(i) == g)
+    				return i;
+    	}
+    	System.out.println("gDir not found");
+    	return 1;
     }
     
     public void inputCheck(){
@@ -144,13 +163,23 @@ public class Gate {
     				bList.add(false);
     	}
     	
-    	return Logic.eval(bList.toArray(new Boolean[0]), this)[0];
+    	return Logic.eval(bList.toArray(new Boolean[0]), this)[gDir(g)];
     }
     
     public void rotate(int r){
-        this.rot += (r % 4) + 4;
-        this.rot %= 4;
+    	this.rot = mod4(this.rot + r);
     }    
+    
+    public String gateInfo(){
+    	String tbr = this.name;
+    	tbr += "\n  Inputs";
+    	for(Gate g : inputs)
+    		tbr += (g != null ? "\n("+this.inputs.indexOf(g)+")    "+g.name : "");
+    	tbr += "\n  Outputs";
+    	for(Gate g : outputs)
+    		tbr += (g != null ? "\n("+this.outputs.indexOf(g)+")    "+g.name : "");
+    	return tbr;
+    }
     
     @Override
     public String toString(){
@@ -246,7 +275,7 @@ class Output extends Gate{
     @Override
     public Image getSprite(){
         int p = 0;
-        try{p = inputs.get(2).eval(this.inputs.get(2))[0] ? 1: 0;}
+        try{p = inputs.get(2).eval(this)[0] ? 1: 0;}
         catch(NullPointerException np){}
         
         return new Image("/images/Output"+p+".bmp");
@@ -262,7 +291,7 @@ class Output extends Gate{
     public String toString(){
     	return inputs.get(2) != null ? inputs.get(2).toString() : "(F)";
     }
-
+    
     public Object clone(){
     	return new Output(null);
     }

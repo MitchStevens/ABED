@@ -32,7 +32,7 @@ public class Logic {
 		case "&": if(unbracket.size() == 3) return evalString(inputs, unbracket.get(1)) && evalString(inputs, unbracket.get(2));
 		default:
 			Gate g = Gate.allGates.get(unbracket.get(0));
-			if((g = Gate.allGates.get(unbracket.get(0))) == null) return false;
+			if(g == null) { System.out.println("couldn't find "); return false;}
 			if(g.inputs.size() != unbracket.size() -1) return false;
 			
 			boolean[] b = new boolean[inputs.length];
@@ -91,8 +91,8 @@ public class Logic {
 	
 	public static void main(String[] args) {
 		//printArray(Logic.eval(new Boolean[]{true}, new Gate("Not;0,0,1,0;1,0,0,0;~(0),_,_,_")));
-		System.out.println("\n");
-		printArray(Logic.eval(new Boolean[]{true, true}, new Gate("And;0,0,1,1;1,0,0,0;&(0)(1),_,_,_")));
+		//System.out.println("\n");
+		//printArray(Logic.eval(new Boolean[]{true, true}, new Gate("And;0,0,1,1;1,0,0,0;&(0)(1),_,_,_")));
 	}
 
 	

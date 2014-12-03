@@ -39,6 +39,7 @@ public class Game {
     		if(g != null) g.inputCheck();
     	
     	updateGame();
+    	this.printGameInfo();
  	}
     
     public void placePieceAtEmpty(Piece newPiece){
@@ -88,7 +89,7 @@ public class Game {
                 case 3: s.get(i*6 +j-1).flash();	return placed[i][j-1];
                 default: throw new Error(dir+" is not a legit direction!");
             }
-    } 
+    }
     
     public List<Piece> nonNullPieces(){
     	List<Piece> tbr = new ArrayList<>();
@@ -117,6 +118,13 @@ public class Game {
     				if("Output".equals(placed[i][j].gate.name))
     					tbr++;
     	return tbr;
+    }
+    
+    public void printGameInfo(){
+//    	for(int i = 0 ; i < n; i++)
+//    		for(int j = 0; j < n; j++)
+//    			if(placed[i][j] != null)
+//    				System.out.println(placed[i][j].gate.gateInfo());
     }
     
     @Override
