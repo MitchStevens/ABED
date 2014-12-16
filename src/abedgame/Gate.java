@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +26,7 @@ public class Gate {
     
     public static String[][] gateTypes = new String[][]{
     	new String[] {"Input","Output","Not","And","Or"},
-		new String[] {"Single", "Double", "Split"},
+		new String[] {"Single", "Cross", "Double", "Split"},
 		new String[] {"Nand", "Nor", "XOR", "NXOR"},
 		new String[] {"Half Adder", "Adder"}};
 	
@@ -43,6 +44,7 @@ public class Gate {
     int[] inputDir = new int[4];
     ArrayList<Gate> outputs = new ArrayList<Gate>();
     int[] outputDir = new int[4];
+    boolean[][] states;
     
     public Gate(String str){
     	//is there a better way of specifying size?
@@ -63,43 +65,99 @@ public class Gate {
     		inputDir[i] = Integer.parseInt(split[1].split(",")[i]);
        	for(int i = 0; i < 4; i++)
     		outputDir[i] = Integer.parseInt(split[2].split(",")[i]);
-    		
     	
+    	states = Logic.eval(allBoolsFalse(), this);
+    }
+    
+    private Boolean[] allBoolsFalse(){
+    	int count  = 0;
+    	for(int i = 0; i < 4; i++)
+    		count += inputDir[i];
+    	
+    	Boolean[] tbr = new Boolean[count];
+    	for(int i = 0; i < count; i++)
+    		tbr[i] = false;
+    	return tbr;
+    }
+    
+    private static List<Boolean> nBoolsFalse(int n){
+    	List<Boolean> tbr = new ArrayList<Boolean>();
+    	for(int i = 0; i < n; i++)
+    		tbr.add(false);
+    	return tbr;
+    }
+    
+    public void statesCheck(){
+    	states = Logic.eval(getInputs(), this);
     }
     
     private static int mod4(int i){
+    	//returns the least positive i mod 4
     	i %= 4; i += 4;
     	return i %= 4;
     }
     
+    public void tick(){
+    	for(Gate g : inputs)
+    		if(g != null) g.outputCheck();
+    	for(Gate g : outputs)
+    		if(g != null){
+    			g.inputCheck();
+    			g.tick();
+    		}
+    	
+    	inputCheck();
+    	outputCheck();
+    	statesCheck();
+    	
+    	for(Gate g : inputs)
+    		if(g != null) g.outputCheck();
+    	for(Gate g : outputs)
+    		if(g != null){
+    			g.inputCheck();
+    			g.statesCheck();
+    		}
+    	}
+    
+    private Boolean[] getInputs(){
+    	List<Boolean> tbr = new ArrayList<Boolean>();
+    	for(int i = 0; i < 4; i++){
+    		Gate g = inputs.get(i);
+    		if(g != null){
+    			for(boolean b : g.states[g.gDir(this)])
+    				tbr.add(b);
+    		} else {
+    			if(inputDir[i] > 0)
+    				tbr.addAll(nBoolsFalse(inputDir[i]));
+    		}
+    	}
+    	return tbr.toArray(new Boolean[0]);
+    }
+    
     public Gate singleInputCheck(int dir){
-    	 Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
-    	 if(p == null) return null;
-    	 int pDir = pDir(p);
+    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+    	if(p == null) return null;
+    	int pDir = pDir(p);
     	 
-    	 try{
+    	try{
     		if(mod4(rot+dir+2) != mod4(p.gate.rot+pDir)) return null;
     	 	if(this.inputDir[dir] != p.gate.outputDir[pDir]) return null;
     	 	if(this.inputDir[dir] == 0) return null;
     	 	return p.gate;
-    	 }catch(NullPointerException ex) {
-    		 return null;
-    	 }
+    	 }catch(NullPointerException ex) { return null; }
     }
     
     public Gate singleOutputCheck(int dir){
-   	 Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
-   	 if(p == null) return null;
-   	 int pDir = pDir(p);
+    	Piece p = ABEDGUI.getBoard().currentGame.pieceAtDir(i, j, rot+dir);
+    	if(p == null) return null;
+    	int pDir = pDir(p);
    	 
-   	 try{
-   		if(mod4(rot+dir+2) != mod4(p.gate.rot+pDir)) return null;
-   	 	if(this.outputDir[dir] != p.gate.inputDir[pDir]) return null;
-   	 	if(this.outputDir[dir] == 0) return null;
-   	 	return p.gate;
-   	 }catch(NullPointerException ex) {
-   		 return null;
-   	 }
+    	try{
+    		if(mod4(rot+dir+2) != mod4(p.gate.rot+pDir)) return null;
+    		if(this.outputDir[dir] != p.gate.inputDir[pDir]) return null;
+    		if(this.outputDir[dir] == 0) return null;
+    		return p.gate;
+   	 	}catch(NullPointerException ex) { return null; }
     }
     
     private int pDir(Piece p){
@@ -112,14 +170,13 @@ public class Gate {
     	return 0;
     }
     
-    private int gDir(Gate g){
+    public int gDir(Gate g){
     	for(int i = 0; i < 4; i++){
     		if(this.outputs.get(i) != null)
     			if(this.outputs.get(i) == g)
     				return i;
     	}
-    	System.out.println("gDir not found");
-    	return 1;
+    	throw new Error(this.name);
     }
     
     public void inputCheck(){
@@ -153,17 +210,7 @@ public class Gate {
     }
     
     public boolean[] eval(Gate g){
-    	List<Boolean> bList = new ArrayList<>();
-    	for(int i = 0; i < 4; i++){
-    		if(inputs.get(i) != null)
-    			for(boolean b : inputs.get(i).eval(this))
-    				bList.add(b);
-    		else
-    			for(int j = 0; j < this.inputDir[i]; j++)
-    				bList.add(false);
-    	}
-    	
-    	return Logic.eval(bList.toArray(new Boolean[0]), this)[gDir(g)];
+    	return states[gDir(g)];
     }
     
     public void rotate(int r){
@@ -181,10 +228,12 @@ public class Gate {
     	return tbr;
     }
     
-    @Override
-    public String toString(){
-    	return logic;
-    }
+//    @Override
+//    public String toString(){
+//    	Iterator<String> iter = new Iterator(logic);
+//    	
+//    	
+//    }
 
     @Override
     public boolean equals(Object o){
@@ -228,20 +277,41 @@ class Input extends Gate{
         this.rot = 0;
         this.inputDir = new int[]{0, 0, 0, 0};
         this.outputDir = new int[]{1, 0, 0, 0};
+        statesCheck();
     }
         
     @Override
     public void inputCheck(){}
 
-    
     @Override
     public Image getSprite(){
         return new Image("/images/Input"+(isOn? "1": "0")+".bmp");
     }
 
     @Override
+    public void statesCheck(){
+    	states = new boolean[][]{new boolean[]{isOn}, new boolean[]{}, new boolean[]{}, new boolean[]{}};
+    }
+    
+    @Override
+    public void tick(){
+    	for(Gate g : outputs)
+    		if(g != null) g.inputCheck();
+    	
+    	inputCheck();
+    	outputCheck();
+    		
+    	for(Gate g : outputs)
+    		if(g != null) g.inputCheck();
+    	
+    	states[0][0] = isOn;
+    }
+    
+    @Override
     public boolean[] eval(Gate g){
-        return new boolean[] {isOn};
+        if(gDir(g) == 0)
+        	return new boolean[]{isOn};
+        else return new boolean[]{};
     }
 
     @Override
@@ -271,6 +341,21 @@ class Output extends Gate{
     	inputs.set(2, this.singleInputCheck(2));
     }
     
+    @Override
+    public void statesCheck(){};
+    
+    
+    @Override
+    public void tick(){
+    	for(Gate g : inputs)
+    		if(g != null) g.outputCheck();
+    	
+    	inputCheck();
+    	outputCheck();
+    		
+    	for(Gate g : inputs)
+    		if(g != null) g.outputCheck();
+    }
     
     @Override
     public Image getSprite(){
