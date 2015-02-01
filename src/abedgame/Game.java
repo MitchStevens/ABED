@@ -2,129 +2,76 @@ package abedgame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static abedgame.Functions.*;
 
 public class Game {
-    Piece[][] placed;
+    Gate[][] placed;
     int n;
         
     public Game(int n){
-        placed = new Piece[n][n];
+        placed = new Gate[n][n];
         this.n = n;
     }
-    
-//    public boolean[] eval(){
-//    	return true;
-//    }
         
-    public Game(List<Piece> pieces, int n){
-        placed = new Piece[n][n];
-        for(Piece p : pieces)
-            placed[p.i][p.j] = p;
+    public Game(List<Gate> gates, int n){
+        placed = new Gate[n][n];
+        for(Gate g : gates)
+            placed[g.i][g.j] = g;
     }
     
-    public void tick(Gate gate){
-    	if(gate.i == null) return;
-    		
-    	for(Gate g : gate.inputs)
-    		if(g != null) g.outputCheck();
-    	for(Gate g : gate.outputs)
-    		if(g != null) g.inputCheck();
-    	
-    		gate.inputCheck();
-    		gate.outputCheck();
-    		
-    	for(Gate g : gate.inputs)
-    		if(g != null) g.outputCheck();
-    	for(Gate g : gate.outputs)
-    		if(g != null) g.inputCheck();
-    	
-    	updateGame();
-    	this.printGameInfo();
- 	}
-    
-    public void placePieceAtEmpty(Piece newPiece){
+    public void createGateAtEmpty(Gate newGate){
     	int i, j;
     	for(i = 0; i < n; i++)
     		for(j = 0; j < n; j++)
     			if(placed[i][j] == null){
-    				newPiece.i = i;
-    				newPiece.gate.i = i;
-    				newPiece.j = j;
-    				newPiece.gate.j = j;
-    				newPiece.setLayoutX(ABEDGUI.allSquares.get(i*n +j).getLayoutX());
-    				newPiece.setLayoutY(ABEDGUI.allSquares.get(i*n +j).getLayoutY());
-    				ABEDGUI.getBoard().root.getChildren().add(newPiece);
-    				placed[i][j] = newPiece;
+    				newGate.i = i;
+    				newGate.j = j;
+    				placed[i][j] = newGate;
     				return;
     			}
     }
     
-    public void updateGame(){
-    	//only updates graphical components
-    	for(Piece[] pArray : placed)
-    		for(Piece p : pArray){
-    			if(p == null) continue;
-    			else p.updateImage();
-    		}	
-    }
+    //SELECT Gate FROM placed WHERE Gate == <type>
+    Function<String, Integer> countGateType = type -> filter(g -> type.equals(g.name), flatten(placed)).size();
+  
+
+//	public String convertToGate(){
+//    	String tbr = "NAME_OF_GATE;";
+//    	Integer[] inputDir = new Integer[4];
+//    	Integer[] outputDir = new Integer[4];
+//    	String[] logic = new String[4];
+//    	
+//    	//ArrayList<ArrayList<Gate>> allInputs = getSideType("Input");
+//    	//ArrayList<ArrayList<Gate>> allOutputs = getSideType("Output");
+//    	
+//    	for(int i = 0; i < 4; i++)
+//    		for(Gate g : allInputs.get(i))
+//    			inputDir[i]++;
+//    	
+//    	for(int i = 0; i < 4; i++)
+//    		for(Gate g : allOutputs.get(i)){
+//    			outputDir[i]++;
+//    			logic[i] = g.toString();
+//    		}
+//
+//    	for(int i : inputDir) tbr += i+",";
+//    	tbr += ";";
+//    	
+//    	for(int i : outputDir) tbr += i+",";
+//    	tbr += ";";
+//    			
+//    	for(String s : logic) tbr += s+",";
+//    	return tbr;
+//    }
     
-    private boolean posAtDir(int i, int j, int dir){
-        switch(dir%4){
-            case 0: return i > 0;
-            case 1: return j < n-1;
-            case 2: return i < n-1;
-            case 3: return j > 0;
-            default: throw new Error(dir+" is not a legit direction!");
-        }
-    }
-    
-    public Piece pieceAtDir(int i, int j, int dir){
-    	List<Square> s = ABEDGUI.allSquares;
-    	
-        if(!posAtDir(i, j, dir)) return null;
-            switch(dir%4){
-                case 0: s.get((i-1)*6 +j).flash();	return placed[i-1][j];
-                case 1: s.get(i*6 +j+1).flash();	return placed[i][j+1];
-                case 2: s.get((i+1)*6 +j).flash();	return placed[i+1][j];
-                case 3: s.get(i*6 +j-1).flash();	return placed[i][j-1];
-                default: throw new Error(dir+" is not a legit direction!");
-            }
-    }
-    
-    public List<Piece> nonNullPieces(){
-    	List<Piece> tbr = new ArrayList<>();
+    public void printGame(){
     	for(int i = 0 ; i < n; i++)
     		for(int j = 0; j < n; j++)
     			if(placed[i][j] != null)
-    				tbr.add(placed[i][j]);
-    	return tbr;
-    }
-    
-    public int inputNum(){
-    	int tbr = 0;
-    	for(int i = 0 ; i < n; i++)
-    		for(int j = 0; j < n; j++)
-    			if(placed[i][j] != null)
-    				if(placed[i][j].gate instanceof Input)
-    					tbr++;
-    	return tbr;
-    }
-    
-    public int outputNum(){
-    	int tbr = 0;
-    	for(int i = 0 ; i < n; i++)
-    		for(int j = 0; j < n; j++)
-    			if(placed[i][j] != null)
-    				if("Output".equals(placed[i][j].gate.name))
-    					tbr++;
-    	return tbr;
-    }
-    
-    public void printGameInfo(){
-//    	for(int i = 0 ; i < n; i++)
-//    		for(int j = 0; j < n; j++)
-//    			if(placed[i][j] != null)
-//    				System.out.println(placed[i][j].gate.gateInfo());
+    				System.out.println(placed[i][j].name.charAt(0));
     }
     
     @Override
@@ -133,8 +80,8 @@ public class Game {
     	for(int i = 0 ; i < n; i++)
     		for(int j = 0; j < n; j++)
     			if(placed[i][j] != null)
-    				if("Output".equals(placed[i][j].gate.name))
-    				tbr.add(placed[i][j].gate.toString());
+    				if("Output".equals(placed[i][j].name))
+    				tbr.add(placed[i][j].toString());
     	return tbr.toString();
     }
 	

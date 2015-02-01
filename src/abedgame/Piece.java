@@ -53,10 +53,8 @@ public class Piece extends Parent{
 		gateName.setLayoutY(ABEDGUI.tileSize);
 		
 		if("Input".equals(g.name)){
-			((Input)gate).inputNum = ABEDGUI.getBoard().currentGame.inputNum();
 			gateNumber.setText(((Input)gate).inputNum+"");}
 		else if("Output".equals(g.name)){
-			((Output)gate).outputNum = ABEDGUI.getBoard().currentGame.outputNum();
 			gateNumber.setText(((Output)gate).outputNum+"");}
 		else gateNumber.setText("");
 		gateNumber.setFont(f);
@@ -75,6 +73,8 @@ public class Piece extends Parent{
         image.setRotate(gate.rot*90);
         image.setFitHeight(ABEDGUI.tileSize);
         image.setFitWidth(ABEDGUI.tileSize);
+        
+        //ABEDGUI.getBoard().currentGame.printGameInfo();
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
@@ -139,8 +139,8 @@ public class Piece extends Parent{
                 }
             }
             //if(i != null && j != null)
-          	ABEDGUI.getBoard().currentGame.tick(gate);
-          	ABEDGUI.getBoard().currentGame.toString();
+            gate.tick();
+            ABEDGUI.getBoard().updateGraphics();
             event.consume();
         });
         
@@ -152,15 +152,16 @@ public class Piece extends Parent{
 //        });
         
         this.setOnScroll(event -> {
-        	gate.rotate(event.getDeltaY() > 0? -1: 1);
+        	gate.rotate.accept(event.getDeltaY() > 0? -1: 1);
             //if(i != null && j != null)
-            	ABEDGUI.getBoard().currentGame.tick(gate);
+            gate.tick();
+            ABEDGUI.getBoard().updateGraphics();
             event.consume();
         });
         
         duplicate.setOnMouseClicked(event -> {
         	Piece p = this.clone();
-        	ABEDGUI.getBoard().currentGame.placePieceAtEmpty(p);
+        	ABEDGUI.getBoard().currentGame.createGateAtEmpty(p.gate);
         });
         
         delete.setOnMouseClicked(event -> {
@@ -177,13 +178,13 @@ public class Piece extends Parent{
             return;
         }
         
-        if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != this)
+        if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != gate)
             return;
         if(i != null && j != null)
             ABEDGUI.getBoard().currentGame.placed[i][j] = null;
         i = s.i; j = s.j;
         gate.i = s.i; gate.j = s.j;
-        ABEDGUI.getBoard().currentGame.placed[s.i][s.j] = this;
+        ABEDGUI.getBoard().currentGame.placed[s.i][s.j] = this.gate;
         setLayoutX(s.x);
         setLayoutY(s.y);
     }

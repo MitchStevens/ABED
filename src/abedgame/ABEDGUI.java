@@ -16,6 +16,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import static abedgame.Functions.*;
 
 public class ABEDGUI extends Application{
     public Group root;
@@ -27,14 +28,16 @@ public class ABEDGUI extends Application{
     public static double boardWidth = 1024;
     public static double boardHeight = 768;
     public static double tileSize = 0;
-    public static int numTiles = 6;
+    public static int numTiles = 3;
 	
     public Game currentGame = new Game(numTiles);
     public static List<Square> allSquares;
 	
     public static VBox sideBar;
     public static Pane abedPane;
-    public static BorderPane mainPane;
+    public static BorderPane gamePane;
+    public static Pane levelSelectPane;
+    public static Pane mainPane;
     private static ABEDGUI board;
 
     @Override
@@ -50,22 +53,35 @@ public class ABEDGUI extends Application{
 	}
 	
 	private void initaliseBoard(){
+		new Reader().getImages();
 		new Reader().getGates();
 		
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
-		mainPane = new BorderPane();
+		mainPane = new Pane();
+		
 		getSideBar();
 		getAbedPane();
 		
-		mainPane.setRight(sideBar);
-		mainPane.setCenter(abedPane);
+		gamePane = new BorderPane();
+		gamePane.setRight(sideBar);
+		gamePane.setCenter(abedPane);
 		
+		mainPane.getChildren().add(gamePane);
 		mainPane.setMinHeight(boardHeight);
 		mainPane.setMinWidth(boardWidth);
 		root.getChildren().add(mainPane);
 	}
 
+	public void getLevelSelectPane(){
+		levelSelectPane = new VBox();
+	}
+	
+	public void updateGraphics(){
+		List<Node> pieces = filter(n -> n instanceof Piece, abedPane.getChildren());
+		pieces.forEach(p -> ((Piece)p).updateImage());
+	}
+	
     public void getSideBar(){
     	sideBar = new VBox();
     	TreeItem<Label> root = new TreeItem<>(new Label("Gates"));
@@ -78,13 +94,15 @@ public class ABEDGUI extends Application{
             for(String s : Gate.gateTypes[i]){
             	Label l = new Label(s);
             	Gate gate = (Gate) Gate.allGates.get(s);
-            	ImageView icon  = new ImageView(gate != null ? gate.getSprite() : new Image("/images/emptyGate.bmp"));
+            	ImageView icon  = new ImageView(gate != null ? gate.defSprite.get() : new Image("/images/emptyGate.bmp"));
             	
             	l.setOnMouseClicked(event -> {
                     Gate g = (Gate) Gate.allGates.get(s).clone();
                     if(g != null){
+                        currentGame.createGateAtEmpty(g);
                         Piece p = new Piece(g);
-                        currentGame.placePieceAtEmpty(p);
+                        p.setVisible(true);
+                        abedPane.getChildren().add(p);
                     } else System.err.println("gate "+s+" does not exist!");
                 });
             
@@ -115,15 +133,15 @@ public class ABEDGUI extends Application{
     }
 	
     public void getAbedPane(){
-	abedPane = new Pane();
-	abedPane.setStyle(
-     	"-fx-background-color: BLUE;"
-      	+ "-fx-padding: "+20+";");
+    	abedPane = new Pane();
+    	abedPane.setStyle(
+    		"-fx-background-color: BLUE;"
+    		+ "-fx-padding: "+20+";");
 		
-	allSquares = new ArrayList<Square>();
-	for(int i = 0; i < numTiles; i++)
-       	for(int j = 0; j < numTiles; j++){
-       		Square temp = new Square(
+    	allSquares = new ArrayList<Square>();
+    	for(int i = 0; i < numTiles; i++)
+    		for(int j = 0; j < numTiles; j++){
+    			Square temp = new Square(
             	GAME_MARGIN + j*(tileSize + GAP),
               	GAME_MARGIN + i*(tileSize + GAP),
              	i,
@@ -133,7 +151,7 @@ public class ABEDGUI extends Application{
        		allSquares.add(temp);
     	}
 	
-	abedPane.getChildren().addAll(allSquares);
+    	abedPane.getChildren().addAll(allSquares);
     }
     
     public static ABEDGUI getBoard(){
