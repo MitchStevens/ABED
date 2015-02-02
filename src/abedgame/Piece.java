@@ -27,6 +27,7 @@ public class Piece extends Parent{
 	
     public Piece(Gate g){
     	this.gate = g;
+    	this.i = g.i; this.j = g.j;
         try{ updateImage(); }
         catch (IllegalArgumentException ex) {}
         this.getChildren().add(image);
@@ -65,7 +66,7 @@ public class Piece extends Parent{
 	
 		this.getChildren().add(gateNumber);
 		this.getChildren().add(gateName);
-		getEvents();
+		setEvents();
     }
     
     public void updateImage(){
@@ -73,8 +74,7 @@ public class Piece extends Parent{
         image.setRotate(gate.rot*90);
         image.setFitHeight(ABEDGUI.tileSize);
         image.setFitWidth(ABEDGUI.tileSize);
-        
-        //ABEDGUI.getBoard().currentGame.printGameInfo();
+        ABEDGUI.getBoard().currentGame.printGame();
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
@@ -101,7 +101,7 @@ public class Piece extends Parent{
         return output;
     }
 
-    private void getEvents(){
+    private void setEvents(){
         this.setOnMousePressed(event -> {
             mousex = event.getSceneX();
             mousey = event.getSceneY();
@@ -129,10 +129,11 @@ public class Piece extends Parent{
         this.setOnMouseReleased(event -> {
             if(!isDraggable) return;
             if(dragging) {
+            	ABEDGUI.getBoard().currentGame.placed[i][j] = null;
                 dragging = false;
                 changePos(closest);
             } else {
-                switch(gate.getClass().getSimpleName()){
+                switch(gate.name){
                 //Q: Is this the best way to toggle a boolean?
                 //A: HELL YEAH.
                     case "Input": ((Input)gate).isOn ^= true;
@@ -160,8 +161,7 @@ public class Piece extends Parent{
         });
         
         duplicate.setOnMouseClicked(event -> {
-        	Piece p = this.clone();
-        	ABEDGUI.getBoard().currentGame.createGateAtEmpty(p.gate);
+        	ABEDGUI.getBoard().addPiece((Gate)gate.clone());
         });
         
         delete.setOnMouseClicked(event -> {
@@ -171,19 +171,14 @@ public class Piece extends Parent{
     }
     
     public void changePos(Square s){        
-        Game temp = ABEDGUI.getBoard().currentGame;
         if(s == null){
-        	temp.placed[i][j] = null;
         	ABEDGUI.getBoard().root.getChildren().remove(this);
             return;
         }
         
-        if(temp.placed[s.i][s.j] != null && temp.placed[s.i][s.j] != gate)
-            return;
-        if(i != null && j != null)
-            ABEDGUI.getBoard().currentGame.placed[i][j] = null;
         i = s.i; j = s.j;
         gate.i = s.i; gate.j = s.j;
+        
         ABEDGUI.getBoard().currentGame.placed[s.i][s.j] = this.gate;
         setLayoutX(s.x);
         setLayoutY(s.y);

@@ -68,10 +68,17 @@ public class Game {
 //    }
     
     public void printGame(){
-    	for(int i = 0 ; i < n; i++)
-    		for(int j = 0; j < n; j++)
+    	System.out.println(dup("__", n)+"_");
+    	for(int i = 0 ; i < n; i++){
+			System.out.print("|");
+    		for(int j = 0; j < n; j++){
     			if(placed[i][j] != null)
-    				System.out.println(placed[i][j].name.charAt(0));
+    				System.out.print(placed[i][j].name.charAt(0)+"|");
+    			else System.out.print(" |");
+    		}
+    		System.out.println();
+    	}
+    	System.out.println(dup("¯¯", n)+"¯");
     }
     
     @Override

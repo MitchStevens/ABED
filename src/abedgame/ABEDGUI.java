@@ -52,14 +52,13 @@ public class ABEDGUI extends Application{
 		board = this;
 	}
 	
-	private void initaliseBoard(){
-		new Reader().getImages();
-		new Reader().getGates();
-		
+	private void initaliseBoard(){		
 		currentGame = new Game(numTiles);
 		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 		mainPane = new Pane();
 		
+		new Reader().getImages();
+		new Reader().getGates();
 		getSideBar();
 		getAbedPane();
 		
@@ -98,12 +97,7 @@ public class ABEDGUI extends Application{
             	
             	l.setOnMouseClicked(event -> {
                     Gate g = (Gate) Gate.allGates.get(s).clone();
-                    if(g != null){
-                        currentGame.createGateAtEmpty(g);
-                        Piece p = new Piece(g);
-                        p.setVisible(true);
-                        abedPane.getChildren().add(p);
-                    } else System.err.println("gate "+s+" does not exist!");
+                    addPiece(g);
                 });
             
             	l.setOnMouseEntered(EventHandler -> {
@@ -132,6 +126,18 @@ public class ABEDGUI extends Application{
         });
     }
 	
+    public void addPiece(Gate g){
+        if(g != null){
+            currentGame.createGateAtEmpty(g);
+            Piece p = new Piece(g);
+            p.setVisible(true);
+            Square pos = allSquares.get(currentGame.n*g.i + g.j);
+            p.setLayoutX(pos.x);
+            p.setLayoutY(pos.y);
+            abedPane.getChildren().add(p);
+        } else System.err.println("gate "+g.name+" does not exist!");
+    }
+    
     public void getAbedPane(){
     	abedPane = new Pane();
     	abedPane.setStyle(

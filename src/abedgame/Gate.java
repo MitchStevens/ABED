@@ -48,7 +48,6 @@ public class Gate {
     int rot;
     List<Bus> inputBus;
     List<Bus> outputBus;
-    Game game;
     
     public Gate(String str){
     	if(str == null) return;
@@ -65,8 +64,6 @@ public class Gate {
     }
 
     Supplier<Integer> numInputs = () -> fold((a,b) -> a+b, map(b -> b.numWires(), inputBus)); 
-    
-    public void setGame(Game g){ this.game = g; }
     
     //gets least positive modulus
     Function<Integer, Integer> mod4 = i -> (i>0?i:-i+2)%4;
@@ -96,6 +93,7 @@ public class Gate {
 
     public Gate gateAtDir(int dir){
     	//returns gate in a given direction
+    	Game game = ABEDGUI.getBoard().currentGame;
     	try{
 	        switch(mod4.apply(dir)){
 	        case 0: return game.placed[i-1][j];
@@ -104,8 +102,11 @@ public class Gate {
 	        case 3: return game.placed[i][j-1];
 	        default: throw new Error(dir+" is not a legit direction!");
 	        }
-    	}catch(NullPointerException np){
+    	}catch(NullPointerException e){
     		return null;}
+    	catch(ArrayIndexOutOfBoundsException e){
+    		return null;
+    	}
     }
     
     Function<Integer, Bus> outputtingAtDir = dir -> outputBus.get(mod4.apply(dir-rot));
@@ -170,12 +171,9 @@ class Input extends Gate{
     	
     	inputBus = map(s -> new Bus(Integer.parseInt(s)), split[1].split(","));
     	outputBus = map(s -> new Bus(Integer.parseInt(s)), split[2].split(","));
-	}
-	
-	@Override
-	public void setGame(Game g){
-		this.game = g;
-		this.inputNum = game.countGateType.apply("Input");
+    	
+    	//Game game = ABEDGUI.getBoard().currentGame;
+    	//this.inputNum = game.countGateType.apply("Input");
 	}
 	
 	@Override
@@ -202,12 +200,9 @@ class Output extends Gate{
     	
     	inputBus = map(s -> new Bus(Integer.parseInt(s)), split[1].split(","));
     	outputBus = map(s -> new Bus(Integer.parseInt(s)), split[2].split(","));
-	}
-	
-	@Override
-	public void setGame(Game g){
-		this.game = g;
-		this.outputNum = game.countGateType.apply("Output");
+    	
+    	//Game game = ABEDGUI.getBoard().currentGame;
+    	//this.outputNum = game.countGateType.apply("Output");
 	}
 	
 	@Override
