@@ -70,11 +70,11 @@ public class Piece extends Parent{
     }
     
     public void updateImage(){
-    	image.setImage(resample(this.gate.getSprite()));
+    	//image.setImage(resample(this.gate.getSprite()));
         image.setRotate(gate.rot*90);
         image.setFitHeight(ABEDGUI.tileSize);
         image.setFitWidth(ABEDGUI.tileSize);
-        ABEDGUI.getBoard().currentGame.printGame();
+        ABEDGUI.getBoard().currentGame.printGameInfo();
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
@@ -123,6 +123,7 @@ public class Piece extends Parent{
                 closest = newClosest;
                 if(closest != null) closest.flash();
             }
+            ABEDGUI.getBoard().updateGraphics();
             event.consume();
         });
 		
@@ -140,7 +141,8 @@ public class Piece extends Parent{
                 }
             }
             //if(i != null && j != null)
-            gate.tick();
+            ABEDGUI.getBoard().currentGame.placed[i][j].tick();
+            ABEDGUI.getBoard().currentGame.printGameInfo();
             ABEDGUI.getBoard().updateGraphics();
             event.consume();
         });

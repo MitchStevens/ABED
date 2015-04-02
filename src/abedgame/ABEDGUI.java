@@ -1,5 +1,9 @@
 package abedgame;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,7 +62,7 @@ public class ABEDGUI extends Application{
 		mainPane = new Pane();
 		
 		new Reader().getImages();
-		new Reader().getGates();
+		//new Reader().getGates();
 		getSideBar();
 		getAbedPane();
 		
@@ -87,13 +91,35 @@ public class ABEDGUI extends Application{
         sideBar.setStyle(
             "-fx-background-color: GRAY;"
           + "-fx-min-width:		   "+(boardWidth-boardHeight)+";");
+        
+        //get all the gates.
+        try {
+			InputStream is = this.getClass().getResourceAsStream("/data/gateData.txt");
+			InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader bf = new BufferedReader(isr);
+            String line;
+            
+            while ((line = bf.readLine()) != null) {
+            	if(line.charAt(0) == '/') continue;
+            	if(line.charAt(0) == '#'){
+            		
+            	}
+           		Gate g = new Gate(line);
+           		Gate.allGates.put(g.name, g);
+            }
+            bf.close();
+   	 	} catch (IOException e) {
+   		 System.err.println("reading file is fLIcked");
+   	 	}
+		Gate.allGates.put("Input", new Input());
+		Gate.allGates.put("Output", new Output());
+        
                 
         for(int i = 0; i < Gate.gateNames.length; i++){
             TreeItem<Label> tempTree = new TreeItem<>(new Label(Gate.gateNames[i]));
             for(String s : Gate.gateTypes[i]){
             	Label l = new Label(s);
-            	Gate gate = (Gate) Gate.allGates.get(s);
-            	ImageView icon  = new ImageView(gate != null ? gate.defSprite.get() : new Image("/images/emptyGate.bmp"));
+            	//Gate gate = (Gate) Gate.allGates.get(s);
             	
             	l.setOnMouseClicked(event -> {
                     Gate g = (Gate) Gate.allGates.get(s).clone();
@@ -107,10 +133,14 @@ public class ABEDGUI extends Application{
         		l.setOnMouseExited(event -> {
         			l.setFont(new Font(l.getFont().getSize() -2));
             	});
-            	
+        		
             	TreeItem<Label> tempGate = new TreeItem<>(l);
-            	tempGate.setGraphic(icon);
+            	Gate g = Gate.allGates.get(s);
+            	System.out.println(Gate.allGates.keySet());
             	
+            	if(Gate.allSprites.get(s) != null)
+            		 tempGate.setGraphic(new ImageView(Gate.allSprites.get(g.defSprite)));
+            	else tempGate.setGraphic(new ImageView(Gate.allSprites.get("emptyGate.bmp")));
             	
             	tempTree.getChildren().add(tempGate);
             }
@@ -128,7 +158,7 @@ public class ABEDGUI extends Application{
 	
     public void addPiece(Gate g){
         if(g != null){
-            currentGame.createGateAtEmpty(g);
+            //currentGame.createGateAtEmpty(g);
             Piece p = new Piece(g);
             p.setVisible(true);
             Square pos = allSquares.get(currentGame.n*g.i + g.j);

@@ -22,64 +22,60 @@ public class Game {
             placed[g.i][g.j] = g;
     }
     
-    public void createGateAtEmpty(Gate newGate){
-    	int i, j;
-    	for(i = 0; i < n; i++)
-    		for(j = 0; j < n; j++)
-    			if(placed[i][j] == null){
-    				newGate.i = i;
-    				newGate.j = j;
-    				placed[i][j] = newGate;
-    				return;
-    			}
+    public boolean addGate(Gate g, int i, int j){
+    	//returns true if gate was added to game, else false
+    	if(i >= n || j >= n) return false;
+    	if(placed[i][j] != null) return false;
+    	placed[i][j] = g;
+    	g.i = i; g.j = j;
+    	return true;
     }
     
-    //SELECT Gate FROM placed WHERE Gate == <type>
-    Function<String, Integer> countGateType = type -> filter(g -> type.equals(g.name), flatten(placed)).size();
-  
-
-//	public String convertToGate(){
-//    	String tbr = "NAME_OF_GATE;";
-//    	Integer[] inputDir = new Integer[4];
-//    	Integer[] outputDir = new Integer[4];
-//    	String[] logic = new String[4];
-//    	
-//    	//ArrayList<ArrayList<Gate>> allInputs = getSideType("Input");
-//    	//ArrayList<ArrayList<Gate>> allOutputs = getSideType("Output");
-//    	
-//    	for(int i = 0; i < 4; i++)
-//    		for(Gate g : allInputs.get(i))
-//    			inputDir[i]++;
-//    	
-//    	for(int i = 0; i < 4; i++)
-//    		for(Gate g : allOutputs.get(i)){
-//    			outputDir[i]++;
-//    			logic[i] = g.toString();
+    public boolean removeGate(Gate g){
+    	try{
+    		if(placed[g.i][g.j].equals(g)){
+    			placed[g.i][g.j] = null;
+    			return true;
+    		}
+    		return false;
+    	} catch(NullPointerException np){
+    		return false;
+    	}
+    }
+    
+//    public void createGateAtEmpty(Gate newGate){
+//    	int i, j;
+//    	for(i = 0; i < n; i++)
+//    		for(j = 0; j < n; j++)
+//    			if(placed[i][j] == null){
+//    				newGate.i = i;
+//    				newGate.j = j;
+//    				placed[i][j] = newGate;
+//    				return;
+//    			}
+//    }
+//    
+//    public void printGame(){
+//    	System.out.println(dup("__", n)+"_");
+//    	for(int i = 0 ; i < n; i++){
+//			System.out.print("|");
+//    		for(int j = 0; j < n; j++){
+//    			if(placed[i][j] != null)
+//    				System.out.print(placed[i][j].name.charAt(0)+"|");
+//    			else System.out.print(" |");
 //    		}
-//
-//    	for(int i : inputDir) tbr += i+",";
-//    	tbr += ";";
-//    	
-//    	for(int i : outputDir) tbr += i+",";
-//    	tbr += ";";
-//    			
-//    	for(String s : logic) tbr += s+",";
-//    	return tbr;
+//    		System.out.println();
+//    	}
+//    	System.out.println(dup("¯¯", n)+"¯");
 //    }
     
-    public void printGame(){
-    	System.out.println(dup("__", n)+"_");
-    	for(int i = 0 ; i < n; i++){
-			System.out.print("|");
-    		for(int j = 0; j < n; j++){
-    			if(placed[i][j] != null)
-    				System.out.print(placed[i][j].name.charAt(0)+"|");
-    			else System.out.print(" |");
-    		}
-    		System.out.println();
-    	}
-    	System.out.println(dup("¯¯", n)+"¯");
-    }
+//    public void printGameInfo(){
+//    	filter(g -> g != null, flatten(placed)).forEach(g -> {
+//    		System.out.println("Gate: "+g.name);
+//    		System.out.println("\tInputs: "+g.allValidInputs());
+//    		System.out.println("\tGate Sprite: "+g.name + cat(g.inputBus));
+//    	});
+//    }
     
     @Override
     public String toString(){

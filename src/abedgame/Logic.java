@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static abedgame.Functions.*;
-/*  1 > 2 > 3		func(arg1)(arg2)...
- *  ^       V
- *  8       4
- *  ^       V
- *  7 < 6 < 5 */
+//func(arg1)(arg2)...
+
 
 
 public class Logic {
-	public static List<Bus> eval(Gate g, List<Boolean> inputs){
+	public static List<Bus> eval(Gate g, List<Bus> buses){
+		List<Boolean> inputs = new ArrayList<>();
+		for(Bus b : buses)
+			if(b != null) inputs.addAll(b.wires);
+		
 		List<Bus> tbr = new ArrayList<Bus>();
-		String[] str = g.data.split(",");
+		String[] str = g.logic.split(",");
+		
 		for(int i = 0; i < 4; i++){
 			Bus b = new Bus(map(s -> evalString(s, inputs), str[i].split("#")));
 			tbr.add(b);
@@ -24,9 +26,10 @@ public class Logic {
 	}
 	
 	private static Boolean evalString(String s, List<Boolean> inputs){
+		if(s.equals("_") || s.equals("")) return null;
 		if(s.matches("\\d")) return inputs.get(Integer.parseInt(s));
-		if(s.matches("_")) return null;
 		List<String> unbracket = bracketSplit(s);
+		System.out.println(s);
 		System.out.println(unbracket);
 		//if the operation is one of the basic ops, return whatever it is.
 		switch(unbracket.get(0)){
@@ -76,5 +79,14 @@ public class Logic {
 		}
 		
 		return filter(str -> !str.equals(""), tbr);
+	}
+	
+	public static void main(String[] args){
+		List<Bus> buses = new ArrayList<>();
+		buses.add(Bus.nullBus());
+		buses.add(Bus.nullBus());
+		buses.add(new Bus(asList(new Boolean[]{false})));
+		buses.add(Bus.nullBus());
+		System.out.println(Logic.eval(new Gate("Not;0,0,1,0;1,0,0,0;~(0),_,_,_"), buses));
 	}
 }
