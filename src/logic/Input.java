@@ -1,21 +1,21 @@
 package logic;
 
 public class Input extends Token{
-	Boolean b;
+	int ref;
 	
 	Input(){}
 	
-	Input(Boolean b){
-		this.b = b;
+	Input(int b){
+		this.ref = ref;
 	}
 	
-	public Boolean get(){
-		return b;
+	public Boolean get(List<Boolean> list){
+		return list.get(ref);
 	}
 
 	@Override
 	public String toString() {
-		return b+"";
+		return ref+"";
 	}
 	
 }
