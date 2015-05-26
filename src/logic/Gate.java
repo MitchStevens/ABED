@@ -11,10 +11,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 import javafx.scene.image.Image;
 import static abedgame.Functions.*;
@@ -37,6 +33,7 @@ public class Gate {
     Integer i;
     Integer j;
     int rot;
+    int args
 //    List<Bus> inputBus;
 //    List<Bus> outputBus;
     
@@ -49,6 +46,7 @@ public class Gate {
     	this.j = null;
     	this.rot = 0;
     	this.data = str;
+    	this.args = 0;
     	
     	//inputBus = map(s -> new Bus(Integer.parseInt(s)), split[1].split(","));
     	//outputBus = map(s -> new Bus(Integer.parseInt(s)), split[2].split(","));
