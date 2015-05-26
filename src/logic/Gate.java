@@ -151,6 +151,34 @@ public class Gate {
     public Object clone(){
     	return new Gate(this.data);
     }
+    
+    public static List<Token> tokenize(String str) throws Error{
+		ArrayList<Token> tokens = new ArrayList<>();
+		String temp = "";
+		
+		int i = 0;
+		do{
+			if(str.substring(i, i+1).matches("\\d")){
+				temp += str.charAt(i++);
+				continue;}
+			else{
+				if(!temp.isEmpty())
+					tokens.add(new Input(Integer.parseInt(temp)));
+				temp = "";
+			}
+			
+			switch(str.substring(i, i+1)){
+			case "&": tokens.add(Gate.and);      i++; break;
+			case "|": tokens.add(Gate.or);       i++; break;
+			case "~": tokens.add(Gate.not);      i++; break;
+			deafault throw new Error("Couldn't find symbol "+str.substring(i, i+1);
+			
+			}while(i < str.length());
+		
+		if(!temp.isEmpty())
+			tokens.add(new Input(Integer.parseInt(temp)));
+		
+		return tokens;
 }
 
 class Bus{	
