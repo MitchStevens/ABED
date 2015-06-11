@@ -5,31 +5,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javafx.scene.image.Image;
 import data.Reader;
 
 public class Circuit{
 	public static Circuit Input = new Input();
-	public static Map<String, Circuit> loadedCircuits = Reader.loadCircuits();
+	public static Map<String, Circuit> 	loadedCircuits 	= Reader.loadCircuits();
+	public static Map<String, Image>	loadedImages	= Reader.loadImages();
+	public static String[] circuitTypes = new String[]{
+		"Basic Circuits",
+		"Single Circuits",
+		"Multi Circuits"};
 	
-	public String name;
+	public String name = "";
 	String initData;
 	List<Evaluator> evals;
 	public List<Bus> inputBus, outputBus;
-	public Integer i, j, rot;
 	//rot is the number of CLOCKWISE rotations
-	Game game;
+	public Integer i, j, rot;
+	//used to sort circuits in the gui
+	public int type = 0;
+	public Game game;
 	//evals.size should be the same as outputBus.size
 	
 	public Circuit(){}
 	public Circuit(String datum){
 		init(datum);
-	}
-
-	public Circuit(String datum, Game g, int i, int j){
-		init(datum);
-		this.game = g;
-		this.i = i;
-		this.j = j;
 	}
 	
 	public Circuit(Circuit c, Game g){
@@ -37,9 +38,18 @@ public class Circuit{
 		this.game = g;
 	}
 	
-	public Circuit setGame(Game g){
+	public void setGame(Game g){
 		this.game = g;
-		return this.clone();
+	}
+	
+	public Image getSprite(){
+		//fix this later
+		String s = name;
+		for(Boolean b : inputList())
+			s += "0";
+		if(loadedImages.containsKey(s))
+			return loadedImages.get(s);
+		else return loadedImages.get("EmptyGate");
 	}
 	
 	public void init(String datum){

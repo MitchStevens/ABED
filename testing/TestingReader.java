@@ -19,4 +19,8 @@ public class TestingReader {
 		assertTrue(list.size() > 0);
 	}
 	
+	@Test
+	public void getImagesTest(){
+		Reader.loadImages();
+	}
 }

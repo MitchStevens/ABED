@@ -11,7 +11,7 @@ import logic.Circuit;
 import logic.Evaluator;
 import logic.Game;
 
-public class TestingLogic {
+public class TestingSingleBusLogic {
 	String[] evalTrue = new String[]{
 			"0 ~",		"0 1 |",
 			"1 ~ ~",	"1 1 &",
@@ -37,7 +37,7 @@ public class TestingLogic {
 		assertTrue(or.outputList().get(0));
 		
 		g.clear();
-		Circuit not2 = Circuit.loadedCircuits.get("Not").setGame(g);
+		Circuit not2 = Circuit.loadedCircuits.get("Not").clone();
 		g.add(not2, 1, 0);
 		assertTrue(not2.outputList().get(0));
 		g.add(not, 0, 0);
@@ -47,9 +47,9 @@ public class TestingLogic {
 	@Test
 	public void gameTestRot(){
 		Game g = new Game(3);
-		Circuit not = Circuit.loadedCircuits.get("Not").setGame(g);
+		Circuit not = Circuit.loadedCircuits.get("Not").clone();
 		not.addRot(1);
-		Circuit or = Circuit.loadedCircuits.get("Or").setGame(g);
+		Circuit or = Circuit.loadedCircuits.get("Or").clone();
 		or.addRot(1);
 		g.add(or, 0, 1);
 		assertFalse(or.outputList().get(0));
@@ -58,7 +58,7 @@ public class TestingLogic {
 		
 		g.clear();
 		not.setRot(1);
-		Circuit not2 = Circuit.loadedCircuits.get("Not").setGame(g);
+		Circuit not2 = Circuit.loadedCircuits.get("Not").clone();;
 		not2.setRot(1);
 		g.add(not2, 0, 1);
 		assertTrue(not2.outputList().get(0));
@@ -67,9 +67,9 @@ public class TestingLogic {
 		
 		g.clear();
 		not.setRot(1);
-		not2 = Circuit.loadedCircuits.get("Not").setGame(g);
+		not2 = Circuit.loadedCircuits.get("Not").clone();
 		not2.setRot(0);
-		Circuit and = Circuit.loadedCircuits.get("And").setGame(g);
+		Circuit and = Circuit.loadedCircuits.get("And").clone();
 		g.add(and, 1, 1);
 		assertFalse(and.outputList().get(0));
 		g.add(not, 1, 0);
@@ -86,7 +86,11 @@ public class TestingLogic {
 		assertTrue(g.outputsAtDir(1).get(0));
 		
 		Game xor = Game.loadedGames.get("Xor");
-		
+		assertFalse(xor.outputsAtDir(1).get(0));
+		xor.tileGrid[0][2].toggle();
+		assertTrue(xor.outputsAtDir(1).get(0));
+		xor.tileGrid[2][0].toggle();
+		assertFalse(xor.outputsAtDir(1).get(0));
 	}
 	
 	@Test

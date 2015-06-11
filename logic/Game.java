@@ -39,6 +39,17 @@ public class Game {
 		return add(c, Integer.parseInt(i), Integer.parseInt(j));
 	}
 	
+	public boolean add(Circuit c){
+		//Adds circuits to an unspecified position on the board
+		for(int i = 0; i < n; i++)
+			for(int j = 0; j < n; j++)
+				if(tileGrid[i][j] == null){
+					add(c, i, j);
+					return true;
+				}
+		return false;
+	}
+	
 	public boolean add(Circuit c, int i, int j){
 		//Add circuit to tileGrid if possible and return true, if not return false.
 		if(i < 0 || i >= n || j < 0 || j >= n) return false;
