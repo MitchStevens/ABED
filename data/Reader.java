@@ -1,6 +1,8 @@
 package data;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.image.Image;
+import javafx.scene.text.Font;
 import logic.Circuit;
 import logic.Game;
 
@@ -73,6 +76,16 @@ public class Reader {
 		}
 			
 		return images;
+	}
+	
+	public static Font loadFont(String s){
+		Path path = FileSystems.getDefault().getPath("src", "fonts", s);
+		try {
+			return Font.loadFont(new FileInputStream(path.toFile()), 18);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return Font.font("Arial", 18);
+		}
 	}
 	
 	private static List<String> readFile(String location){

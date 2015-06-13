@@ -1,19 +1,11 @@
 package abedgui;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import javafx.application.Application;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -35,8 +27,8 @@ public class Gui extends Application{
     public static double tileSize = 0;
     public static int numTiles = 3;
 	
-    public Game currentGame = new Game(numTiles);
-    public static List<Square> allSquares;
+    public static Game currentGame = new Game(numTiles);
+    public static Square[][] allSquares;
 	
     public static VBox sideBar;
     public static Pane abedPane;
@@ -80,8 +72,14 @@ public class Gui extends Application{
 		levelSelectPane = new VBox();
 	}
 	
-	public void updateGraphics(){
-		abedPane.getChildren().filtered(n -> n instanceof Piece).forEach(p -> ((Piece)p).updateImage());
+	public void addPiece(Piece p, Integer i, Integer j){
+		p.setLayoutX(allSquares[i][j].x);
+		p.setLayoutY(allSquares[i][j].y);
+		abedPane.getChildren().add(p);
+	}
+	
+	public static void removePiece(Piece p){
+		abedPane.getChildren().remove(p);
 	}
 	
     public void getSideBar(){
@@ -99,7 +97,8 @@ public class Gui extends Application{
             	
         	l.setOnMouseClicked(e -> {
         		Circuit c1 = c.clone();
-//                    addPiece(c1);
+        		currentGame.add(c1);
+        		addPiece(new Piece(c1), c1.i, c1.j);
           	});
             
         	l.setOnMouseEntered(e -> {
@@ -133,20 +132,19 @@ public class Gui extends Application{
     		"-fx-background-color: BLUE;"
     		+ "-fx-padding: "+20+";");
 		
-    	allSquares = new ArrayList<Square>();
-    	for(int i = 0; i < numTiles; i++)
-    		for(int j = 0; j < numTiles; j++){
+    	allSquares = new Square[numTiles][numTiles];
+    	for(int j = 0; j < numTiles; j++)
+    		for(int i = 0; i < numTiles; i++){
     			Square temp = new Square(
-            	GAME_MARGIN + j*(tileSize + GAP),
-              	GAME_MARGIN + i*(tileSize + GAP),
+            	GAME_MARGIN + i*(tileSize + GAP),
+              	GAME_MARGIN + j*(tileSize + GAP),
              	i,
               	j);
        		if(i == 0 || i == numTiles-1) temp.setIsOnSide();
        		if(j == 0 || j == numTiles-1) temp.setIsOnSide();
-       		allSquares.add(temp);
-    	}
-	
-    	abedPane.getChildren().addAll(allSquares);
+       		allSquares[i][j] = temp;
+       		abedPane.getChildren().add(allSquares[i][j]);
+    		}
     }
     
     public static Gui getBoard(){
@@ -154,14 +152,15 @@ public class Gui extends Application{
     }
 	
     public Square getClosest(double x, double y){
-	Square closest = null;
-	double minDist = Double.MAX_VALUE;
-	for(Square s : allSquares)
-		if(s.distance(x, y) < minDist){
-			closest = s;
-			minDist = s.distance(x, y);
-    	}
-        return minDist < tileSize? closest: null;				
+		Square closest = null;
+		double minDist = Double.MAX_VALUE;
+		for(Square[] sArray : allSquares)
+			for(Square s : sArray)
+				if(s.distance(x, y) < minDist){
+					closest = s;
+					minDist = s.distance(x, y);
+				}
+		return closest;
     }
     
     public static void open() {Application.launch();}

@@ -140,5 +140,5 @@ public class TestingSingleBusLogic {
 		for(String s : evalFalse)
 			assertFalse(new Evaluator(s).eval(list));
 	}
-	
+
 }

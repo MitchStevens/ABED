@@ -46,7 +46,7 @@ public class Circuit{
 		//fix this later
 		String s = name;
 		for(Boolean b : inputList())
-			s += "0";
+			s += (b ? "1" : "0");
 		if(loadedImages.containsKey(s))
 			return loadedImages.get(s);
 		else return loadedImages.get("EmptyGate");
@@ -158,6 +158,7 @@ public class Circuit{
 	//mostly used for debugging/testing
 	public List<Boolean> inputList(){ return flatten(inputBus); }
 	public List<Boolean> outputList(){ return flatten(outputBus); }
+	public String pos(){ return "("+i+", "+j+")"; }
 	
 	public Circuit circuitAtDir(int dir){
 		Circuit c = null;
@@ -254,6 +255,11 @@ class Input extends Circuit{
 		//toggles value true->false, false->true. It is my very favorite hack.
 		value ^= true;
 		this.game.updateGame(i, j);
+	}
+	
+	public Image getSprite(){
+		String s = "Input"+(value ? "1" : "0");
+		return loadedImages.get(s);
 	}
 	
 	@Override

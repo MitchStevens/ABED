@@ -1,9 +1,6 @@
 package abedgui;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-
+import data.Reader;
 import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.text.Font;
@@ -11,6 +8,8 @@ import javafx.scene.text.Text;
 import logic.Circuit;
 
 public class Piece extends Parent{
+	public static Font adbxtsc = Reader.loadFont("adbxtsc.ttf");
+	
     public ImageView image = new ImageView();
     public Circuit c;
         
@@ -31,10 +30,6 @@ public class Piece extends Parent{
         catch (IllegalArgumentException ex) {}
         this.getChildren().add(image);
 		
-        Font f = Font.font("Comic Sans");
-		try {f = Font.loadFont(new FileInputStream(new File("src/fonts/adbxtsc.ttf")), 18);}
-		catch (FileNotFoundException e) {e.printStackTrace();}
-		
 		duplicate = new Text("✚ ");
 		duplicate.setLayoutX(Gui.tileSize-35);
 		duplicate.setLayoutY(15);
@@ -46,7 +41,7 @@ public class Piece extends Parent{
 		this.getChildren().add(delete);
 		
         gateName.setText(c.name);
-        gateName.setFont(f);
+        gateName.setFont(adbxtsc);
         gateName.setStrokeWidth(2);
 		gateName.setStyle("-fx-font-weight: bold;");
 		gateName.setLayoutX(0);
@@ -57,7 +52,7 @@ public class Piece extends Parent{
 //		else if("Output".equals(g.name)){
 //			gateNumber.setText(((Output)gate).outputNum+"");}
 //		else gateNumber.setText("");
-		gateNumber.setFont(f);
+		gateNumber.setFont(adbxtsc);
         gateNumber.setStrokeWidth(2);
 		gateNumber.setStyle("-fx-font-weight: bold; -fx-font-size: 25;");
 		gateNumber.setLayoutX(5);
@@ -65,15 +60,14 @@ public class Piece extends Parent{
 	
 		this.getChildren().add(gateNumber);
 		this.getChildren().add(gateName);
-		//setEvents();
+		setEvents();
     }
     
     public void updateImage(){
-    	//image.setImage(resample(this.gate.getSprite()));
+    	image.setImage(resample(c.getSprite()));
         image.setRotate(c.rot*90);
         image.setFitHeight(Gui.tileSize);
         image.setFitWidth(Gui.tileSize);
-        Gui.getBoard().currentGame.printGameInfo();
     }
     
     //taken from https://gist.github.com/jewelsea/5415891
@@ -122,22 +116,20 @@ public class Piece extends Parent{
                 closest = newClosest;
                 if(closest != null) closest.flash();
             }
-            Gui.getBoard().updateGraphics();
             event.consume();
         });
 		
         this.setOnMouseReleased(event -> {
             if(!isDraggable) return;
             if(dragging) {
-            	Gui.getBoard().currentGame.tileGrid[c.i][c.j] = null;
+            	changePos(closest);
                 dragging = false;
-                changePos(closest);
             } else {
-            	
+            	this.c.toggle();
+            	System.out.println(Gui.currentGame.printGame());
+            	this.updateImage();
             }
             //if(i != null && j != null)
-            Gui.getBoard().currentGame.printGameInfo();
-            Gui.getBoard().updateGraphics();
             event.consume();
         });
         
@@ -152,34 +144,33 @@ public class Piece extends Parent{
         	c.addRot(event.getDeltaY() > 0? -1: 1);
             //if(i != null && j != null)
             c.game.updateGame(c.i, c.j);
-            Gui.getBoard().updateGraphics();
+            updateImage();
             event.consume();
         });
         
         duplicate.setOnMouseClicked(event -> {
-        	Gui.getBoard().currentGame.add(c.clone());
+        	Gui.currentGame.add(c.clone());
         });
         
         delete.setOnMouseClicked(event -> {
-        	this.changePos(null);
+        	Gui.removePiece(this);
+        	Gui.currentGame.remove(c.i, c.j);
         	event.consume();
         });
     }
     
-    public void changePos(Square s){          
-        c.i = s.i; c.j = s.j;
-        
-        Gui.getBoard().currentGame.move(c, s.i, s.j);
+    public void changePos(Square s){       
+        Gui.currentGame.move(c, s.i, s.j);
         setLayoutX(s.x);
         setLayoutY(s.y);
+        updateImage();
     }
 
     @Override
     public String toString(){
     	return c.name+","+c.rot+",";
     }
-    
-    
+       
     @Override
     public Piece clone(){
     	return new Piece(c);

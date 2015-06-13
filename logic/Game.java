@@ -41,8 +41,8 @@ public class Game {
 	
 	public boolean add(Circuit c){
 		//Adds circuits to an unspecified position on the board
-		for(int i = 0; i < n; i++)
-			for(int j = 0; j < n; j++)
+		for(int j = 0; j < n; j++)
+			for(int i = 0; i < n; i++)
 				if(tileGrid[i][j] == null){
 					add(c, i, j);
 					return true;
@@ -55,6 +55,7 @@ public class Game {
 		if(i < 0 || i >= n || j < 0 || j >= n) return false;
 		if(tileGrid[i][j] != null) return false;
 		if(c == null) return false;
+		System.out.println("Added circuit at ("+i+", "+j+")");
 		c.i = i; c.j = j;
 		c.setGame(this);
 		tileGrid[i][j] = c;
@@ -62,11 +63,11 @@ public class Game {
 		return true;
 	}
 	
-	public boolean move(Circuit c, int i, int j){
+	public boolean move(Circuit c, int i2, int j2){
 		//move c from where ever is was to (i, j)
-		if(add(c, i, j)){
-			tileGrid[c.i][c.j] = null;
-			updateGame(i, j);
+		if(tileGrid[i2][j2] == null){
+			remove(c.i, c.j);
+			add(c, i2, j2);
 			return true;
 		} else
 			return false;
@@ -74,6 +75,7 @@ public class Game {
 	
 	public void remove(int i, int j){
 		tileGrid[i][j] = null;
+		updateGame(i, j);
 	}
 	
 	public List<Circuit> getAdj(int i, int j){
