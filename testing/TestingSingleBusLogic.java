@@ -35,13 +35,26 @@ public class TestingSingleBusLogic {
 		assertFalse(or.outputList().get(0));
 		g.add(not, 0, 0);
 		assertTrue(or.outputList().get(0));
-		
+		//+-+-+-+-+-
 		g.clear();
 		Circuit not2 = Circuit.loadedCircuits.get("Not").clone();
 		g.add(not2, 1, 0);
 		assertTrue(not2.outputList().get(0));
 		g.add(not, 0, 0);
 		assertFalse(not2.outputList().get(0));
+		//+-+-+-+-+-
+		g.clear();
+		g.add(Circuit.loadedCircuits.get("Input").clone(), 0, 0);
+		g.add(Circuit.loadedCircuits.get("Bus").clone(), 1, 0);
+		g.add(Circuit.loadedCircuits.get("Output").clone(), 2, 0);
+		g.toggle(0, 0);
+		assertTrue(g.outputsAtDir(1).get(0));
+		
+		g.move(1, 0, 1, 1);
+		assertFalse(g.outputsAtDir(1).get(0));
+		
+		g.move(1, 1, 1, 0);
+		assertTrue(g.outputsAtDir(1).get(0));
 	}
 	
 	@Test
@@ -55,7 +68,7 @@ public class TestingSingleBusLogic {
 		assertFalse(or.outputList().get(0));
 		g.add(not, 0, 0);
 		assertTrue(or.outputList().get(0));
-		
+		//+-+-+-+-+-
 		g.clear();
 		not.setRot(1);
 		Circuit not2 = Circuit.loadedCircuits.get("Not").clone();;
@@ -64,7 +77,7 @@ public class TestingSingleBusLogic {
 		assertTrue(not2.outputList().get(0));
 		g.add(not, 0, 0);
 		assertTrue(!not2.outputList().get(0));
-		
+		//+-+-+-+-+-
 		g.clear();
 		not.setRot(1);
 		not2 = Circuit.loadedCircuits.get("Not").clone();
@@ -81,15 +94,15 @@ public class TestingSingleBusLogic {
 	public void gameFromString(){
 		Game g = new Game("name;3;Input,1,1,0;Input,0,0,1;And,0,1,1;Output,0,2,1;");
 		assertFalse(g.outputsAtDir(1).get(0));
-		g.tileGrid[0][1].toggle();
-		g.tileGrid[1][0].toggle();
+		g.toggle(0, 1);
+		g.toggle(1, 0);
 		assertTrue(g.outputsAtDir(1).get(0));
 		
 		Game xor = Game.loadedGames.get("Xor");
 		assertFalse(xor.outputsAtDir(1).get(0));
-		xor.tileGrid[0][2].toggle();
+		xor.toggle(0, 2);
 		assertTrue(xor.outputsAtDir(1).get(0));
-		xor.tileGrid[2][0].toggle();
+		xor.toggle(2, 0);
 		assertFalse(xor.outputsAtDir(1).get(0));
 	}
 	
@@ -98,9 +111,9 @@ public class TestingSingleBusLogic {
 		Game g = new Game(3);
 		Circuit input = Circuit.Input.clone();
 		g.add(input, 0, 0);
-		assertFalse( g.tileGrid[0][0].outputList().get(0) );
-		g.tileGrid[0][0].toggle();
-		assertTrue( g.tileGrid[0][0].outputList().get(0) );
+		assertFalse( g.circuitAtPos(0, 0).outputList().get(0) );
+		g.toggle(0, 0);
+		assertTrue( g.circuitAtPos(0, 0).outputList().get(0) );
 	}
 	
 	@Test
@@ -139,6 +152,17 @@ public class TestingSingleBusLogic {
 			assertTrue(new Evaluator(s).eval(list));
 		for(String s : evalFalse)
 			assertFalse(new Evaluator(s).eval(list));
+	}
+	
+	@Test
+	public void moveTest(){
+		Game g = new Game(2);
+		g.add(Circuit.Input, 0, 0);
+		g.add(Circuit.loadedCircuits.get("Output"), 1, 0);
+		g.toggle(0, 0);
+		assertTrue(g.outputsAtDir(1).get(0));
+		g.move(g.circuitAtPos(1, 0), 1, 1);
+		assertFalse(g.outputsAtDir(1).get(0));
 	}
 
 }

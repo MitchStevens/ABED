@@ -49,12 +49,9 @@ public class Gui extends Application{
 		board = this;
 	}
 	
-	private void initaliseBoard(){		
-		currentGame = new Game(numTiles);
-		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+	private void initaliseBoard(){
 		mainPane = new Pane();
 		
-		//new Reader().getGates();
 		getSideBar();
 		getAbedPane();
 		
@@ -63,23 +60,51 @@ public class Gui extends Application{
 		gamePane.setCenter(abedPane);
 		
 		mainPane.getChildren().add(gamePane);
-		mainPane.setMinHeight(boardHeight);
-		mainPane.setMinWidth(boardWidth);
 		root.getChildren().add(mainPane);
+		newGame(new Game(6));
 	}
 
 	public void getLevelSelectPane(){
 		levelSelectPane = new VBox();
 	}
 	
-	public void addPiece(Piece p, Integer i, Integer j){
+	public static void addPiece(Piece p){
+		Square s = currentGame.nextOpen();
+		addPiece(p, s.i, s.j);
+	}
+	
+	public static void addPiece(Piece p, Integer i, Integer j){
+		currentGame.add(p.c, i, j);
 		p.setLayoutX(allSquares[i][j].x);
 		p.setLayoutY(allSquares[i][j].y);
 		abedPane.getChildren().add(p);
+		updateBoard();
+	}
+	
+	public static void rotatePiece(int i, int j, int rot){
+		currentGame.rotate(i, j, rot);
+		updateBoard();
+	}
+	
+	public static void movePiece(Piece p, int i, int j){
+		System.out.println("+-+-+-+-+-+-+-+-+-+-+-");
+		currentGame.remove(p.c.i, p.c.j);
+		currentGame.add(p.c, i, j);
+    	p.setLayoutX(allSquares[i][j].x);
+    	p.setLayoutY(allSquares[i][j].y);
+		updateBoard();
 	}
 	
 	public static void removePiece(Piece p){
+		currentGame.remove(p.c.i, p.c.j);
 		abedPane.getChildren().remove(p);
+		updateBoard();
+	}
+	
+	public static void updateBoard(){
+		for(Node n : abedPane.getChildren())
+			if(n instanceof Piece)
+				((Piece)n).updateImage();
 	}
 	
     public void getSideBar(){
@@ -96,9 +121,7 @@ public class Gui extends Application{
         	Label l = new Label(c.name);
             	
         	l.setOnMouseClicked(e -> {
-        		Circuit c1 = c.clone();
-        		currentGame.add(c1);
-        		addPiece(new Piece(c1), c1.i, c1.j);
+        		addPiece(new Piece(c.clone()));
           	});
             
         	l.setOnMouseEntered(e -> {
@@ -120,10 +143,11 @@ public class Gui extends Application{
         gateSelector.setShowRoot(false);
         sideBar.getChildren().add(gateSelector);
         
-        Button saveGate = new Button();
+        Button saveGate = new Button("Save Gate");
         saveGate.setOnMouseClicked(e -> {
-        	
+        	System.out.println(currentGame.toString());
         });
+        sideBar.getChildren().add(saveGate);
     }
     
     public void getAbedPane(){
@@ -131,7 +155,15 @@ public class Gui extends Application{
     	abedPane.setStyle(
     		"-fx-background-color: BLUE;"
     		+ "-fx-padding: "+20+";");
-		
+    	abedPane.setPrefSize(boardHeight, boardHeight);
+    }
+    
+    public void newGame(Game g){
+    	//loads new game into the gui and sets current game
+		currentGame = g;
+		numTiles = g.n;
+		tileSize = (boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+    	
     	allSquares = new Square[numTiles][numTiles];
     	for(int j = 0; j < numTiles; j++)
     		for(int i = 0; i < numTiles; i++){
@@ -145,6 +177,14 @@ public class Gui extends Application{
        		allSquares[i][j] = temp;
        		abedPane.getChildren().add(allSquares[i][j]);
     		}
+    	
+    	Circuit c = null;
+    	for(int j = 0; j < numTiles; j++)
+    		for(int i = 0; i < numTiles; i++)
+    			if((c = currentGame.circuitAtPos(i, j)) != null){
+    				Piece p = new Piece(c);
+    				addPiece(p, c.i, c.j);
+    			}
     }
     
     public static Gui getBoard(){

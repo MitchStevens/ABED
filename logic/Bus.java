@@ -43,6 +43,10 @@ public class Bus{
 		return this.bools;
 	}
 	
+	public Bus clone(){
+		return new Bus(bools);
+	}
+	
 //	public boolean equals(Object o){
 //		if(!(o instanceof Bus)) return false;
 //		Bus c = (Bus)o;

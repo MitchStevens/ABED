@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import abedgui.Square;
 import javafx.scene.image.Image;
 import data.Reader;
 
@@ -20,7 +21,7 @@ public class Circuit{
 	public String name = "";
 	String initData;
 	List<Evaluator> evals;
-	public List<Bus> inputBus, outputBus;
+	public final List<Bus> inputBus, outputBus;
 	//rot is the number of CLOCKWISE rotations
 	public Integer i, j, rot;
 	//used to sort circuits in the gui
@@ -28,14 +29,19 @@ public class Circuit{
 	public Game game;
 	//evals.size should be the same as outputBus.size
 	
-	public Circuit(){}
 	public Circuit(String datum){
-		init(datum);
-	}
-	
-	public Circuit(Circuit c, Game g){
-		init(c.initData);
-		this.game = g;
+		//NAME;INPUTS;OUTPUTS;EVALS
+		this.initData = datum;
+		String[] data = datum.split(";");
+		this.name = data[0];
+		this.inputBus = createBusList(data[1]);
+		this.outputBus = createBusList(data[2]);
+		this.evals = new ArrayList<>();
+		if(data.length == 4)
+			for(String s : data[3].split(","))
+				evals.add(new Evaluator(s));
+		this.eval();
+		this.rot = 0;
 	}
 	
 	public void setGame(Game g){
@@ -50,21 +56,6 @@ public class Circuit{
 		if(loadedImages.containsKey(s))
 			return loadedImages.get(s);
 		else return loadedImages.get("EmptyGate");
-	}
-	
-	public void init(String datum){
-		//NAME;INPUTS;OUTPUTS;EVALS
-		this.initData = datum;
-		String[] data = datum.split(";");
-		this.name = data[0];
-		this.inputBus = createBusList(data[1]);
-		this.outputBus = createBusList(data[2]);
-		this.evals = new ArrayList<>();
-		if(data.length == 4)
-			for(String s : data[3].split(","))
-				evals.add(new Evaluator(s));
-		this.eval();
-		this.rot = 0;
 	}
 	
 	public void setRot(int rot){
@@ -103,19 +94,20 @@ public class Circuit{
 	public void updateInputs(){
 		//if there is no game enclosing the circuit, updating inputs is undefined
 		if(game == null) return;
+
 		//check directions 0-4
 		for(int dir = 0; dir < 4; dir++){
 			Bus b = validInputAtDir(dir);
 			if(b != null)
 				inputBus.set(dir, b);
-			else inputBus.get(dir).clear();
+			else inputBus.set(dir, new Bus(inputBus.get(dir).size()));
 		}
 		eval();
 	}
 	
 	public Bus validInputAtDir(int dir){
 		//If there is a valid input from another circuit at dir return it. Else return null.
-		Circuit c = circuitAtDir(dir);
+		Circuit c = game.circuitAtDir(this, dir);
 		if(c == null) return null;
 		if(inputBus.get(mod4(dir-rot)).size() == c.outputBus.get(mod4(dir-2-c.rot)).size() &&
 				inputBus.get(mod4(dir-rot)).size() > 0)
@@ -125,7 +117,7 @@ public class Circuit{
 	
 	public Bus validOutputAtDir(int dir){
 		//The inverse of the above. looks for valid inputs.
-		Circuit c = circuitAtDir(dir);
+		Circuit c = game.circuitAtDir(this, dir);
 		if(c == null) return null;
 		if(outputBus.get(mod4(dir-rot)).size() == c.inputBus.get(mod4(dir-2-c.rot)).size() &&
 				outputBus.get(mod4(dir-rot)).size() > 0)
@@ -159,31 +151,6 @@ public class Circuit{
 	public List<Boolean> inputList(){ return flatten(inputBus); }
 	public List<Boolean> outputList(){ return flatten(outputBus); }
 	public String pos(){ return "("+i+", "+j+")"; }
-	
-	public Circuit circuitAtDir(int dir){
-		Circuit c = null;
-		switch(dir){
-		case 0:
-			if(j != 0) c = game.tileGrid[i][j-1];
-			break;
-		case 1:
-			if(i != game.n-1) c = game.tileGrid[i+1][j];
-			break;
-		case 2:
-			if(j != game.n-1) c = game.tileGrid[i][j+1];
-			break;
-		case 3:
-			if(i != 0) c = game.tileGrid[i-1][j];
-			break;
-		}
-		return c;
-	}
-	
-	//calling circuitAtDir with a numerical direction gets confusing after a while.
-	public Circuit up(){ return circuitAtDir(0); }
-	public Circuit down(){ return circuitAtDir(2); }
-	public Circuit left(){ return circuitAtDir(3); }
-	public Circuit right(){ return circuitAtDir(1); }
 	
 	public void updatePos(int i, int j){
 		if(game == null) return;
@@ -232,19 +199,18 @@ public class Circuit{
 		
 		return tbr;
 	}
+	
+	@Override
+	public String toString(){
+		return name+","+rot+","+i+","+j;
+	}
 }
 
 class Input extends Circuit{
 	boolean value = false;
 	
 	public Input(){
-		this.initData = "Input";
-		this.name = "Input";
-		this.inputBus = createBusList("0,0,0,0");
-		this.outputBus = createBusList("0,1,0,0");
-		this.evals = new ArrayList<>();
-		this.eval();
-		this.rot = 0;
+		super("Input;0,0,0,0;0,1,0,0;");
 	}
 	
 	public void setValue(Boolean b){

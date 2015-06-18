@@ -1,10 +1,8 @@
 package data;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.attribute.*;
 import java.nio.file.FileSystems;
@@ -18,6 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import javafx.scene.image.Image;
+import javafx.scene.image.PixelReader;
+import javafx.scene.image.PixelWriter;
+import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
 import logic.Circuit;
 import logic.Game;
@@ -74,9 +75,33 @@ public class Reader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-			
+		System.out.println(images.keySet());
 		return images;
 	}
+	
+	//taken from https://gist.github.com/jewelsea/5415891
+    private static Image resample(Image input) {
+        final int W = (int) input.getWidth();
+        final int H = (int) input.getHeight();
+        final int S = 5;
+        WritableImage output = new WritableImage(
+            W * S,
+            H * S
+        );
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+            final int argb = reader.getArgb(x, y);
+                for (int dy = 0; dy < S; dy++) {
+                    for (int dx = 0; dx < S; dx++) {
+                        writer.setArgb(x * S + dx, y * S + dy, argb);
+                    }
+                }
+            }
+        }
+        return output;
+    }
 	
 	public static Font loadFont(String s){
 		Path path = FileSystems.getDefault().getPath("src", "fonts", s);

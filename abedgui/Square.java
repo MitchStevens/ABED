@@ -21,9 +21,20 @@ public class Square extends Rectangle{
     int isSide = 0; //0 = def, 1 = side, 2 = null
     double x;
     double y;
-    Integer i;
-    Integer j;
+    public Integer i;
+    public Integer j;
 	
+    // this constructor used as a tuple. Some people like passing a raw int array or something
+    // but I feel that this is a more civilized way of going about the same task. In Haskell sometimes
+    // you create new data types that are basically wrappers for primitives and call them something 
+    // descriptive like "Temperature" or "Weight". I guess we've got class variables for that sort of
+    // thing, plus in Haskell you can create a data type in a line. Not sure if you could write a
+    // wrapper in less then a dozen lines or so in java.
+    public Square(int i, int j){
+    	this.i = i;
+    	this.j = j;
+    }
+    
     Square(double x, double y, int i, int j) {
         this.x = x;
         this.y = y;

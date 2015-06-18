@@ -1,10 +1,12 @@
 package abedgui;
 
 import data.Reader;
+import javafx.animation.RotateTransition;
 import javafx.scene.*;
 import javafx.scene.image.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import logic.Circuit;
 
 public class Piece extends Parent{
@@ -14,6 +16,7 @@ public class Piece extends Parent{
     public Circuit c;
         
     public boolean isDraggable = true;
+    public static boolean isRotating = false;
     public double mousex;				// where the cursor's x-position is
     public double mousey;				// where the cursor's y-position is
     private boolean dragging = false;	// whether the tile is currently being dragged
@@ -64,41 +67,16 @@ public class Piece extends Parent{
     }
     
     public void updateImage(){
-    	image.setImage(resample(c.getSprite()));
+    	image.setImage(c.getSprite());
         image.setRotate(c.rot*90);
         image.setFitHeight(Gui.tileSize);
         image.setFitWidth(Gui.tileSize);
-    }
-    
-    //taken from https://gist.github.com/jewelsea/5415891
-    public static Image resample(Image input) {
-        final int W = (int) input.getWidth();
-        final int H = (int) input.getHeight();
-        final int S = 5;
-        WritableImage output = new WritableImage(
-            W * S,
-            H * S
-        );
-        PixelReader reader = input.getPixelReader();
-        PixelWriter writer = output.getPixelWriter();
-        for (int y = 0; y < H; y++) {
-            for (int x = 0; x < W; x++) {
-            final int argb = reader.getArgb(x, y);
-                for (int dy = 0; dy < S; dy++) {
-                    for (int dx = 0; dx < S; dx++) {
-                        writer.setArgb(x * S + dx, y * S + dy, argb);
-                    }
-                }
-            }
-        }
-        return output;
     }
 
     private void setEvents(){
         this.setOnMousePressed(event -> {
             mousex = event.getSceneX();
             mousey = event.getSceneY();
-            //closest = ABEDGUI.getBoard().getClosest(getLayoutX(), getLayoutY());
             toFront();
             event.consume();
         });
@@ -122,39 +100,39 @@ public class Piece extends Parent{
         this.setOnMouseReleased(event -> {
             if(!isDraggable) return;
             if(dragging) {
-            	changePos(closest);
+            	Gui.movePiece(this, closest.i, closest.j);
                 dragging = false;
             } else {
             	this.c.toggle();
             	System.out.println(Gui.currentGame.printGame());
-            	this.updateImage();
             }
-            //if(i != null && j != null)
+            Gui.updateBoard();
             event.consume();
         });
         
-//        this.setOnKeyPressed(event ->{
-//        	if(event.getCode() == KeyCode.R){
-//        		gate.rotate(1);
-//        		ABEDGUI.getBoard().currentGame.tick(gate);
-//        	}
-//        });
-        
         this.setOnScroll(event -> {
-        	c.addRot(event.getDeltaY() > 0? -1: 1);
+//        	if(isRotating) return;
+//        	System.out.println("roting");
+//        	isRotating = true;
             //if(i != null && j != null)
-            c.game.updateGame(c.i, c.j);
-            updateImage();
+            
+//            RotateTransition rt = new RotateTransition(Duration.millis(300), image);
+//            rt.setByAngle(90);
+//            rt.play();
+        	int rot = event.getDeltaY() < 0 ? 1 : -1;
+        	Gui.rotatePiece(c.i, c.j, rot);
+            //image.setRotate(c.rot*90);
             event.consume();
+//        	isRotating = false;
         });
         
         duplicate.setOnMouseClicked(event -> {
-        	Gui.currentGame.add(c.clone());
+        	Gui.addPiece(this.clone());
+        	event.consume();
         });
         
         delete.setOnMouseClicked(event -> {
         	Gui.removePiece(this);
-        	Gui.currentGame.remove(c.i, c.j);
         	event.consume();
         });
     }
