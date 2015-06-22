@@ -48,16 +48,6 @@ public class Circuit{
 		this.game = g;
 	}
 	
-	public Image getSprite(){
-		//fix this later
-		String s = name;
-		for(Boolean b : inputList())
-			s += (b ? "1" : "0");
-		if(loadedImages.containsKey(s))
-			return loadedImages.get(s);
-		else return loadedImages.get("EmptyGate");
-	}
-	
 	public void setRot(int rot){
 		this.rot = mod4(rot);
 	}
@@ -98,9 +88,9 @@ public class Circuit{
 		//check directions 0-4
 		for(int dir = 0; dir < 4; dir++){
 			Bus b = validInputAtDir(dir);
-			if(b != null)
-				inputBus.set(dir, b);
-			else inputBus.set(dir, new Bus(inputBus.get(dir).size()));
+			if( b != null)
+				inputBus.set(mod4(dir-rot), b);
+			else inputBus.set(mod4(dir-rot), new Bus(inputBus.get(mod4(dir-rot)).size()));
 		}
 		eval();
 	}
@@ -109,9 +99,9 @@ public class Circuit{
 		//If there is a valid input from another circuit at dir return it. Else return null.
 		Circuit c = game.circuitAtDir(this, dir);
 		if(c == null) return null;
-		if(inputBus.get(mod4(dir-rot)).size() == c.outputBus.get(mod4(dir-2-c.rot)).size() &&
-				inputBus.get(mod4(dir-rot)).size() > 0)
-			return c.outputBus.get(mod4(dir-2-c.rot));
+		if(inputAtAbsDir(dir).size() == c.outputAtAbsDir(dir-2).size() &&
+				inputAtAbsDir(dir).size() > 0)
+			return c.outputAtAbsDir(dir-2);
 		else return null;
 	}
 	
@@ -119,9 +109,9 @@ public class Circuit{
 		//The inverse of the above. looks for valid inputs.
 		Circuit c = game.circuitAtDir(this, dir);
 		if(c == null) return null;
-		if(outputBus.get(mod4(dir-rot)).size() == c.inputBus.get(mod4(dir-2-c.rot)).size() &&
-				outputBus.get(mod4(dir-rot)).size() > 0)
-			return c.inputBus.get(mod4(dir-2-c.rot));
+		if(outputAtAbsDir(dir).size() == c.inputAtAbsDir(dir-2).size() &&
+				outputAtAbsDir(dir).size() > 0)
+			return c.inputAtAbsDir(dir-2);
 		else return null;
 	}
 	
@@ -158,6 +148,10 @@ public class Circuit{
 		this.i = i; this.j = j;
 	}
 	
+//	public String logicAtDir(){
+//		
+//	}
+	
 	@Override
 	public Circuit clone(){
 		return new Circuit(initData);
@@ -169,9 +163,6 @@ public class Circuit{
 		Circuit c = (Circuit)o;
 		if(!name.equals(c.name)) return false;
 		if(!initData.equals(c.initData)) return false;
-//		for(int i = 0; i < evals.size(); i++)
-//			if(!evals.get(i).tokens.equals(c.evals.get(i).tokens))
-//				return false;
 		if(i != null)
 			if(!i.equals(c.i))
 				return false;
@@ -204,38 +195,4 @@ public class Circuit{
 	public String toString(){
 		return name+","+rot+","+i+","+j;
 	}
-}
-
-class Input extends Circuit{
-	boolean value = false;
-	
-	public Input(){
-		super("Input;0,0,0,0;0,1,0,0;");
-	}
-	
-	public void setValue(Boolean b){
-		value = b;
-	}
-	
-	public void toggle(){
-		//toggles value true->false, false->true. It is my very favorite hack.
-		value ^= true;
-		this.game.updateGame(i, j);
-	}
-	
-	public Image getSprite(){
-		String s = "Input"+(value ? "1" : "0");
-		return loadedImages.get(s);
-	}
-	
-	@Override
-	public List<Bus> eval(){
-		outputBus.set(1, new Bus(new Boolean[]{value}));
-		return outputBus;
-	}
-	
-	public Circuit clone(){
-		return new Input();
-	}
-	
 }

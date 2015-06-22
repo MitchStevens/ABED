@@ -1,5 +1,6 @@
 package logic;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -22,10 +23,18 @@ public class Operation extends Token{
   
 
   public Flag apply(List<Boolean> bools){
+	  List<Flag> tbr = new ArrayList<>();
 		switch(name){
-		case "and": return new Flag( bools.get(0) && bools.get(1) );
-		case "or":  return new Flag( bools.get(0) || bools.get(1) );
-		case "not": return new Flag( !bools.get(0) );
+		case "and":
+			return new Flag( bools.get(0) && bools.get(1));
+			
+		case "or":
+				return new Flag( bools.get(0) || bools.get(1));
+		
+		case "not":
+			return new Flag( !bools.get(0));
+			
+		default:
 		}
 		throw new Error("Operator "+op+" not found!");
 	}

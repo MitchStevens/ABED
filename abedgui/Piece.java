@@ -12,7 +12,7 @@ import logic.Circuit;
 public class Piece extends Parent{
 	public static Font adbxtsc = Reader.loadFont("adbxtsc.ttf");
 	
-    public ImageView image = new ImageView();
+    public PieceImage image;
     public Circuit c;
         
     public boolean isDraggable = true;
@@ -25,12 +25,12 @@ public class Piece extends Parent{
     private Text gateNumber = new Text();
     private Text delete;
     private Text duplicate;
+    private ImageView rotate = new ImageView();
     
 	
     public Piece(Circuit c){
     	this.c = c;
-        try{ updateImage(); }
-        catch (IllegalArgumentException ex) {}
+    	image = new PieceImage(c);
         this.getChildren().add(image);
 		
 		duplicate = new Text("✚ ");
@@ -49,28 +49,20 @@ public class Piece extends Parent{
 		gateName.setStyle("-fx-font-weight: bold;");
 		gateName.setLayoutX(0);
 		gateName.setLayoutY(Gui.tileSize);
-		
-//		if("Input".equals(g.name)){
-//			gateNumber.setText(((Input)gate).inputNum+"");}
-//		else if("Output".equals(g.name)){
-//			gateNumber.setText(((Output)gate).outputNum+"");}
-//		else gateNumber.setText("");
-		gateNumber.setFont(adbxtsc);
-        gateNumber.setStrokeWidth(2);
-		gateNumber.setStyle("-fx-font-weight: bold; -fx-font-size: 25;");
-		gateNumber.setLayoutX(5);
-		gateNumber.setLayoutY(20);
-	
-		this.getChildren().add(gateNumber);
 		this.getChildren().add(gateName);
+		
+		rotate.setImage(PieceImage.resample(Circuit.loadedImages.get("rotateSymbol")));
+		rotate.setFitHeight(30);
+		rotate.setFitWidth(30);
+		rotate.setLayoutX(Gui.tileSize-30);
+		rotate.setLayoutY(Gui.tileSize-30);
+		this.getChildren().add(rotate);
+		
 		setEvents();
     }
     
     public void updateImage(){
-    	image.setImage(c.getSprite());
-        image.setRotate(c.rot*90);
-        image.setFitHeight(Gui.tileSize);
-        image.setFitWidth(Gui.tileSize);
+    	image.update(c);
     }
 
     private void setEvents(){
@@ -104,30 +96,24 @@ public class Piece extends Parent{
                 dragging = false;
             } else {
             	this.c.toggle();
-            	System.out.println(Gui.currentGame.printGame());
             }
             Gui.updateBoard();
             event.consume();
         });
         
         this.setOnScroll(event -> {
-//        	if(isRotating) return;
-//        	System.out.println("roting");
-//        	isRotating = true;
-            //if(i != null && j != null)
-            
-//            RotateTransition rt = new RotateTransition(Duration.millis(300), image);
-//            rt.setByAngle(90);
-//            rt.play();
         	int rot = event.getDeltaY() < 0 ? 1 : -1;
         	Gui.rotatePiece(c.i, c.j, rot);
-            //image.setRotate(c.rot*90);
             event.consume();
-//        	isRotating = false;
+        });
+        
+        rotate.setOnMouseClicked(event -> {
+        	Gui.rotatePiece(c.i, c.j, -1);
+            event.consume();
         });
         
         duplicate.setOnMouseClicked(event -> {
-        	Gui.addPiece(this.clone());
+        	Gui.addPiece(new Piece(c.clone()));
         	event.consume();
         });
         

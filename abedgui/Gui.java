@@ -61,7 +61,7 @@ public class Gui extends Application{
 		
 		mainPane.getChildren().add(gamePane);
 		root.getChildren().add(mainPane);
-		newGame(new Game(6));
+		newGame(new Game(7));
 	}
 
 	public void getLevelSelectPane(){
@@ -87,7 +87,6 @@ public class Gui extends Application{
 	}
 	
 	public static void movePiece(Piece p, int i, int j){
-		System.out.println("+-+-+-+-+-+-+-+-+-+-+-");
 		currentGame.remove(p.c.i, p.c.j);
 		currentGame.add(p.c, i, j);
     	p.setLayoutX(allSquares[i][j].x);
@@ -134,7 +133,7 @@ public class Gui extends Application{
         		
             TreeItem<Label> label = new TreeItem<>(l);
             	
-            label.setGraphic(new ImageView(c.getSprite()));
+            label.setGraphic(new PieceImage(c, 20));
             	
             root.getChildren().get(c.type).getChildren().add(label);
         }

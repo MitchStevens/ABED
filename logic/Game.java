@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import abedgui.Square;
 import static logic.Circuit.flatten;
 import static logic.Circuit.mod4;
+import static java.util.stream.Collectors.toList;
 import data.Reader;
 
 public class Game {
@@ -136,9 +138,9 @@ public class Game {
 			c.updateInputs();
 			//then update the circuits around it that c outputs to (to prevent infinite loops)
 			for(int dir = 0; dir < 4; dir++)
-				if(c.validOutputAtDir(dir) != null){
+				if(c.validOutputAtDir(dir) != null)
 					updateGame(circuitAtDir(c, dir));
-					}
+					
 		} else {
 			for(int dir = 0; dir < 4; dir++){
 				Square s = posAtDir(i, j, dir);
@@ -194,44 +196,59 @@ public class Game {
 		return null;
 	}
 	
-	public Bus outputsAtDir(int dir){
-		Bus tbr = new Bus();
+//	public String toCircuit(){
+//		String tbr = "NAME_WHATEVER";
+//		List<Circuit> outputs = new ArrayList<>();
+//		for(int dir = 0; dir < 4; dir++){
+//			List<Circuit> tempList = circuitsOnEdge(dir)
+//							.stream()
+//							.filter(c -> c.name.equals("Output"))
+//							.collect(toList());
+//			outputs.addAll(tempList);
+//		}
+//		
+//	}
+	
+	public List<Circuit> circuitsOnEdge(int edge){
+		//gets all circuits on a given edge. Ignores corners
+		List<Circuit> tbr = new ArrayList<>();
 		Circuit c;
-		switch(dir){
+		switch(edge){
 		case 0:
-			for(int i = 0; i < n; i++){
-				c = tileGrid[i][0];
-				if(c == null) continue;
-				if(c.name.equals("Output"))
-					tbr.add(c.inputList().get(0));
-			}
+			for(int i = 1; i < n-1; i++)
+				if((c = tileGrid[i][0]) != null)
+					tbr.add(c);
 			break;
 		case 1:
-			for(int j = 0; j < n; j++){
-				c = tileGrid[n-1][j];
-				if(c == null) continue;
-				if(c.name.equals("Output"))
-					tbr.add(c.inputList().get(0));
-			}
+			for(int j = 1; j < n-1; j++)
+				if((c = tileGrid[n-1][j]) != null)
+					tbr.add(c);
 			break;
 		case 2:
-			for(int i = n-1; i >= 0; i--){
-				c = tileGrid[i][n-1];
-				if(c == null) continue;
-				if(c.name.equals("Output"))
-					tbr.add(c.inputList().get(0));
-			}
+			for(int i = n-2; i >= 1; i--)
+				if((c = tileGrid[i][n-1]) != null)
+					tbr.add(c);
 			break;
 		case 3:
-			for(int j = n-1; j >= 0; j--){
-				c = tileGrid[0][j];
-				if(c == null) continue;
-				if(c.name.equals("Output"))
-					tbr.add(c.inputList().get(0));
-			}
+			for(int j = n-2; j >= 1; j--)
+				if((c = tileGrid[0][j]) != null)
+					tbr.add(c);
 			break;
 		}
-		
+		return tbr;
+	}
+	
+	public Bus outputBusAtDir(int dir){
+		List<Circuit> outputs = circuitsOnEdge(dir);
+		outputs = outputs
+				.stream()
+				.filter(c -> c.name.equals("Output"))
+				.collect(toList());
+		Bus tbr = new Bus();
+		for(Circuit c : outputs){
+			tbr.add(c.inputList().get(0));
+		}
+		System.out.println(tbr);
 		return tbr;
 	}
 	

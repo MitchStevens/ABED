@@ -47,6 +47,10 @@ public class Bus{
 		return new Bus(bools);
 	}
 	
+	public boolean isEmpty(){
+		return bools.size() == 0;
+	}
+	
 //	public boolean equals(Object o){
 //		if(!(o instanceof Bus)) return false;
 //		Bus c = (Bus)o;

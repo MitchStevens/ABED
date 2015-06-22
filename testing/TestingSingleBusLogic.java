@@ -42,19 +42,6 @@ public class TestingSingleBusLogic {
 		assertTrue(not2.outputList().get(0));
 		g.add(not, 0, 0);
 		assertFalse(not2.outputList().get(0));
-		//+-+-+-+-+-
-		g.clear();
-		g.add(Circuit.loadedCircuits.get("Input").clone(), 0, 0);
-		g.add(Circuit.loadedCircuits.get("Bus").clone(), 1, 0);
-		g.add(Circuit.loadedCircuits.get("Output").clone(), 2, 0);
-		g.toggle(0, 0);
-		assertTrue(g.outputsAtDir(1).get(0));
-		
-		g.move(1, 0, 1, 1);
-		assertFalse(g.outputsAtDir(1).get(0));
-		
-		g.move(1, 1, 1, 0);
-		assertTrue(g.outputsAtDir(1).get(0));
 	}
 	
 	@Test
@@ -93,17 +80,17 @@ public class TestingSingleBusLogic {
 	@Test
 	public void gameFromString(){
 		Game g = new Game("name;3;Input,1,1,0;Input,0,0,1;And,0,1,1;Output,0,2,1;");
-		assertFalse(g.outputsAtDir(1).get(0));
+		assertFalse(g.outputBusAtDir(1).get(0));
 		g.toggle(0, 1);
 		g.toggle(1, 0);
-		assertTrue(g.outputsAtDir(1).get(0));
+		assertTrue(g.outputBusAtDir(1).get(0));
 		
 		Game xor = Game.loadedGames.get("Xor");
-		assertFalse(xor.outputsAtDir(1).get(0));
+		assertFalse(xor.outputBusAtDir(1).get(0));
 		xor.toggle(0, 2);
-		assertTrue(xor.outputsAtDir(1).get(0));
+		assertTrue(xor.outputBusAtDir(1).get(0));
 		xor.toggle(2, 0);
-		assertFalse(xor.outputsAtDir(1).get(0));
+		assertFalse(xor.outputBusAtDir(1).get(0));
 	}
 	
 	@Test
@@ -156,13 +143,18 @@ public class TestingSingleBusLogic {
 	
 	@Test
 	public void moveTest(){
-		Game g = new Game(2);
-		g.add(Circuit.Input, 0, 0);
-		g.add(Circuit.loadedCircuits.get("Output"), 1, 0);
-		g.toggle(0, 0);
-		assertTrue(g.outputsAtDir(1).get(0));
-		g.move(g.circuitAtPos(1, 0), 1, 1);
-		assertFalse(g.outputsAtDir(1).get(0));
+		Game g = new Game(3);
+		g.add(Circuit.loadedCircuits.get("Input").clone(), 0, 1);
+		g.add(Circuit.loadedCircuits.get("Bus").clone(), 1, 1);
+		g.add(Circuit.loadedCircuits.get("Output").clone(), 2, 1);
+		g.toggle(0, 1);
+		assertTrue(g.outputBusAtDir(1).get(0));
+		
+		g.move(1, 1, 1, 0);
+		assertFalse(g.outputBusAtDir(1).get(0));
+		
+		g.move(1, 0, 1, 1);
+		assertTrue(g.outputBusAtDir(1).get(0));
 	}
 
 }

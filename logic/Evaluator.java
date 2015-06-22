@@ -12,6 +12,16 @@ public class Evaluator {
 		tokens = tokenize(data);
 	}
 	
+	public String toString(List<String> inputs){
+		String tbr = "";
+		for(Token t : tokens)
+			if(t instanceof Flag) {
+				tbr += inputs.get(((Flag)t).i);
+			} else
+				tbr += t.toString();
+		return tbr;
+	}
+	
 	public static List<Token> tokenize(String str) throws Error{
 			ArrayList<Token> tokens = new ArrayList<>();
 			String temp = "";

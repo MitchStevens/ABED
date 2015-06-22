@@ -10,11 +10,11 @@ public class TestingMultiBusLogic {
 	@Test
 	public void basicMultiTest(){
 		Game g = Game.loadedGames.get("MultiTest");
-		assertTrue(!g.outputsAtDir(1).get(0) && !g.outputsAtDir(1).get(1));
-		g.toggle(0, 0);
-		assertTrue(g.outputsAtDir(1).get(0) && !g.outputsAtDir(1).get(1));
+		assertTrue(!g.outputBusAtDir(1).get(0) && !g.outputBusAtDir(1).get(1));
 		g.toggle(0, 1);
-		assertTrue(g.outputsAtDir(1).get(0) && g.outputsAtDir(1).get(1));
+		assertTrue(g.outputBusAtDir(1).get(0) && !g.outputBusAtDir(1).get(1));
+		g.toggle(0, 2);
+		assertTrue(g.outputBusAtDir(1).get(0) && g.outputBusAtDir(1).get(1));
 	}
 	
 	@Test
