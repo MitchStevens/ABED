@@ -28,6 +28,8 @@ public class Circuit{
 	public int type = 0;
 	public Game game;
 	//evals.size should be the same as outputBus.size
+	public List<List<String>> evalStrings = null;
+	//remember to nullify this after converting from game to circuit
 	
 	public Circuit(String datum){
 		//NAME;INPUTS;OUTPUTS;EVALS
@@ -148,9 +150,39 @@ public class Circuit{
 		this.i = i; this.j = j;
 	}
 	
-//	public String logicAtDir(){
-//		
-//	}
+	public String outputAsString(int direction, int index){
+		try{
+			return evalStrings.get(direction).get(index);
+		} catch (ArrayIndexOutOfBoundsException e){}
+		  catch (NullPointerException e){}
+		
+		List<String> inputStr = new ArrayList<>();
+		
+		Circuit parent;
+		for(int dir = 0; dir < 4; dir++){
+			parent = game.circuitAtDir(this, mod4(dir-rot));
+			if(parent == null || this.validInputAtDir(dir) == null)
+				for(int i = 0 ; i < inputBus.get(dir).size(); i++)
+					inputStr.add("F");
+			else
+				for(int i = 0 ; i < inputBus.get(dir).size(); i++){
+					String s = parent.outputAsString(mod4(dir-rot -2 +parent.rot), inputBus.get(dir).size() -(i+1));
+					inputStr.add(s);
+				}
+			}
+		
+		if(name.equals("Output"))
+			return inputStr.get(0);
+		else
+			return evals.get(0).toString(inputStr);
+	}
+	
+	public Integer toIndex(int dir, int index){
+		int num = index;
+		for(int i = 0; i < dir; i++)
+			num += outputBus.get(i).size();
+		return num;
+	}
 	
 	@Override
 	public Circuit clone(){

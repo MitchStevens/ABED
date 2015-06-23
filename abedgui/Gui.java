@@ -61,7 +61,7 @@ public class Gui extends Application{
 		
 		mainPane.getChildren().add(gamePane);
 		root.getChildren().add(mainPane);
-		newGame(new Game(7));
+		newGame(new Game(6));
 	}
 
 	public void getLevelSelectPane(){
@@ -144,7 +144,7 @@ public class Gui extends Application{
         
         Button saveGate = new Button("Save Gate");
         saveGate.setOnMouseClicked(e -> {
-        	System.out.println(currentGame.toString());
+        	System.out.println(currentGame.toCircuit());
         });
         sideBar.getChildren().add(saveGate);
     }

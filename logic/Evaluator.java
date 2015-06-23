@@ -16,11 +16,13 @@ public class Evaluator {
 		String tbr = "";
 		for(Token t : tokens)
 			if(t instanceof Flag) {
-				tbr += inputs.get(((Flag)t).i);
+				tbr += inputs.get(((Flag)t).i)+" ";
 			} else
-				tbr += t.toString();
-		return tbr;
+				tbr += t.toString()+" ";
+		return init(tbr);
 	}
+	
+	public static String init(String s){ return s.substring(0, s.length() -1); }
 	
 	public static List<Token> tokenize(String str) throws Error{
 			ArrayList<Token> tokens = new ArrayList<>();
@@ -45,9 +47,13 @@ public class Evaluator {
 				}
 				
 				switch(curr){
-				case "&": tokens.add(Operation.and); i++; break;
-				case "|": tokens.add(Operation.or);  i++; break;
-				case "~": tokens.add(Operation.not); i++; break;
+				case "&": tokens.add(Operation.and);   i++; break;
+				case "|": tokens.add(Operation.or);    i++; break;
+				case "~": tokens.add(Operation.not);   i++; break;
+				case "t":
+				case "T": tokens.add(new Flag(true));  i++; break;
+				case "f":
+				case "F": tokens.add(new Flag(false)); i++; break;
 				default: throw new Error("Couldn't find symbol \'"+curr+"\'.");
 				}
 				

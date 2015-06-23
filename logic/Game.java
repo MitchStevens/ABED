@@ -1,15 +1,12 @@
 package logic;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import abedgui.Square;
-import static logic.Circuit.flatten;
-import static logic.Circuit.mod4;
 import static java.util.stream.Collectors.toList;
+import static logic.Evaluator.init;
 import data.Reader;
 
 public class Game {
@@ -196,18 +193,33 @@ public class Game {
 		return null;
 	}
 	
-//	public String toCircuit(){
-//		String tbr = "NAME_WHATEVER";
-//		List<Circuit> outputs = new ArrayList<>();
-//		for(int dir = 0; dir < 4; dir++){
-//			List<Circuit> tempList = circuitsOnEdge(dir)
-//							.stream()
-//							.filter(c -> c.name.equals("Output"))
-//							.collect(toList());
-//			outputs.addAll(tempList);
-//		}
-//		
-//	}
+	public String toCircuit(){
+		String tbr = "NAME_WHATEVER;";
+		List<Circuit> inputs = new ArrayList<>();
+		List<Circuit> outputs = new ArrayList<>();
+		List<Circuit> temp;
+		
+		for(int dir = 0; dir < 4; dir++){
+			temp = circuitsOnEdge(dir, "Input");
+			inputs.addAll(temp);
+			tbr += temp.size()+",";
+		}
+		tbr = init(tbr)+";";
+		
+		for(int dir = 0; dir < 4; dir++){
+			temp = circuitsOnEdge(dir, "Output");
+			outputs.addAll(temp);
+			tbr += temp.size()+",";
+		}
+		tbr = init(tbr)+";";
+		
+		for(Circuit c : outputs){
+			String logic = c.outputAsString(1, 0);
+			tbr += logic+",";
+		}
+		
+		return init(tbr);
+	}
 	
 	public List<Circuit> circuitsOnEdge(int edge){
 		//gets all circuits on a given edge. Ignores corners
@@ -237,6 +249,13 @@ public class Game {
 		}
 		return tbr;
 	}
+	
+	public List<Circuit> circuitsOnEdge(int edge, String name){
+		return circuitsOnEdge(edge)
+				.stream()
+				.filter(c -> c.name.equals(name))
+				.collect(toList());
+	} 
 	
 	public Bus outputBusAtDir(int dir){
 		List<Circuit> outputs = circuitsOnEdge(dir);
