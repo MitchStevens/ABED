@@ -44,6 +44,10 @@ public class Incrementor extends HBox{
 		lbl.setText(num+"");
 	}
 	
+	public void setWidth1(double width){
+		lbl.setPrefWidth(width-60);
+	}
+	
 	public void setOnInc(EventHandler<MouseEvent> e){
 		inc.addEventHandler(MouseEvent.MOUSE_CLICKED, e);
 	}

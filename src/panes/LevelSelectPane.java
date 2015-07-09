@@ -32,7 +32,7 @@ public class LevelSelectPane extends Pane {
 	public LevelSelectPane(){
 		xCentre = Gui.boardWidth/2;
 		yCentre = Gui.boardHeight/2;
-		xpos = new double[]{-100, 10, xCentre -300/2, Gui.boardWidth -110, Gui.boardWidth};
+		xpos = new double[]{-100, 10, xCentre -300/2, Gui.boardHeight -110, Gui.boardWidth};
 		ypos = new double[]{yCentre -50, yCentre -50, yCentre -150, yCentre -50, yCentre -50};
 		
 		

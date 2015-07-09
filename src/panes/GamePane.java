@@ -9,6 +9,8 @@ import logic.Bus;
 import logic.Circuit;
 import logic.Game;
 
+import static java.lang.Math.min;
+
 public class GamePane extends Pane {
 
     public static double tileSize = 0;
@@ -16,18 +18,22 @@ public class GamePane extends Pane {
     public static Game currentGame;
     public static Square[][] allSquares;
 	
-    public static double GAME_MARGIN = 50;
-    public static double GAP = 0;
+    public final static double GAME_MARGIN = 50;
+    public final static double GAP = 0;
     public static Circuit levelObjective;
     
     public static GamePane gp;
-	
+    
 	public GamePane(){
 		this.getStylesheets().add("css/GamePane.css");
-    	this.setPrefSize(Gui.boardHeight, Gui.boardHeight);
+    	this.setPrefSize(Gui.boardWidth - Gui.SIDE_BAR_WIDTH, Gui.boardHeight);
     	
     	gp = this;
     	gp.setId("main");
+	}
+	
+	public static void calcTileSize(){
+		tileSize = (min(Gui.boardHeight, Gui.boardWidth - Gui.SIDE_BAR_WIDTH) - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
 	}
 	
 	public static void addPiece(Piece p){
@@ -109,7 +115,7 @@ public class GamePane extends Pane {
     	//loads new game into the gui and sets current game
 		currentGame = g;
 		numTiles = g.n;
-		tileSize = (Gui.boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+		calcTileSize();
     	
     	allSquares = new Square[numTiles][numTiles];
     	SideBarPane.inc.set(numTiles);
@@ -140,7 +146,7 @@ public class GamePane extends Pane {
 		//increments size of board by one
 		if(numTiles == Game.MAX_TILES) return;
 		numTiles++;
-		tileSize = (Gui.boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+		calcTileSize();
 		Square[][] temp = new Square[numTiles][numTiles];
 		
 		//reposition/create new squares in array
@@ -174,7 +180,7 @@ public class GamePane extends Pane {
 		//decrements size of board by one
 		if(numTiles == Game.MIN_TILES) return;
 		numTiles--;
-		tileSize = (Gui.boardHeight - 2*GAME_MARGIN - (numTiles-1)*GAP)/numTiles;
+		calcTileSize();
 		Square[][] temp = new Square[numTiles][numTiles];
 
 		Game g = new Game(numTiles);
@@ -205,6 +211,36 @@ public class GamePane extends Pane {
 			}
 				allSquares = temp;
 				currentGame = g;
+	}
+	
+	public static void resizeHeight(){
+		calcTileSize();
+		gp.setPrefHeight(Gui.boardHeight);
+		for(Object n : gp.getChildren().toArray())
+			if(n instanceof Piece) {
+				Piece p = (Piece)n;
+				p.changePos(allSquares[p.c.i][p.c.j]);
+				p.changeSize();
+			} else if(n instanceof Square) {
+				Square s = (Square)n;
+				s.initialise();
+				allSquares[s.i][s.j] = s;
+			}
+	}
+	
+	public static void resizeWidth(){
+		calcTileSize();
+		gp.setPrefWidth(Gui.boardWidth - Gui.SIDE_BAR_WIDTH);
+		for(Object n : gp.getChildren().toArray())
+			if(n instanceof Piece) {
+				Piece p = (Piece)n;
+				p.changePos(allSquares[p.c.i][p.c.j]);
+				p.changeSize();
+			} else if(n instanceof Square) {
+				Square s = (Square)n;
+				s.initialise();
+				allSquares[s.i][s.j] = s;
+			}
 	}
 	
     public static Square getClosest(double x, double y){

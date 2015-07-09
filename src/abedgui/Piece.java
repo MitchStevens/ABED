@@ -129,6 +129,8 @@ public class Piece extends Parent{
     }
     
     public void changeSize(){
+    	image.init(GamePane.tileSize);
+    	
 		duplicate.setLayoutX(GamePane.tileSize-35);
 		
 		delete.setLayoutX(GamePane.tileSize-20);

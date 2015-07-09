@@ -32,7 +32,8 @@ public class SideBarPane extends GridPane {
 		sb.setId("main");
 		sb.setHgap(10); //horizontal gap in pixels => that's what you are asking for
 		sb.setVgap(10); //vertical gap in pixels
-		defWidth = Gui.boardWidth - Gui.boardHeight;
+		this.setPrefWidth(Gui.SIDE_BAR_WIDTH);
+		defWidth = Gui.SIDE_BAR_WIDTH;
 		this.getStylesheets().add("css/SideBarGui.css");
 		this.setPrefWidth(defWidth);
     	TreeItem<Label> root = new TreeItem<>(new Label("Gates"));
@@ -68,6 +69,7 @@ public class SideBarPane extends GridPane {
         sb.add(gateSelector, 0, 0, 2, 1);
         
         ComboBox<String> cmb = new ComboBox<>();
+        cmb.setPrefWidth(defWidth/2);
         cmb.setId("combobox");
         cmb.getItems().addAll(Game.loadedGames.keySet());
         cmb.setOnAction(e -> {
@@ -78,6 +80,7 @@ public class SideBarPane extends GridPane {
         sb.add(cmb, 1, 1);
         
         inc = new Incrementor(Game.MIN_TILES, Game.MAX_TILES);
+        inc.setWidth1(defWidth/2);
         inc.setOnInc(e -> {
         	GamePane.incSize();
         });
@@ -90,6 +93,7 @@ public class SideBarPane extends GridPane {
         sb.add(inc, 1, 2);
         
         ComboBox<String> cmbo = new ComboBox<>();
+        cmbo.setPrefWidth(defWidth/2);
         cmbo.setId("combobox");
         cmbo.getItems().addAll(Circuit.loadedCircuits.keySet());
         cmbo.setOnAction(e -> {

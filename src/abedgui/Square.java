@@ -11,6 +11,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
+import static java.lang.Math.max;
+
 /**
  * @author Mitch
  */
@@ -35,8 +37,9 @@ public class Square extends Rectangle{
     }
     
     public void initialise(){
-        this.x = GamePane.GAME_MARGIN + i*(GamePane.tileSize + GamePane.GAP);
-        this.y = GamePane.GAME_MARGIN + j*(GamePane.tileSize + GamePane.GAP);
+    	double init = (Gui.boardWidth - Gui.boardHeight - Gui.SIDE_BAR_WIDTH)/2;
+        this.x = max(0, init)  + GamePane.GAME_MARGIN + i*(GamePane.tileSize + GamePane.GAP);
+        this.y = max(0, -init) + GamePane.GAME_MARGIN + j*(GamePane.tileSize + GamePane.GAP);
         //double size = ABEDGUI.getBoard().tileSize;
         this.setHeight(GamePane.tileSize);
         this.setWidth(GamePane.tileSize);

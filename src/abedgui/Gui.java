@@ -4,6 +4,8 @@ import panes.GamePane;
 import panes.SideBarPane;
 import data.Reader;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -20,11 +22,15 @@ import logic.Circuit;
 import logic.Game;
 
 public class Gui extends Application{
-    public Group root;
-    Scene scene;
+    public final static double SIDE_BAR_WIDTH = 300;
+    public final static double MIN_WIDTH = 800;
+    public final static double MIN_HEIGHT = 600;
 	
     public static double boardWidth = 1024;
     public static double boardHeight = 768;
+	
+    public Group root;
+    Scene scene;
 	
     public static SideBarPane sideBar;
     public static GamePane abedPane;
@@ -38,12 +44,12 @@ public class Gui extends Application{
 		primaryStage.setTitle("ABED");
 		root = new Group();
 		scene = new Scene(root, boardWidth, boardHeight);
-		//TODO: use Reader to reference the css file.
-//		scene.getStylesheets().add
-//			(Reader.class.getResource("Gui.css").toExternalForm());
+
 		
 		initaliseBoard();
 		primaryStage.setScene(scene);
+		primaryStage.setMinHeight(MIN_HEIGHT);
+		primaryStage.setMinWidth(MIN_WIDTH);
 		primaryStage.show();
 		g = this;
 	}
@@ -56,12 +62,29 @@ public class Gui extends Application{
 		abedPane = new GamePane();
 		
 		gamePane = new BorderPane();
-		gamePane.setRight(sideBar);
-		gamePane.setCenter(abedPane);
+		gamePane.setLeft(abedPane);
+		gamePane.setCenter(sideBar);
 		
 		mainPane.getChildren().add(gamePane);
 		root.getChildren().add(mainPane);
 		GamePane.newGame(new Game(6));
+		
+		windowResizeListeners();
+	}
+	
+	private void windowResizeListeners(){		
+		scene.widthProperty().addListener(new ChangeListener<Number>() {
+		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneWidth, Number newSceneWidth) {
+		    	boardWidth = (double) newSceneWidth;
+		    	GamePane.resizeWidth();
+		    }
+		});
+		scene.heightProperty().addListener(new ChangeListener<Number>() {
+		    @Override public void changed(ObservableValue<? extends Number> observableValue, Number oldSceneHeight, Number newSceneHeight) {
+		    	boardHeight = (double) newSceneHeight;
+		    	GamePane.resizeHeight();
+		    }
+		});
 	}
 
 	public void getLevelSelectPane(){
