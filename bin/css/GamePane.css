@@ -1,0 +1,15 @@
+#main {
+    -fx-background-color: #121212;
+}
+
+#square0 {
+	-fx-fill: #DDFEFE;
+}
+
+#square1 {
+	-fx-fill: #9FFCFC;
+}
+
+#square2 {
+	-fx-fill: #000000;
+}
