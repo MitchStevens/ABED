@@ -42,7 +42,6 @@ public class Circuit{
 		if(data.length == 4)
 			for(String s : data[3].split(","))
 				evals.add(new Evaluator(s));
-		this.eval();
 		this.rot = 0;
 	}
 	

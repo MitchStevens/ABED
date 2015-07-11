@@ -221,8 +221,6 @@ public class Game {
 			String logic = c.outputAsString(1, 0);
 			tbr += logic+",";
 		}
-		
-		System.out.println(init(tbr));
 		return new Circuit(init(tbr));
 	}
 	

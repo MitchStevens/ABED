@@ -188,7 +188,6 @@ public class TestingSingleBusLogic {
 			else
 				map.put(b, 1);
 		}
-		System.out.println(map);
 	}
 	
 }

@@ -13,12 +13,12 @@ import data.Reader;
 
 public class TestingReader {
 	
-	@Test
-	public void getCircuitsTest(){
-		Map<String, Circuit> list = Reader.loadCircuits();
-		assertTrue(list.size() > 0);
-	}
-	
+//	@Test
+//	public void getCircuitsTest(){
+//		Map<String, Circuit> list = Reader.loadCircuits();
+//		assertTrue(list.size() > 0);
+//	}
+//	
 	@Test
 	public void getImagesTest(){
 		Reader.loadImages();

@@ -109,15 +109,24 @@ public class SideBarPane extends GridPane {
         	Circuit c = GamePane.currentGame.toCircuit();
         });
         sb.add(b1, 0, 4, 2, 1);
-        SideBarPane.setRowSpan(b1, 2);
+        SideBarPane.setColumnSpan(b1, 2);
         
         Button b2 = new Button("Save Gate");
         b2.setPrefWidth(defWidth);
         b2.setOnMouseClicked(e -> {
         	System.out.println(GamePane.currentGame.toString());
         });
-        sb.add(b2, 0, 6, 2, 1);
-        SideBarPane.setRowSpan(b2, 2);
+        sb.add(b2, 0, 5, 2, 1);
+        SideBarPane.setColumnSpan(b2, 2);
+        
+        Button b3 = new Button("Test");
+        b3.setPrefWidth(defWidth);
+        b3.setOnMouseClicked(e -> {
+        	Circuit c = Circuit.loadedCircuits.get("Xor");
+        	System.out.println(c);
+        });
+        sb.add(b3, 0, 6, 2, 1);
+        SideBarPane.setColumnSpan(b3, 2);
 	}
 	
 }

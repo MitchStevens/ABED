@@ -78,7 +78,6 @@ public class Evaluator {
 		for(int i = 0; i < 1000; i++){
 			Bus b = Bus.randomBus(32);
 			if(this.eval(b.toBooleanList()) != e.eval(b.toBooleanList())){
-				System.out.println(this.logic+" != "+e.logic);
 				return false;
 			}
 		}

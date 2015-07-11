@@ -21,59 +21,42 @@ public class Operation extends Token{
     this.name = name;
     this.args = args;
   }
-
-
-//  public void apply(Stack<Token> stack, List<Boolean> list){
-//		List<Boolean> ins = new ArrayList<>();
-//		Circuit c = null;
-//		if(args == null){
-//			c = Circuit.loadedCircuits.get(name).clone();
-//			args = c.inputList().size();
-//		}
-//		
-//		if(stack.size() < args){ throw new Error("");
-//		} else {
-//			for(int i = 0; i < args; i++)
-//				ins.add(((Flag)stack.pop()).get(list));
-//		}
-//	  
-//		switch(name){
-//		case "And": stack.push( new Flag( ins.get(0) && ins.get(1)) ); return;
-//		case "Or":  stack.push( new Flag( ins.get(0) || ins.get(1)) ); return;
-//		case "Not": stack.push( new Flag( !ins.get(0)) );			   return;
-//		default:
-//			if(c != null)
-//				stack.push( new Flag(c.evals.get(0).eval(list)) );
-//			else
-//				throw new Error("Operator \""+name+"\" not found!");
-//		}
-//	}
 	
-  public void apply(Stack<Token> stack, List<Boolean> list){
-	  	Circuit c = null;
-		if(args == null){
-			c = Circuit.loadedCircuits.get(name).clone();
-			args = c.inputList().size();
-		}
+	public void apply(Stack<Token> stack, List<Boolean> list){
 	  
-	  	List<Boolean> ins = new ArrayList<>();
-		if(stack.size() < args){ throw new Error("");
-		} else {
-			for(int i = 0; i < args; i++)
-				ins.add(((Flag)stack.pop()).get(list));
-		}
-	  
+		List<Flag> l;
 		switch(name){
-		case "And": stack.push(new Flag( ins.get(0) && ins.get(1))); return;
-		case "Or": stack.push(new Flag( ins.get(0) || ins.get(1))); return;
-		case "Not": stack.push( new Flag(!ins.get(0)) ); return;
+		case "And":
+			l = popList(stack, 2);
+			stack.push(new Flag( l.get(0).get(list) && l.get(1).get(list))); return;
+		case "Or":
+			l = popList(stack, 2);
+			stack.push(new Flag( l.get(0).get(list) || l.get(1).get(list))); return;
+		case "Not":
+			l = popList(stack, 1);
+			stack.push(new Flag( !l.get(0).get(list) )); return;
 		default:
-			if(c != null)
-				stack.push( new Flag(c.evals.get(0).eval(list)) );
-			else
-				throw new Error("Operator \""+name+"\" not found!");
+			Circuit c = Circuit.loadedCircuits.get(name).clone();
+			if(c != null) {
+				l = popList(stack, c.inputList().size());
+				List<Boolean> b = new ArrayList<>();
+				l.forEach(f -> b.add(f.get(list)));
+				stack.push( new Flag(c.evals.get(0).eval(b)) );
+			} else {
+				throw new Error("Operator \'"+name+"\' not found!");
+			}
 		}
 	}
+  
+  	private static List<Flag> popList(Stack<Token> stack, int num){
+  		List<Flag> tbr = new ArrayList<>();
+		if(stack.size() < num)
+			throw new Error("");
+		else
+			for(int i = 0; i < num; i++)
+				tbr.add((Flag)stack.pop());
+		return tbr;
+  	}
   
 	@Override
 	public String toString() {

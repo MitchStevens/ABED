@@ -116,7 +116,8 @@ public class GamePane extends Pane {
 		currentGame = g;
 		numTiles = g.n;
 		calcTileSize();
-    	
+    	gp.getChildren().clear();
+		
     	allSquares = new Square[numTiles][numTiles];
     	SideBarPane.inc.set(numTiles);
     	
@@ -134,13 +135,6 @@ public class GamePane extends Pane {
     				addPiece(p, c.i, c.j);
     			}
     }
-	
-	public static void changeSize(int size){
-		if(size > numTiles)
-			incSize();
-		else
-			decSize();
-	}
 	
 	public static void incSize(){
 		//increments size of board by one
@@ -173,7 +167,12 @@ public class GamePane extends Pane {
 				s.initialise();
 			}
 		
-		currentGame.n++;
+		Game g = new Game(numTiles);
+		for(int i = 0; i < numTiles-1; i++)
+			for(int j = 0; j < numTiles-1; j++)
+				g.add(currentGame.circuitAtPos(i, j));
+		
+		currentGame = g;
 	}
 	
 	public static void decSize(){
@@ -209,8 +208,8 @@ public class GamePane extends Pane {
 					
 				s.initialise();
 			}
-				allSquares = temp;
-				currentGame = g;
+			allSquares = temp;
+			currentGame = g;
 	}
 	
 	public static void resizeHeight(){
@@ -239,7 +238,6 @@ public class GamePane extends Pane {
 			} else if(n instanceof Square) {
 				Square s = (Square)n;
 				s.initialise();
-				allSquares[s.i][s.j] = s;
 			}
 	}
 	
