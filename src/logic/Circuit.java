@@ -8,6 +8,7 @@ import java.util.Map;
 import abedgui.Square;
 import javafx.scene.image.Image;
 import data.Reader;
+import static logic.Evaluator.init;
 
 public class Circuit{
 	public static Circuit Input = new Input();
@@ -97,7 +98,7 @@ public class Circuit{
 	}
 	
 	public Bus validInputAtDir(int dir){
-		//If there is a valid input from another circuit at dir return it. Else return null.
+		//If there is a valid output from another circuit at dir return it. Else return null.
 		Circuit c = game.circuitAtDir(this, dir);
 		if(c == null) return null;
 		if(inputAtAbsDir(dir).size() == c.outputAtAbsDir(dir-2).size() &&
@@ -149,31 +150,39 @@ public class Circuit{
 		this.i = i; this.j = j;
 	}
 	
-	public String outputAsString(int direction, int index){
-		try{
-			return evalStrings.get(direction).get(index);
-		} catch (ArrayIndexOutOfBoundsException e){}
-		  catch (NullPointerException e){}
-		
-		List<String> inputStr = new ArrayList<>();
+	public String outputAsString(int direction){
+		//given a (relative) direction, return the eval string for the inputs at that direction
+		String tbr = "";
+		System.out.println(name);
 		
 		Circuit parent;
 		for(int dir = 0; dir < 4; dir++){
-			parent = game.circuitAtDir(this, mod4(dir-rot));
-			if(parent == null || this.validInputAtDir(dir) == null)
+			parent = game.circuitAtDir(this, mod4(dir+rot));
+			if(inputBus.get(dir).size() == 0) continue;
+			if(parent == null || this.validInputAtDir(mod4(dir+rot)) == null){
 				for(int i = 0 ; i < inputBus.get(dir).size(); i++)
-					inputStr.add("F");
-			else
+					tbr += "F ";
+				System.out.println(parent+" || "+this.validInputAtDir(mod4(dir-rot)));
+				System.out.println(dir);
+			}else
 				for(int i = 0 ; i < inputBus.get(dir).size(); i++){
-					String s = parent.outputAsString(mod4(dir-rot -2 +parent.rot), inputBus.get(dir).size() -(i+1));
-					inputStr.add(s);
+					String s = parent.outputAsString(mod4(dir-rot -2 +parent.rot));
+					tbr += s+" ";
 				}
-			}
+		}
 		
-		if(name.equals("Output"))
-			return inputStr.get(0);
-		else
-			return evals.get(0).toString(inputStr);
+		switch(name){
+		case "Output":
+		case "Bus":
+		case "Super":
+		case "Right":
+		case "Left":
+			return init(tbr);
+		case "And": return tbr+"&";
+		case "Or": 	return tbr+"|";
+		case "Not": return tbr+"~";
+		default:	return tbr+name;
+		}
 	}
 	
 	public Integer toIndex(int dir, int index){

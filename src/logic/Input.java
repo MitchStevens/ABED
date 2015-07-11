@@ -23,14 +23,14 @@ public class Input extends Circuit{
 		this.game.updateGame(i, j);
 	}
 	
-//	@Override
-//	public String outputAsString(int dir){
-//		Integer in;
-//		if((in = getInputNumber()) != null)
-//			return in+"";
-//		else
-//			return (value?"T":"F");
-//	}
+	@Override
+	public String outputAsString(int dir){
+		Integer in;
+		if((in = getInputNumber()) != null)
+			return in+"";
+		else
+			return (value?"T":"F");
+	}
 	
 	private Integer getInputNumber(){
 		List<Circuit> inputs = new ArrayList<>();

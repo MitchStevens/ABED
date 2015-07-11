@@ -82,10 +82,10 @@ public class SideBarPane extends GridPane {
         inc = new Incrementor(Game.MIN_TILES, Game.MAX_TILES);
         inc.setWidth1(defWidth/2);
         inc.setOnInc(e -> {
-        	GamePane.incSize();
+        	GamePane.incSize(GamePane.numTiles+1);
         });
         inc.setOnDec(e -> {
-        	GamePane.decSize();
+        	GamePane.decSize(GamePane.numTiles-1);
         });
         inc.set(GamePane.numTiles);
         inc.setAlignment(Pos.CENTER_RIGHT);
@@ -103,15 +103,16 @@ public class SideBarPane extends GridPane {
         GridPane.setHalignment(cmbo, HPos.RIGHT);
         sb.add(cmbo, 1, 3);
         
-        Button b1 = new Button("Gate toString()");
+        Button b1 = new Button("Gate toCircuit()");
         b1.setPrefWidth(defWidth);
         b1.setOnMouseClicked(e -> {
         	Circuit c = GamePane.currentGame.toCircuit();
+        	System.out.println(c.evals.get(0).logic);
         });
         sb.add(b1, 0, 4, 2, 1);
         SideBarPane.setColumnSpan(b1, 2);
         
-        Button b2 = new Button("Save Gate");
+        Button b2 = new Button("Gate toString()");
         b2.setPrefWidth(defWidth);
         b2.setOnMouseClicked(e -> {
         	System.out.println(GamePane.currentGame.toString());
@@ -127,6 +128,22 @@ public class SideBarPane extends GridPane {
         });
         sb.add(b3, 0, 6, 2, 1);
         SideBarPane.setColumnSpan(b3, 2);
+        
+        Button b4 = new Button("Print Game");
+        b4.setPrefWidth(defWidth);
+        b4.setOnMouseClicked(e -> {
+        	System.out.println(GamePane.currentGame.printGame());
+        });
+        sb.add(b4, 0, 7, 2, 1);
+        SideBarPane.setColumnSpan(b4, 2);
+        
+        Button b5 = new Button("Clear Game");
+        b5.setPrefWidth(defWidth);
+        b5.setOnMouseClicked(e -> {
+        	GamePane.newGame(new Game(GamePane.numTiles));
+        });
+        sb.add(b5, 0, 8, 2, 1);
+        SideBarPane.setColumnSpan(b5, 2);
 	}
 	
 }

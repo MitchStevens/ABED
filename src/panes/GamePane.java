@@ -9,7 +9,7 @@ import logic.Bus;
 import logic.Circuit;
 import logic.Game;
 
-import static java.lang.Math.min;
+import static java.lang.Math.*;
 
 public class GamePane extends Pane {
 
@@ -103,21 +103,12 @@ public class GamePane extends Pane {
 				((Piece)n).updateImage();
 	}
 	
-//	public static void updatePiece(int i, int j){
-//		Node n = gp.lookup("#("+i+", "+j+")");
-//		if(n != null)
-//			((Piece)n).updateImage();
-//		else
-//			System.out.println("couldn\'t find "+"#("+i+", "+j+")");
-//	}
-	
 	public static void newGame(Game g){
     	//loads new game into the gui and sets current game
 		currentGame = g;
 		numTiles = g.n;
 		calcTileSize();
     	gp.getChildren().clear();
-		
     	allSquares = new Square[numTiles][numTiles];
     	SideBarPane.inc.set(numTiles);
     	
@@ -136,17 +127,18 @@ public class GamePane extends Pane {
     			}
     }
 	
-	public static void incSize(){
-		//increments size of board by one
-		if(numTiles == Game.MAX_TILES) return;
-		numTiles++;
+	public static void incSize(int newSize){
+		//increments size of board
+		if(newSize > Game.MAX_TILES || newSize == numTiles) return;
+		int oldSize = numTiles;
+		numTiles = newSize;
 		calcTileSize();
 		Square[][] temp = new Square[numTiles][numTiles];
 		
 		//reposition/create new squares in array
 		for(int i = 0; i < numTiles; i++)
 			for(int j = 0; j < numTiles; j++)
-				if(i >= numTiles-1 || j >= numTiles-1){
+				if(i >= oldSize || j >= oldSize){
 					temp[i][j] = new Square(i, j);
 	    			gp.getChildren().add(temp[i][j]);
 				}else{
@@ -168,17 +160,20 @@ public class GamePane extends Pane {
 			}
 		
 		Game g = new Game(numTiles);
-		for(int i = 0; i < numTiles-1; i++)
-			for(int j = 0; j < numTiles-1; j++)
-				g.add(currentGame.circuitAtPos(i, j));
+		for(int i = 0; i < oldSize; i++)
+			for(int j = 0; j < oldSize; j++){
+				Circuit c = currentGame.circuitAtPos(i, j);
+				if(c != null)
+					g.add(c, c.i, c.j);
+			}
 		
 		currentGame = g;
 	}
 	
-	public static void decSize(){
+	public static void decSize(int newSize){
 		//decrements size of board by one
-		if(numTiles == Game.MIN_TILES) return;
-		numTiles--;
+		if(newSize < Game.MIN_TILES || newSize == numTiles) return;
+		numTiles = newSize;
 		calcTileSize();
 		Square[][] temp = new Square[numTiles][numTiles];
 

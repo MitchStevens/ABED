@@ -218,7 +218,7 @@ public class Game {
 		tbr = init(tbr)+";";
 		
 		for(Circuit c : outputs){
-			String logic = c.outputAsString(1, 0);
+			String logic = c.outputAsString(1);
 			tbr += logic+",";
 		}
 		return new Circuit(init(tbr));
