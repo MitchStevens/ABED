@@ -153,7 +153,6 @@ public class Circuit{
 	public String outputAsString(int direction){
 		//given a (relative) direction, return the eval string for the inputs at that direction
 		String tbr = "";
-		System.out.println(name);
 		
 		Circuit parent;
 		for(int dir = 0; dir < 4; dir++){
@@ -162,8 +161,6 @@ public class Circuit{
 			if(parent == null || this.validInputAtDir(mod4(dir+rot)) == null){
 				for(int i = 0 ; i < inputBus.get(dir).size(); i++)
 					tbr += "F ";
-				System.out.println(parent+" || "+this.validInputAtDir(mod4(dir-rot)));
-				System.out.println(dir);
 			}else
 				for(int i = 0 ; i < inputBus.get(dir).size(); i++){
 					String s = parent.outputAsString(mod4(dir-rot -2 +parent.rot));
@@ -208,6 +205,18 @@ public class Circuit{
 				return false;
 		if(j != null)
 			if(!j.equals(c.j))
+				return false;
+		return true;
+	}
+	
+	public boolean equiv(Circuit c){
+		for(int i = 0; i < 4; i++){
+			if(inputBus.get(i).size()  != c.inputBus.get(i).size())  return false;
+			if(outputBus.get(i).size() != c.outputBus.get(i).size()) return false;
+		}
+		if(this.evals.size() != c.evals.size()) return false;
+		for(int i = 0; i < evals.size(); i++)
+			if(!evals.get(i).equiv(c.evals.get(i)))
 				return false;
 		return true;
 	}

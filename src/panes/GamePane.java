@@ -78,24 +78,11 @@ public class GamePane extends Pane {
 		levelObjective = c;
 	}
 	
-//	public boolean isLevelComplete(){
-//		//Uses a probibalistic algorithm to check if Game and circuit are equivalent
-//		Circuit c = currentGame.toCircuit();
-//		if(c.inputList().size() > 8) return false;
-//		
-//		for(int i = 0; i < 4; i++){
-//			if(levelObjective.inputBus.get(i).size() != c.inputBus.get(i).size())
-//				return false;
-//			if(levelObjective.outputBus.get(i).size() != c.outputBus.get(i).size())
-//				return false;
-//		}
-//		
-//		for(Bus b : Bus.generateBuses(c.inputList().size())){
-//			
-//		}
-//		
-//		
-//	}
+	public static boolean isLevelComplete(){
+		Circuit c = currentGame.toCircuit();
+		if(levelObjective == null) return false;
+		return levelObjective.equiv(c);
+	}
 	
 	public static void updateBoard(){
 		for(Node n : gp.getChildren())

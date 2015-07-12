@@ -80,12 +80,16 @@ public class Reader {
 	}
 	
 	public static Font loadFont(String s){
+		return loadFont(s, 18);
+	}
+	
+	public static Font loadFont(String s, int size){
 		Path path = FileSystems.getDefault().getPath("src", "fonts", s);
 		try {
-			return Font.loadFont(new FileInputStream(path.toFile()), 18);
+			return Font.loadFont(new FileInputStream(path.toFile()), size);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			return Font.font("Arial", 18);
+			return Font.font("Arial", size);
 		}
 	}
 	

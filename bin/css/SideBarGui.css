@@ -6,6 +6,18 @@
 	-fx-text-fill: #000000;
 }
 
+.label:hover {
+	
+}
+
+.label:pressed {
+	
+}
+
+.button:focused{
+	
+}
+
 .combo-box {
 	-fx-graphic-hpos: right;
 	-fx-graphic-vpos: top;

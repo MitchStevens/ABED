@@ -1,7 +1,6 @@
 package abedgui;
 
-import panes.GamePane;
-import panes.SideBarPane;
+import panes.*;
 import data.Reader;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -15,6 +14,7 @@ import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -35,7 +35,11 @@ public class Gui extends Application{
     public static SideBarPane sideBar;
     public static GamePane abedPane;
     public static BorderPane gamePane;
-    public static Pane levelSelectPane;
+    
+    public static TitlePane titlePane;
+    
+    public static LevelSelectPane levelSelectPane;
+    
     public static Pane mainPane;
     public static Gui g;
 
@@ -56,7 +60,6 @@ public class Gui extends Application{
 	
 	private void initaliseBoard(){
 		mainPane = new Pane();
-		//mainPane.getChildren().add(new GuiLevelSelect());
 		
 		sideBar = new SideBarPane();
 		abedPane = new GamePane();
@@ -64,6 +67,10 @@ public class Gui extends Application{
 		gamePane = new BorderPane();
 		gamePane.setLeft(abedPane);
 		gamePane.setCenter(sideBar);
+		
+		titlePane = new TitlePane();
+		levelSelectPane = new LevelSelectPane();
+		
 		
 		mainPane.getChildren().add(gamePane);
 		root.getChildren().add(mainPane);
@@ -85,10 +92,6 @@ public class Gui extends Application{
 		    	GamePane.resizeHeight();
 		    }
 		});
-	}
-
-	public void getLevelSelectPane(){
-		levelSelectPane = new VBox();
 	}
     
     public static void open() {Application.launch();}

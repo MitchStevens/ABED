@@ -34,24 +34,57 @@ public class PieceImage extends Pane{
 	
 	public void init(double size){
 		this.size = size;
-		image.setFitHeight(size);
-		image.setFitWidth(size);
+		image.setFitHeight(size/2);
+		image.setFitWidth(size/2);
+		image.setLayoutX(size*0.25);
+		image.setLayoutY(size*0.25);
 	}
+        
+        public void circuitBuilder(Circuit c) {
+            for(int dir = 0; dir < 4; dir++)
+                if(c.inputBus.get(dir).size() > 0){
+                    ImageView img = new ImageView();
+                    
+                    if(c.inputBus.get(dir).get(0))
+                        img.setImage(resample(Circuit.loadedImages.get("PipeIn_On")));
+                    else img.setImage(resample(Circuit.loadedImages.get("PipeIn_Off")));
+                    
+                    img.setRotate(90*dir+(c.rot*90));
+                    img.setFitHeight(size);
+                    img.setFitWidth(size);
+                    this.getChildren().add(img);
+                }
+            
+            for(int dir = 0; dir < 4; dir++)
+                if(c.outputBus.get(dir).size() > 0){
+                    ImageView img = new ImageView();
+                    
+                    if(c.outputBus.get(dir).get(0))
+                        img.setImage(resample(Circuit.loadedImages.get("PipeOut_On")));
+                    else img.setImage(resample(Circuit.loadedImages.get("PipeOut_Off")));
+                    
+                    img.setRotate(90*dir+(c.rot*90));
+                    img.setFitHeight(size);
+                    img.setFitWidth(size);
+                    this.getChildren().add(img);
+                }
+            
+        }
 	
 	public void update(Circuit c){
-		String s = c.name;
-		if(c instanceof Input){
-			if(((Input)c).outputList().get(0))
-				s += "1";
-			else s += "0";
-		} else{
-			for(Boolean b : c.inputList())
-				s += (b ? "1" : "0");}
-				
+  		String s = c.name;
+                this.getChildren().clear();
+                this.getChildren().add(image);
+                if("Bus".equals(s) || "Left".equals(s) || "Right".equals(s)){
+                    image.setRotate(c.rot*90);
+                }
+                circuitBuilder(c);
 		if(Circuit.loadedImages.containsKey(s)){
 			image.setImage(resample(Circuit.loadedImages.get(s)));
 		} else image.setImage(Circuit.loadedImages.get("EmptyGate"));
-		image.setRotate(90*c.rot);
+                image.toFront();
+                
+
 	}
 	
 	//taken from https://gist.github.com/jewelsea/5415891

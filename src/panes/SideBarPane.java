@@ -1,5 +1,6 @@
 package panes;
 
+import data.Reader;
 import abedgui.Gui;
 import abedgui.Incrementor;
 import abedgui.Piece;
@@ -14,6 +15,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -23,9 +26,16 @@ import logic.Circuit;
 import logic.Game;
 
 public class SideBarPane extends GridPane {
+	private final double ICON_SIZE = 30;
+	
 	public static SideBarPane sb;
 	public static Incrementor inc;
 	public static double defWidth;
+	public static Font adbxtsc = Reader.loadFont("adbxtsc.ttf");
+	
+//	{
+//		sb.setStyle(value);
+//	}
 	
 	public SideBarPane(){
 		sb = this;
@@ -36,34 +46,42 @@ public class SideBarPane extends GridPane {
 		defWidth = Gui.SIDE_BAR_WIDTH;
 		this.getStylesheets().add("css/SideBarGui.css");
 		this.setPrefWidth(defWidth);
-    	TreeItem<Label> root = new TreeItem<>(new Label("Gates"));
+		
+    	TreeItem<Node> root = new TreeItem<>(new Label("Gates"));
         
-        for(int i = 0; i < Circuit.circuitTypes.length; i++)
-        	root.getChildren().add(new TreeItem<>(new Label(Circuit.circuitTypes[i])));
+        for(int i = 0; i < Circuit.circuitTypes.length; i++){
+    		Label headLabel = new Label(Circuit.circuitTypes[i]);
+    		headLabel.setFont(adbxtsc);
+    		root.getChildren().add(new TreeItem<>(headLabel));
+        }
         
         for(Circuit c : Circuit.loadedCircuits.values()){
+        	HBox hbox = new HBox();
+        	
         	Label l = new Label(c.name);
-            	
-        	l.setOnMouseClicked(e -> {
+        	l.setFont(adbxtsc);
+        	l.setAlignment(Pos.CENTER_LEFT);
+        	
+            Image img = Circuit.loadedImages.get(c.name);
+            if(img != null){
+            	ImageView view = new ImageView(img);
+            	view.setFitHeight(ICON_SIZE);
+            	view.setFitWidth(ICON_SIZE);
+            	l.setGraphic(view);
+            }
+            
+        	hbox.getChildren().add(l);
+        	
+        	hbox.setOnMouseClicked(e -> {
         		GamePane.addPiece(new Piece(c.clone()));
           	});
+        	
+            TreeItem<Node> label = new TreeItem<>(hbox);
             
-        	l.setOnMouseEntered(e -> {
-            	l.setFont(new Font(l.getFont().getSize() +2));
-      		});
-            
-        	l.setOnMouseExited(e -> {
-        		l.setFont(new Font(l.getFont().getSize() -2));
-        	});
-        		
-            TreeItem<Label> label = new TreeItem<>(l);
-            	
-            label.setGraphic(new PieceImage(c, 20));
-            	
             root.getChildren().get(c.type).getChildren().add(label);
         }
         
-        TreeView<Label> gateSelector = new TreeView<>(root);
+        TreeView<Node> gateSelector = new TreeView<>(root);
         gateSelector.setShowRoot(false);
         gateSelector.setPrefSize(defWidth, 300);
         sb.add(gateSelector, 0, 0, 2, 1);
@@ -120,11 +138,10 @@ public class SideBarPane extends GridPane {
         sb.add(b2, 0, 5, 2, 1);
         SideBarPane.setColumnSpan(b2, 2);
         
-        Button b3 = new Button("Test");
+        Button b3 = new Button("isLevelComplete");
         b3.setPrefWidth(defWidth);
         b3.setOnMouseClicked(e -> {
-        	Circuit c = Circuit.loadedCircuits.get("Xor");
-        	System.out.println(c);
+        	System.out.println(GamePane.isLevelComplete());
         });
         sb.add(b3, 0, 6, 2, 1);
         SideBarPane.setColumnSpan(b3, 2);
