@@ -14,7 +14,7 @@ import static java.lang.Math.*;
 public class GamePane extends Pane {
 
     public static double tileSize = 0;
-    public static int numTiles = 6;
+    public static int numTiles = 3;
     public static Game currentGame;
     public static Square[][] allSquares;
 	
@@ -139,7 +139,7 @@ public class GamePane extends Pane {
 			if(n instanceof Piece){
 				Piece p = (Piece)n;
 				p.changePos(allSquares[p.c.i][p.c.j]);
-				p.changeSize();
+				p.onResize();
 				p.image.init(tileSize);
 			} else if( n instanceof Square){
 				Square s = (Square)n;
@@ -171,7 +171,7 @@ public class GamePane extends Pane {
 				Piece p = (Piece)n;
 				if(p.c.i < numTiles && p.c.j < numTiles){
 					p.changePos(allSquares[p.c.i][p.c.j]);
-					p.changeSize();
+					p.onResize();
 					g.add(p.c, p.c.i, p.c.j);
 				} else {
 					gp.removePiece(p);
@@ -201,7 +201,7 @@ public class GamePane extends Pane {
 			if(n instanceof Piece) {
 				Piece p = (Piece)n;
 				p.changePos(allSquares[p.c.i][p.c.j]);
-				p.changeSize();
+				p.onResize();
 			} else if(n instanceof Square) {
 				Square s = (Square)n;
 				s.initialise();
@@ -216,7 +216,7 @@ public class GamePane extends Pane {
 			if(n instanceof Piece) {
 				Piece p = (Piece)n;
 				p.changePos(allSquares[p.c.i][p.c.j]);
-				p.changeSize();
+				p.onResize();
 			} else if(n instanceof Square) {
 				Square s = (Square)n;
 				s.initialise();

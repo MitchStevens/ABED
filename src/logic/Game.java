@@ -89,7 +89,18 @@ public class Game {
 	}
 	
 	public void rotate(int i, int j, int rot){
-		tileGrid[i][j].addRot(rot);
+		/* adds rot to circuit in game
+		 * ORiginal code
+		 * tileGrid[i][j].addRot(rot);
+		 * updateGame(i, j);
+		 * I shouldn't have to go to all this trouble to rotate a tile. Why aren't the children
+		 * of the circuit picking up on the rotational change?
+		 * */
+		Circuit c = tileGrid[i][j];
+		remove(i, j);
+		c.addRot(rot);
+		add(c, i, j);
+		
 		updateGame(i, j);
 	}
 	
@@ -137,10 +148,9 @@ public class Game {
 			c.updateInputs();
 			//then update the circuits around it that c outputs to (to prevent infinite loops)
 			for(int dir = 0; dir < 4; dir++)
-				if(c.validOutputAtDir(dir) != null)
+				if(c.validOutputAtDir(dir) != null){
 					updateGame(circuitAtDir(c, dir));
-//				else
-//					circuitAtDir(c, dir).updateInputs();
+				}
 					
 		} else {
 			for(int dir = 0; dir < 4; dir++){

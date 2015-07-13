@@ -68,7 +68,7 @@ public class Reader {
 			     public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
 					Image image = new Image(new FileInputStream(path.toFile()));
 					String name = path.toFile().getName();
-			        images.put(name.substring(0, name.length()-4), image);
+			        images.put(name.substring(0, name.length()-4), resample(image));
 			        return FileVisitResult.CONTINUE;
 			     }
 			});
@@ -78,6 +78,30 @@ public class Reader {
 		}
 		return Collections.unmodifiableMap(images);
 	}
+	
+	//taken from https://gist.github.com/jewelsea/5415891
+    public static Image resample(Image input) {
+        final int W = (int) input.getWidth();
+        final int H = (int) input.getHeight();
+        final int S = 5;
+        WritableImage output = new WritableImage(
+            W * S,
+            H * S
+        );
+        PixelReader reader = input.getPixelReader();
+        PixelWriter writer = output.getPixelWriter();
+        for (int y = 0; y < H; y++) {
+            for (int x = 0; x < W; x++) {
+            final int argb = reader.getArgb(x, y);
+                for (int dy = 0; dy < S; dy++) {
+                    for (int dx = 0; dx < S; dx++) {
+                        writer.setArgb(x * S + dx, y * S + dy, argb);
+                    }
+                }
+            }
+        }
+        return output;
+    }
 	
 	public static Font loadFont(String s){
 		return loadFont(s, 18);

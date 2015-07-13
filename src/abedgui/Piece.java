@@ -5,12 +5,13 @@ import data.Reader;
 import javafx.animation.RotateTransition;
 import javafx.scene.*;
 import javafx.scene.image.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import logic.Circuit;
 
-public class Piece extends Parent{
+public class Piece extends Pane {
 	public static Font adbxtsc = Reader.loadFont("adbxtsc.ttf");
 	
     public PieceImage image;
@@ -51,7 +52,7 @@ public class Piece extends Parent{
 		gateName.setLayoutY(GamePane.tileSize);
 		this.getChildren().add(gateName);
 		
-		rotate.setImage(PieceImage.resample(Circuit.loadedImages.get("rotateSymbol")));
+		rotate.setImage(Circuit.loadedImages.get("rotateSymbol"));
 		rotate.setFitHeight(30);
 		rotate.setFitWidth(30);
 		rotate.setLayoutX(GamePane.tileSize-30);
@@ -128,8 +129,8 @@ public class Piece extends Parent{
         updateImage();
     }
     
-    public void changeSize(){
-    	image.init(GamePane.tileSize);
+    public void onResize(){
+    	this.image.onResize(c);
     	
 		duplicate.setLayoutX(GamePane.tileSize-35);
 		

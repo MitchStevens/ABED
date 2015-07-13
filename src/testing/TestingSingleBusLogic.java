@@ -75,6 +75,30 @@ public class TestingSingleBusLogic {
 		assertTrue(!not2.outputList().get(0));
 		//+-+-+-+-+-
 		g.clear();
+		not.setRot(0);
+		g.add(not, 1, 1);
+		out.setRot(0);
+		g.add(out, 2, 1);
+		System.out.println(g.printGame());
+		assertTrue(g.outputBusAtDir(1).get(0));
+		
+		g.rotate(1, 1, 1);
+		System.out.println(g.printGame());
+		assertFalse(g.outputBusAtDir(1).get(0));
+		
+		g.rotate(1, 1, 1);
+		System.out.println(g.printGame());
+		assertFalse(g.outputBusAtDir(1).get(0));
+		
+		g.rotate(1, 1, 1);
+		System.out.println(g.printGame());
+		assertFalse(g.outputBusAtDir(1).get(0));
+		
+		g.rotate(1, 1, 1);
+		System.out.println(g.printGame());
+		assertTrue(g.outputBusAtDir(1).get(0));
+		//+-+-+-+-+-
+		g.clear();
 		not.setRot(1);
 		not2 = Circuit.loadedCircuits.get("Not").clone();
 		not2.setRot(0);
@@ -169,8 +193,8 @@ public class TestingSingleBusLogic {
 	@Test
 	public void generateBusTest(){
 		List<Bus> buses = Bus.generateBuses(4);
-		for(int i = 0; i < 16; i++)
-			for(int j = 0; j < 16; j++)
+		for(int i = 0; i < 8; i++)
+			for(int j = 0; j < 8; j++)
 				if(i != j)
 					assertFalse(buses.get(i).equals(buses.get(j)));
 				else

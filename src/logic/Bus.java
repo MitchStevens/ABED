@@ -82,6 +82,13 @@ public class Bus{
 		return bools.size() == 0;
 	}
 	
+	public boolean or(){
+		//returns true if at least one bool is true
+		for(Boolean b : bools)
+			if(b) return true;
+		return false;
+	}
+	
 	@Override
 	public boolean equals(Object o){
 		if(!(o instanceof Bus)) return false;

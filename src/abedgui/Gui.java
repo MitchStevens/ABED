@@ -74,7 +74,7 @@ public class Gui extends Application{
 		
 		mainPane.getChildren().add(gamePane);
 		root.getChildren().add(mainPane);
-		GamePane.newGame(new Game(6));
+		GamePane.newGame(new Game(3));
 		
 		windowResizeListeners();
 	}
