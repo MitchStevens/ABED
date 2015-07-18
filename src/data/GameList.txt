@@ -1,5 +1,0 @@
-LeftyGame;3;Input,1,1,0;Left,1,1,1;Output,0,2,1;
-Game1;3;Input,0,0,1;Input,1,1,0;And,0,1,1;Output,0,2,1;
-Xor;7;Input,1,2,0;Super,1,2,1;Bus,0,3,1;Right,0,4,1;Input,0,0,2;Super,0,1,2;Nand,0,2,2;Super,0,3,2;Nand,0,4,2;Right,0,5,2;Left,1,1,3;Bus,0,2,3;Nand,0,3,3;Bus,0,4,3;Nand,0,5,3;Output,0,6,3
-MultiTest;4;Input,0,0,1;Right,0,1,1;Right,3,2,1;Output,0,3,1;Input,0,0,2;Merge2,0,1,2;Branch2,0,2,2;Output,0,3,2;
-2_bit_Adder;6;Input,1,1,0;Input,1,3,0;Input,0,0,1;Cross_Over,0,1,1;Bus,0,2,1;Half_Adder,0,3,1;Bus,0,4,1;Output,0,5,1;Bus,1,1,2;Bus,1,3,2;Input,0,0,3;Half_Adder,0,1,3;Bus,0,2,3;Half_Adder,0,3,3;Bus,0,4,3;Output,0,5,3;Left,1,1,4;Bus,0,2,4;Or,0,3,4;Right,0,4,4;Output,1,4,5;

@@ -7,9 +7,9 @@ import org.junit.Test;
 import javafx.scene.layout.Pane;
 
 public class TestingGui {
-	
+
 	@Test
-	public void lookupTest(){
+	public void lookupTest() {
 		Pane p = new Pane();
 		Pane q = new Pane();
 		q.setId("ID1");

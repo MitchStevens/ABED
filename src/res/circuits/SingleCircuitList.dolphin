@@ -1,0 +1,10 @@
+Super;0,0,0,1;1,1,1,0;0,0,0
+Nand;1,0,0,1;0,1,0,0;0 1 & ~
+Nor;1,0,0,1;0,1,0,0;0 1 | Not>0
+Xor;1,0,0,1;0,1,0,0;0 1 ~ & 0 ~ 1 & |
+Half_Adder;1,0,0,1;0,1,1,0;0 1 ~ & 0 ~ 1 & |,0 1 &
+Corner_Cut;1,0,0,1;0,1,1,0;0,1
+Cross_Over;1,0,0,1;0,1,1,0;1,0
+Implies;1,0,0,1;0,1,0,0;0 ~ 1 |
+CImplies;1,0,0,1;0,1,0,0;1 ~ 0 |
+SuperClone;0,0,0,2;2,2,2,0;1 0 Cross_Over>1,1 0 Cross_Over>0,1 0 Cross_Over>0,1 0 Cross_Over>0 0 Cross_Over>1,1 0 Cross_Over>0 0 Cross_Over>0,0,
