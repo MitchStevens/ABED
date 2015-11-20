@@ -1,0 +1,10 @@
+#message {
+	-fx-background-color: #8FECEC;
+}
+
+.Button {
+    -fx-background-color: white;
+    -fx-background-insets: 0,1,2;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 5, 0.0 , 0 , 1 );
+}

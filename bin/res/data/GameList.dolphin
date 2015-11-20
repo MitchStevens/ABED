@@ -5,6 +5,3 @@ MultiTest;4;Input,0,0,1;Right,0,1,1;Right,3,2,1;Output,0,3,1;Input,0,0,2;Merge2,
 2_bit_Adder;6;Input,1,1,0;Input,1,3,0;Input,0,0,1;Cross_Over,0,1,1;Bus,0,2,1;Half_Adder,0,3,1;Bus,0,4,1;Output,0,5,1;Bus,1,1,2;Bus,1,3,2;Input,0,0,3;Half_Adder,0,1,3;Bus,0,2,3;Half_Adder,0,3,3;Bus,0,4,3;Output,0,5,3;Left,1,1,4;Bus,0,2,4;Or,0,3,4;Right,0,4,4;Output,1,4,5;
 Super2;4;Output,3,1,0;Output,3,2,0;Input,0,0,1;Cross_Over,3,1,1;Super,0,2,1;Output,0,3,1;Input,0,0,2;Super,0,1,2;Cross_Over,0,2,2;Output,0,3,2;Output,1,1,3;Output,1,2,3;
 4_WAY_GAME;6;Input,0,0,1;Right,0,1,1;Right,3,4,1;Output,0,5,1;Input,0,0,2;Merge2,0,1,2;Right2,0,2,2;Right2,3,3,2;Branch2,0,4,2;Output,0,5,2;Input,0,0,3;Right,0,1,3;Bus2,1,2,3;Bus2,3,3,3;Right,3,4,3;Output,0,5,3;Input,0,0,4;Merge2,0,1,4;Merge4,0,2,4;Branch4,0,3,4;Branch2,0,4,4;Output,0,5,4;
-4_WAY_AND;6;Input,1,2,0;Input,1,3,0;Input,0,0,1;Right,0,1,1;Merge2,1,2,1;Right,1,3,1;Right,3,4,1;Output,0,5,1;Input,0,0,2;Merge2,0,1,2;And2,0,2,2;Bus2,0,3,2;Branch2,0,4,2;Output,0,5,2;
-baby_town;4;Input,0,0,1;Not,0,1,1;Not,0,2,1;Output,0,3,1;
-Super2Also;6;Output,3,2,0;Output,3,3,0;Bus,3,2,1;Bus,3,3,1;Input,0,0,2;Right,0,1,2;Right,2,2,2;Branch2,3,3,2;Right,3,4,2;Output,0,5,2;Input,0,0,3;Merge2,0,1,3;Bus2,0,2,3;Super2,0,3,3;Branch2,0,4,3;Output,0,5,3;Branch2,1,3,4;Right,0,4,4;Output,1,3,5;Output,1,4,5;
