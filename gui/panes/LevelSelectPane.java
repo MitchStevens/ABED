@@ -2,26 +2,15 @@ package panes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
+import tutorials.*;
 import circuits.Circuit;
 import abedgui.Gui;
-import javafx.animation.FadeTransition;
-import javafx.animation.ParallelTransition;
-import javafx.animation.ScaleTransition;
-import javafx.animation.SequentialTransition;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
@@ -38,9 +27,9 @@ import logic.Level;
 import logic.Reader;
 
 public class LevelSelectPane extends Pane implements SetChangeListener<Level> {
-	private static final double COL_WIDTH = 1.0/3.0;
-	private static final Font TITLE_FONT = Reader.loadFont("adbxtsc.ttf", 45);
-	private static final Font LEVEL_FONT = Reader.loadFont("Aux DotBitC.ttf", 30);
+	private static final double COL_WIDTH 	= 1.0/3.0;
+	private static final Font 	TITLE_FONT 	= Reader.loadFont("adbxtsc.ttf", 45);
+	private static final Font 	LEVEL_FONT 	= Reader.loadFont("Aux DotBitC.ttf", 30);
 	
 	public static final String[] levelTitles = new String[]{
 		"Tutorial",

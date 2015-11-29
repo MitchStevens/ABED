@@ -183,4 +183,9 @@ public class Reader {
 			return new ArrayList<String>();
 		}
 	}
+	
+	public static String loadCSS(String css){
+		return "res/css/"+css;
+	}
+
 }

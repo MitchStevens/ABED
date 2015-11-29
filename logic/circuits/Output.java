@@ -9,7 +9,7 @@ public class Output extends Circuit {
 		this.initData = "";
 		this.name = "Output";
 		this.evals = new ArrayList<>();
-		this.buses.set(3, new BusIn(this, 1, 3));
+		initBuses("0,0,0,1", "0,0,0,0");
 		this.rot = 0;
 	}
 	

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import panes.GamePane;
 import circuits.Circuit;
 import circuits.Coord;
 import javafx.collections.FXCollections;
@@ -14,18 +15,18 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 public class Level {
-	public static List<Level> ALL_LEVELS;
-	public static ObservableSet<Level> unlockedLevels;
+	public static 	List<Level> 			ALL_LEVELS;
+	public static 	ObservableSet<Level> 	unlockedLevels;
 	//public static ObservableSet<Level> completedLevels = FXCollections.observableSet();
 	
-	String datum;
-	public String name;
-	public Circuit objective;
-	public List<Circuit> circuitRewards;
-	public List<String> levelRewards;
-	public String goalText;
-	public Integer gameSize;
-	public Coord tuple;
+	public			String 					datum;
+	public 			String 					name;
+	public 			Circuit 				objective;
+	public 			List<Circuit> 			circuitRewards;
+	public 			List<String> 			levelRewards;
+	public 			String 					goalText;
+	public 			Integer 				gameSize;
+	public 			Coord 					tuple;
 	
 	static {
 		ALL_LEVELS = Reader.loadLevels();
@@ -75,7 +76,7 @@ public class Level {
 	
 	public void onCompletion(){
 		for(Circuit c : circuitRewards)
-			Circuit.unlockedCircuits.add(c);
+			GamePane.unlockedCircuits.add(c);
 		
 		for(String s : levelRewards){
 			List<Level> list = search( lvl -> {return lvl.name.equals(s);} );
@@ -105,12 +106,12 @@ public class Level {
 	@Override
 	public int hashCode(){
 		int hash = 101;
-		hash += 2*name.hashCode();
-		hash += 3*objective.hashCode();
-		hash += 5*circuitRewards.hashCode();
-		hash += 7*levelRewards.hashCode();
-		hash += 11*goalText.hashCode();
-		hash += 13*gameSize.hashCode();
+		hash *= 2*name.hashCode();
+		hash *= 3*objective.hashCode();
+		hash *= 5*circuitRewards.hashCode();
+		hash *= 7*levelRewards.hashCode();
+		hash *= 11*goalText.hashCode();
+		hash *= 13*gameSize.hashCode();
 		return hash;
 	}
 	

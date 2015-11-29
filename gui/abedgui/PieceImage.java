@@ -144,17 +144,26 @@ public class PieceImage extends Pane implements Observer{
 	public void addPieceBuses(Circuit c) {
 		buses = new PieceBus[4];
 		
-		for (int dir = 0; dir < 4; dir++){
-			buses[dir] = new PieceBus(this, dir);
-			buses[dir].setRotate(dir * 90);
-			if(c instanceof Cable)
-				buses[dir].toggleable = true;
+		switch(c.name){
+		case "Cable":			
+			for (int dir = 0; dir <= 2; dir++){
+				buses[dir] = new PieceToggleableBus(this, dir);
+				buses[dir].setRotate(dir * 90);
+			}
+			
+			buses[3] = new PieceBus(this, 3);
+			buses[3].setRotate(3 * 90);
+			break;
+		default:
+			for (int dir = 0; dir < 4; dir++){
+				buses[dir] = new PieceBus(this, dir);
+				buses[dir].setRotate(dir * 90);
+			}	
 		}
 
 		setPieceBusPos();
 		for (PieceBus pb : buses)
-			if (pb != null)
-				this.getChildren().add(pb);
+			this.getChildren().add(pb);
 	}
 
 	private void setPieceBusPos() {

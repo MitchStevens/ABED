@@ -1,22 +1,26 @@
 package circuits;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
 public abstract class Bus extends Observable implements Observer{
-	public int size, dir;
-	public Circuit c;
+	public 			int size, dir;
+	public 			Circuit c;
 	
-	// List functions
-	public Boolean get(int i) { return toBooleanList().get(i); } 
-	
+	// List functions	
 	public abstract List<Boolean> 	toBooleanList();
 	public abstract String 			outputAsString();
 	
 	public abstract Bus				getSpouse();
 	public abstract boolean 		tryCouple(Bus b);
 	public abstract void 			uncouple();
+	
+	public Boolean get(int i){
+		return toBooleanList().get(i);
+	} 
+	
 	public void recouple(){
 		if(getSpouse() != null)
 			return;
@@ -44,16 +48,21 @@ public abstract class Bus extends Observable implements Observer{
 		return code;
 	}
 	
-//	@Override
-//	public boolean equals(Object o){
-//		if(this == o)
-//			return true;
-//		if(!(o instanceof this.getClass()))
-//			
-//	}
+	@Override
+	public abstract boolean equals(Object o);
 	
 	@Override
 	public String toString(){
 		return toBooleanList().toString();
+	}
+	
+	public static List<Boolean> randomBus(int size){
+		List<Boolean> b = new ArrayList<>();
+		
+		for(int i = 0; i < size; i++)
+			b.add(Math.random() > 0.5);
+		
+		return b;
+			
 	}
 }

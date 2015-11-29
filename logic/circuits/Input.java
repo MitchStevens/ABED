@@ -7,17 +7,17 @@ import java.util.List;
 import java.util.Queue;
 
 import eval.Evaluator;
-import javafx.scene.image.Image;
 
 public class Input extends Circuit {
 	public boolean value = false;
+	public int capacity = 1;
 
 	public Input() {
 		super();
 		this.initData = "";
 		this.name = "Input";
 		this.evals = new ArrayList<>();
-		this.buses.set(1, new BusOut(this, 1, 1));
+		initBuses("0,0,0,0", "0,1,0,0");
 		this.rot = 0;
 	}
 
@@ -31,6 +31,18 @@ public class Input extends Circuit {
 		((BusOut)this.buses.get(1)).setOutput(value);
 		this.notifyObservers();
 		eval();
+	}
+	
+	public Integer input_num(){
+		int count = 0;
+		for(int i = 0; i < 4; i++)
+			for(Circuit c : game.circuitsOnEdge(i, "Input")){
+				if(c == this)
+					return count;
+				else
+					count++;
+			}
+		return null;
 	}
 	
 	@Override

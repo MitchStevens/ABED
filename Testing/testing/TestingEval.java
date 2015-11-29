@@ -32,11 +32,17 @@ public class TestingEval {
 			"0 1 Xor>0"
 	};
 	
-	String[] equiv = new String[]{
+	String[] equiv_true = new String[]{
 		"1", "0 0 1 Xor Xor",
 		"0 0 1 Xor Xor", "0 0 1 Xor>0 Xor>0",
 		"T", "0 0 ~ |",
 		"0 1 2 Full_Adder>0", "0 1 Xor 2 Xor"
+	};
+	
+	String[] equiv_false = new String[]{
+		"1", "0",
+		"F", "0",
+		"0 1 &", "0 1 |"
 	};
 
 	@Before
@@ -107,7 +113,10 @@ public class TestingEval {
 
 	 @Test
 	 public void equivTest(){
-		 for(int i = 0; i < equiv.length; i += 2)
-			 assertTrue(new Evaluator(equiv[i]).equiv(new Evaluator(equiv[i+1])));
+		 for(int i = 0; i < equiv_true.length; i += 2)
+			 assertTrue(new Evaluator(equiv_true[i]).equiv(new Evaluator(equiv_true[i+1])));
+	 
+		 for(int i = 0; i < equiv_false.length; i += 2)
+			 assertFalse(new Evaluator(equiv_false[i]).equiv(new Evaluator(equiv_false[i+1])));
 	 }
 }

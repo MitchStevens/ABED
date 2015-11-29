@@ -18,27 +18,23 @@ import javafx.util.Duration;
 import logic.Reader;
 
 public class Piece extends Pane{
-	private static final double FONT_CONST = 0.15;
+	private static final 	double 				FONT_CONST 	= 0.15;
 	
-	public PieceImage image;
-	public Circuit c;
+	public 					PieceImage 			image;
+	public 					Circuit 			c;
 
 	//saves on font reading time by caching all the fonts.
-	public static Map<Integer, Font> fontMap;
-	public boolean isDraggable = true;
-	public static boolean isRotating = false;
-	public double mousex; // where the cursor's x-position is
-	public double mousey; // where the cursor's y-position is
-	private boolean dragging = false; // whether the tile is currently being dragged
-	public Square closest;
-	private Text gateName = new Text();
-	private Text delete;
-	private Text duplicate;
-//	private ImageView rotate = new ImageView();
-
-	{
-		fontMap = new HashMap<>();
-	}
+	public static 			Map<Integer, Font> 	fontMap		= new HashMap<>();
+	public 					boolean 			isDraggable = true;
+	public static 			boolean 			isRotating 	= false;
+	public 					double 				mousex;
+	public 					double 				mousey;
+	private 				boolean 			dragging 	= false;
+	public 					Square 				closest;
+	private 				Text 				gateName 	= new Text();
+	private 				Text 				delete;
+	private 				Text 				duplicate;
+	private					Text				rotate;
 	
 	public Piece(Circuit c) {
 		this.c = c;		
@@ -64,12 +60,10 @@ public class Piece extends Pane{
 		gateName.setLayoutY(GamePane.tileSize);
 		this.getChildren().add(gateName);
 
-//		rotate.setImage(Circuit.loadedImages.get("rotate"));
-//		rotate.setFitHeight(30);
-//		rotate.setFitWidth(30);
-//		rotate.setLayoutX(GamePane.tileSize - 30);
-//		rotate.setLayoutY(GamePane.tileSize - 30);
-//		this.getChildren().add(rotate);
+		rotate = new Text("R");
+		rotate.setLayoutX(GamePane.tileSize - 10);
+		rotate.setLayoutY(GamePane.tileSize - 10);
+		this.getChildren().add(rotate);
 
 		setEvents();
 	}
@@ -115,10 +109,10 @@ public class Piece extends Pane{
 			event.consume();
 		});
 
-//		rotate.setOnMouseClicked(event -> {
-//			GamePane.rotatePiece(c.i, c.j, -1);
-//			event.consume();
-//		});
+		rotate.setOnMouseClicked(event -> {
+			GamePane.rotatePiece(c.coord, -1);
+			event.consume();
+		});
 
 		duplicate.setOnMouseClicked(event -> {
 			GamePane.addPiece(new Piece(c.clone()));
@@ -155,8 +149,8 @@ public class Piece extends Pane{
 			
 		gateName.setLayoutY(GamePane.tileSize);
 
-//		rotate.setLayoutX(GamePane.tileSize - 30);
-//		rotate.setLayoutY(GamePane.tileSize - 30);
+		rotate.setLayoutX(GamePane.tileSize - 30);
+		rotate.setLayoutY(GamePane.tileSize - 30);
 	}
 
 	@Override

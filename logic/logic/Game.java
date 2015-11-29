@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import tutorials.Action;
 import circuits.*;
 import static eval.Evaluator.init;
 import static java.util.stream.Collectors.toList;
@@ -16,14 +17,12 @@ public class Game extends Observable{
 	 * we cut down on the amount of repeated code lessen confusion about what does what.
 	 * */
 	
-	public final static int MIN_TILES = 3;
-	public final static int MAX_TILES = 10;
-	public static Map<String, Game> ALL_GAMES;
-	//private List<PropertyChangeListener> listeners = new ArrayList<PropertyChangeListener>();
-	
-	private Circuit[][] tileGrid;
-	public int n;
-	public String name;
+	public final 	static 	int 				MIN_TILES = 3;
+	public final 	static 	int 				MAX_TILES = 10;
+	public 			static 	Map<String, Game> 	ALL_GAMES;	
+	private 				Circuit[][] 		tileGrid;
+	public 					int 				n;
+	public 					String 				name;
 	
 	static {
 		ALL_GAMES = Reader.loadGames();
@@ -67,6 +66,7 @@ public class Game extends Observable{
 			return false;
 	}
 
+	//FUNDAMENTAL OPERATION
 	public boolean add(Circuit c, Coord coord) {
 		// Add circuit to tileGrid if possible and return true, if not return
 		// false.
@@ -82,6 +82,8 @@ public class Game extends Observable{
 		tileGrid[coord.i][coord.j] = c;
 		c.recoupleBuses();
 		c.eval();
+		this.notifyObservers(Action.add(c));
+		this.setChanged();
 		return true;
 	}
 
@@ -94,6 +96,7 @@ public class Game extends Observable{
 		if (tileGrid[c2.i][c2.j] == null) {
 			remove(circ.coord);
 			add(circ, c2);
+			this.notifyObservers(Action.move(circ));
 			return true;
 		} else
 			return false;
@@ -104,16 +107,19 @@ public class Game extends Observable{
 		remove(coord);
 		circ.addRot(rot);
 		add(circ, coord);
+		this.notifyObservers(Action.rotate(circ));
 	}
 
 	public void remove(Coord coord) {
 		if(tileGrid[coord.i][coord.j] == null)
 			return;
 		
+		Circuit c = tileGrid[coord.i][coord.j];
 		tileGrid[coord.i][coord.j].uncoupleBuses();
 		tileGrid[coord.i][coord.j].game = null;
 		tileGrid[coord.i][coord.j] = null;
-		
+		this.notifyObservers(Action.remove(c));
+		this.setChanged();
 	}
 
 	public void toggle(Coord coord) {
@@ -183,8 +189,6 @@ public class Game extends Observable{
 	public Circuit toCircuit() {
 		//A valid game (i.e. one that can be turned into a circuit), 
 		//must have exactly (0|1) input/output on each side
-		
-		
 		String tbr = "NAME_WHATEVER;";
 		List<Circuit> inputs = new ArrayList<>();
 		List<Circuit> outputs = new ArrayList<>();
@@ -214,6 +218,7 @@ public class Game extends Observable{
 			//String logic = c.outputAsString(1);
 			tbr += c.buses.get(3).outputAsString() + ",";
 		}
+		System.out.println(init(tbr));
 		return new Circuit(init(tbr));
 	}
 

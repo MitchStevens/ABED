@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+import circuits.Bus;
 import circuits.BusIn;
 
 public class Evaluator {
-	List<Token> tokens;
-	public String logic;
+	private	List<Token> tokens;
+	public 	String 		logic;
 
 	public Evaluator(String data) {
 		tokens = tokenize(data);
@@ -87,17 +88,18 @@ public class Evaluator {
 	}
 
 	public boolean equiv(Evaluator e) {
-		// checks if the evals are logically identical using a probabilistic
-		// algorithm.
-		// would like to get a exact answer but function doesn't scale well,
-		// would have to check
-		// all possible 2^n busses for a eval with n inputs.
-//		for (int i = 0; i < 1000; i++) {
-//			BusIn b = BusIn.randomBus(32);
-//			if (this.eval(b.toBooleanList()) != e.eval(b.toBooleanList())) {
-//				return false;
-//			}
-//		}
+//		 checks if the evals are logically identical using a probabilistic
+//		 algorithm.
+//		 would like to get a exact answer but function doesn't scale well, would have to be O(2^n).
+		
+		for (int i = 0; i < 1000; i++) {
+			List<Boolean> b = Bus.randomBus(8);
+			System.out.println(b);
+			if (this.eval(b) != e.eval(b)) {
+				System.out.println("evals "+ this.toString() +", "+ e.toString() +"are not equiv");
+				return false;
+			}
+		}
 		return true;
 	}
 }

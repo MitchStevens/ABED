@@ -7,7 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Random;
+import java.math.*;
 
 import javafx.beans.InvalidationListener;
 
@@ -107,5 +107,17 @@ public class BusIn extends Bus{
 	public void update(Observable o, Object arg) {
 		if(c != null)
 			this.notifyObservers();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null) return false;
+		if(!(o instanceof BusIn)) return false;
+		BusIn b = (BusIn)o;
+		
+		return
+			this.size == b.size &&
+			this.dir == b.dir;
 	}
 }

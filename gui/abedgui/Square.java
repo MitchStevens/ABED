@@ -17,15 +17,15 @@ import static java.lang.Math.max;
  * @author Mitch
  */
 public class Square extends Rectangle{
-	public final static Color DEFAULT	= Color.web("#DDFEFE");
-	public final static Color SIDE		= Color.web("#9FFCFC");
-	public final static Color CORNER	= Color.web("#000000");
-	public final static Color SELECTED	= Color.RED;
+	public final static Color 	DEFAULT		= Color.web("#DDFEFE");
+	public final static Color 	SIDE		= Color.web("#9FFCFC");
+	public final static Color 	CORNER		= Color.web("#000000");
+	public final static Color 	SELECTED	= Color.RED;
 	
-	public int isSide = 0; // 0 = def, 1 = side, 2 = null
-	public double x;
-	public double y;
-	public Coord coord;
+	public 				int 	isSide 		= 0; // 0 = def, 1 = side, 2 = null
+	public 				double 	x;
+	public 				double 	y;
+	public 				Coord 	coord;
 
 	public Square(int i, int j) {
 		coord = new Coord(i, j);
@@ -57,8 +57,16 @@ public class Square extends Rectangle{
 				GamePane.lastClicked = this.coord;
 				this.setFill(SELECTED);
 			}else{
-				GamePane.allSquares.values().forEach(s -> s.revertColor());
-				GamePane.lastClicked = null;}
+				if(this.coord == GamePane.lastClicked){
+					GamePane.allSquares.values().forEach(s -> s.revertColor());
+					return;
+				}else{
+					GamePane.add_cable_path(GamePane.lastClicked, this.coord);
+					GamePane.lastClicked = null;
+					GamePane.allSquares.values().forEach(s -> s.revertColor());
+					return;
+				}
+			}
 		});
 		
 		this.setOnMouseEntered(e -> {

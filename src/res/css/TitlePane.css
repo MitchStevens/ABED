@@ -1,5 +1,4 @@
 #main {
-	-fx-padding: 10;
 }
 
 .label {
@@ -13,4 +12,13 @@
 	-fx-text-fill: #FF0000;
 	-fx-fill: #9FFCFC;
 	-fx-background-color: #121212;
+}
+
+#typer {
+	-fx-text-fill: black;
+	-fx-padding: 10;
+}
+
+#typer:hover {
+	-fx-text-fill: #32CD32;
 }

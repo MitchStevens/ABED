@@ -22,26 +22,22 @@ import logic.Game;
 import logic.Reader;
 
 public class Gui extends Application {
-	public final static double SIDE_BAR_WIDTH = 300;
-	public final static double MIN_WIDTH = 800;
-	public final static double MIN_HEIGHT = 600;
+	public final static double 			SIDE_BAR_WIDTH = 300;
+	public final static double 			MIN_WIDTH = 800;
+	public final static double 			MIN_HEIGHT = 600;
 
-	public static double boardWidth = 1024;
-	public static double boardHeight = 768;
+	public static 		double 			boardWidth = 1024;
+	public static 		double 			boardHeight = 768;
 
-	public Group root;
-	Scene scene;
-
-	public static SideBarPane sideBar;
-	public static GamePane abedPane;
-	public static BorderPane gamePane;
-
-	public static TitlePane titlePane;
-
-	public static LevelSelectPane levelSelectPane;
-
-	public static Pane mainPane;
-	public static Gui g;
+	public 				Group 			root;
+	private				Scene 			scene;
+	public static 		SideBarPane 	sideBar;
+	public static 		GamePane 		abedPane;
+	public static 		BorderPane 		gamePane;
+	public static 		TitlePane 		titlePane;
+	public static 		LevelSelectPane levelSelectPane;
+	public static 		Pane 			mainPane;
+	public static 		Gui 			g;
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
@@ -60,24 +56,25 @@ public class Gui extends Application {
 	private void initaliseBoard() {
 		mainPane = new StackPane();
 
+		titlePane = new TitlePane();
+		levelSelectPane = new LevelSelectPane();
+		
 		sideBar = new SideBarPane();
 		abedPane = new GamePane();
 
 		gamePane = new BorderPane();
 		gamePane.setLeft(abedPane);
 		gamePane.setCenter(sideBar);
-
-//		titlePane = new TitlePane();
-//		levelSelectPane = new LevelSelectPane();
 		
-		//mainPane.getChildren().add(titlePane);
-		root.getChildren().add(gamePane);
-		GamePane.newGame(new Game(3));
+		mainPane.getChildren().add(titlePane);
+		root.getChildren().add(mainPane);
+		GamePane.newGame(new Game(7));
 
 		windowResizeListeners();
 	}
 
 	public static void setCurrentPane(Pane p){
+		//fix this you damn fool
 		mainPane.getChildren().clear();
 		mainPane.getChildren().add(p);
 	}
@@ -90,7 +87,7 @@ public class Gui extends Application {
 					Number oldSceneWidth, Number newSceneWidth) {
 				boardWidth = (double) newSceneWidth;
 				GamePane.resizeWidth();
-				LevelSelectPane.onResize();
+				//LevelSelectPane.onResize();
 			}
 		});
 		scene.heightProperty().addListener(new ChangeListener<Number>() {
@@ -100,7 +97,7 @@ public class Gui extends Application {
 					Number oldSceneHeight, Number newSceneHeight) {
 				boardHeight = (double) newSceneHeight;
 				GamePane.resizeHeight();
-				LevelSelectPane.onResize();
+				//LevelSelectPane.onResize();
 			}
 		});
 	}

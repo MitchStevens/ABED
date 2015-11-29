@@ -3,9 +3,9 @@ package panes;
 import java.util.ArrayList;
 import java.util.List;
 
+import controls.Incrementor;
 import circuits.Circuit;
 import abedgui.Gui;
-import abedgui.Incrementor;
 import abedgui.Piece;
 import abedgui.PieceImage;
 import javafx.collections.ListChangeListener;
@@ -27,24 +27,21 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import logic.Game;
 import logic.Level;
 import logic.Reader;
 
 public class SideBarPane extends GridPane implements SetChangeListener<Circuit> {
-	private final double ICON_SIZE = 20;
+	private final double 			ICON_SIZE 	= 20;
 
-	public static SideBarPane sb;
-	public static Incrementor inc;
-	public static TreeView<Node> gateSelector;
-	public static TextArea textArea;
-	public static double defWidth;
-	public static Font adbxtsc = Reader.loadFont("adbxtsc.ttf", 23);
-
-	// {
-	// sb.setStyle(value);
-	// }
+	public static SideBarPane 		sb;
+	public static Incrementor 		inc;
+	public static TreeView<Node> 	gateSelector;
+	public static TextArea 			textArea;
+	public static double 			defWidth;
+	public static final Font 		DEF_FONT 	= Reader.loadFont("DejaVuSans-ExtraLight.ttf", 15);
 
 	public SideBarPane() {
 		sb = this;
@@ -55,7 +52,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		defWidth = Gui.SIDE_BAR_WIDTH;
 		this.getStylesheets().add("res/css/SideBarGui.css");
 		this.setPrefWidth(defWidth);
-		Circuit.unlockedCircuits.addListener(this);
+		GamePane.unlockedCircuits.addListener(this);
 
 		updateCircuits();
 		
@@ -84,7 +81,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		sb.add(inc, 1, 2);
 		
 		textArea = new TextArea();
-		textArea.setFont(adbxtsc);
+		textArea.setFont(DEF_FONT);
 		textArea.setPrefRowCount(6);
 		textArea.setWrapText(true);
 		textArea.setEditable(false);
@@ -148,25 +145,27 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 	public void updateCircuits(){
 		if(GamePane.unlockAllCircuits)
 			for(Circuit c : Circuit.allCircuits.values())
-				Circuit.unlockedCircuits.add(c);
+				GamePane.unlockedCircuits.add(c);
 		
 		TreeItem<Node> root = new TreeItem<>(new Label("Gates"));
 		
 		List<TreeItem<Node>> headers = new ArrayList<>(Circuit.circuitTypes.length);
 		for(int i = 0; i < Circuit.circuitTypes.length; i++) headers.add(null);
 		
-		for(Circuit c : Circuit.unlockedCircuits)
+		for(Circuit c : GamePane.unlockedCircuits)
 			if(headers.get(c.type) == null){
 				Label headLabel = new Label(Circuit.circuitTypes[c.type]);
-				headLabel.setFont(adbxtsc);
+				headLabel.setFont(DEF_FONT);
 				headers.set(c.type, new TreeItem<>(headLabel));
 			}
 
-		for (Circuit c : Circuit.unlockedCircuits) {
+		for (Circuit c : GamePane.unlockedCircuits) {
 			HBox hbox = new HBox();
-
+			if(GamePane.new_circuits.contains(c))
+				hbox.setStyle("-fx-background-color: DDFEFE;");
+			
 			Label l = new Label(c.name);
-			l.setFont(adbxtsc);
+			l.setFont(DEF_FONT);
 			l.setAlignment(Pos.CENTER_LEFT);
 
 			Image img = PieceImage.ALL_IMAGES.get(c.name);
@@ -187,7 +186,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 
 			if(headers.get(c.type) == null){
 				Label headLabel = new Label(Circuit.circuitTypes[c.type]);
-				headLabel.setFont(adbxtsc);
+				headLabel.setFont(DEF_FONT);
 				root.getChildren().add(new TreeItem<>(headLabel));
 			}
 			
@@ -205,8 +204,8 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 	}
 
 	@Override
-	public void onChanged( javafx.collections.SetChangeListener.Change<? extends Circuit> arg0) {
-		//updateCircuits();
+	public void onChanged( SetChangeListener.Change<? extends Circuit> arg0) {
+		updateCircuits();
 	}
 
 }

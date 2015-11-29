@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Observable;
 
 public class BusOut extends Bus{
-	protected List<Boolean> bools;
-	public BusIn child;
+	protected 	List<Boolean> 	bools;
+	public 		BusIn 			child;
 	
 	public BusOut(Circuit c, int size, int dir){
 		this.c = c;
@@ -44,6 +44,8 @@ public class BusOut extends Bus{
 			return tbr + "|";
 		case "Not":
 			return tbr + "~";
+		case "Input":
+			return ((Input)c).input_num()+"";
 		default:
 			if(c.outputs <= 1)
 				tbr += c.name;
@@ -117,6 +119,18 @@ public class BusOut extends Bus{
 	@Override
 	public void update(Observable o, Object arg) {
 		return;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if(this == o) return true;
+		if(o == null) return false;
+		if(!(o instanceof BusOut)) return false;
+		BusOut b = (BusOut)o;
+		
+		return
+			this.size == b.size &&
+			this.dir == b.dir;
 	}
 }
 

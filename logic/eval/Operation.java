@@ -7,13 +7,13 @@ import java.util.Stack;
 import circuits.Circuit;
 
 public class Operation extends Token {
-	String name;
-	Integer args;
-	int outputNum;
+	private			String 		name;
+	private			Integer 	args;
+	private			int 		outputNum;
 
-	public static Operation and = new Operation("And", 2);
-	public static Operation or = new Operation("Or", 2);
-	public static Operation not = new Operation("Not", 1);
+	public static 	Operation 	and = new Operation("And", 2);
+	public static 	Operation 	or = new Operation("Or", 2);
+	public static 	Operation 	not = new Operation("Not", 1);
 
 	public Operation(String name) {
 		// NAME>OUTPUTNUM

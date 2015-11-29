@@ -1,7 +1,8 @@
-package abedgui;
+package controls;
 
 import java.util.Random;
 
+import abedgui.Gui;
 import circuits.Circuit;
 import eval.Evaluator;
 import panes.GamePane;
@@ -22,8 +23,8 @@ import logic.Level;
 import logic.Reader;
 
 public class WinMessage extends VBox {
-	private final static double PADDING_GAP = 30;
-	private final static Font MESSAGE_FONT = Reader.loadFont("Aux DotBitC.ttf", 20);
+	private final static double PADDING_GAP 	= 30;
+	private final static Font 	MESSAGE_FONT 	= Reader.loadFont("Aux DotBitC.ttf", 20);
 	
 	
 	private final static String[] words = new String[]{

@@ -14,10 +14,6 @@ import logic.Game;
 import logic.Reader;
 
 public class Circuit extends Observable{
-//	public static final long LAG = 100;
-	
-	public static Map<String, Circuit> allCircuits;
-	public static ObservableSet<Circuit> unlockedCircuits;
 	public static final String[] circuitTypes = new String[] {
 		"Basic Circuits",
 		"Single Circuits",
@@ -26,25 +22,24 @@ public class Circuit extends Observable{
 		"User Created"
 	};
 	
-	public int inputs = 0, outputs = 0;
-	public int type = 0;
-	
-	public String name = "";
-	String initData;
-	public List<Evaluator> evals;
-	public final List<Bus> buses = new ArrayList<>(Collections.nCopies(4, null));
+	public static 	Map<String, Circuit> 	allCircuits;
+	public 			int 					inputs = 0, outputs = 0;
+	public 			int 					type = 0;
+	public 			String 					name = "";
+	protected		String 					initData;
+	public 			List<Evaluator> 		evals;
+	public final 	List<Bus> 				buses = new ArrayList<>();
 	// rot is the number of CLOCKWISE rotations
-	public Integer rot;
-	public Coord coord;
+	public 			Integer 				rot;
+	public 			Coord 					coord;
 	// used to sort circuits in the gui
-	public Game game;
+	public 			Game 					game;
 	// evals.size should be the same as outputBus.size
-	public List<List<String>> evalStrings = null;
+	public 			List<List<String>> 		evalStrings = null;
 	
 	static {
 		//loading circuits working correctly
 		allCircuits = Reader.loadCircuits();
-		unlockedCircuits = Reader.loadUnlockedCircuits();
 	}
 	
 	//Only use this constructor when creating a new circuit from a class.
@@ -89,7 +84,7 @@ public class Circuit extends Observable{
 		// when my mind baby arrives.
 	}
 
-	private void initBuses(String ins, String outs) {
+	protected void initBuses(String ins, String outs) {
 		String[] sIn  = ins.split(",");
 		String[] sOut = outs.split(",");
 		
@@ -97,11 +92,13 @@ public class Circuit extends Observable{
 			if(Integer.parseInt(sIn[dir]) > 0){
 				inputs += Integer.parseInt(sIn[dir]);
 				BusIn b = new BusIn(this, Integer.parseInt(sIn[dir]), dir);
-				buses.set(dir, b);
-			}else if(Integer.parseInt(sOut[dir]) > 0){
+				buses.add(b);
+			} else if(Integer.parseInt(sOut[dir]) > 0){
 				outputs += Integer.parseInt(sOut[dir]);
 				BusOut b = new BusOut(this, Integer.parseInt(sOut[dir]), dir);
-				buses.set(dir, b);
+				buses.add(b);
+			} else {
+				buses.add(null);
 			}
 		}
 	}
@@ -192,24 +189,28 @@ public class Circuit extends Observable{
 	}
 
 	public boolean equiv(Circuit c) {
+		if(c == null) return false;
+		
 		for (int i = 0; i < 4; i++) {
 			if(buses.get(i) == null && c.buses.get(i) == null)
 				continue;
 			
 			if(buses.get(i) == null ^ c.buses.get(i) == null)
-				return false;
 			
-			if (buses.get(i).size != c.buses.get(i).size)
-				return false;
-			
-			if (!buses.get(i).getClass().equals(c.buses.get(i).getClass()))
-				return false;
+			if(buses.get(i) != null)
+				if(!buses.get(i).equals(c.buses.get(i)))
+					return false;
+			else
+				if(c.buses.get(i) != null)
+					return false;
 		}
+		
 		if (this.evals.size() != c.evals.size())
 			return false;
 		for (int i = 0; i < evals.size(); i++)
 			if (!evals.get(i).equiv(c.evals.get(i)))
 				return false;
+		
 		return true;
 	}
 

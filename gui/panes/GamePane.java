@@ -2,20 +2,28 @@ package panes;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Set;
 
+import controls.WinMessage;
+import tutorials.Action;
+import tutorials.Tute1;
+import tutorials.Tutorial;
+import circuits.Cable;
 import circuits.Circuit;
 import circuits.Coord;
 import eval.Evaluator;
-import abedgui.GameNavigator;
+import abedgui.CircuitFinder;
 import abedgui.Gui;
 import abedgui.Piece;
 import abedgui.Square;
-import abedgui.WinMessage;
 import javafx.animation.FadeTransition;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
@@ -29,38 +37,47 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import logic.Game;
 import logic.Level;
+import logic.PathFinder;
 import logic.Reader;
 import static java.lang.Math.*;
 
 public class GamePane extends Pane implements Observer {
-	public final static double GAME_MARGIN = 50;
-	public final static double GAP = 0;
+	public final static double 			GAME_MARGIN 		= 50;
+	public final static double 			GAP 				= 0;
 	
-	public static double tileSize = 0;
-	public static int numTiles = 3;
-	public static Game currentGame;
-	public static Map<Coord, Square> allSquares;
-	public static boolean unlockAllCircuits = true;
-
-	public static Level currentLevel;
-	private static boolean gameWon = false;
+	private static CircuitFinder		cf					= new CircuitFinder("");
 	
-	public static Coord lastClicked = null;
+	public static ObservableSet<Circuit> 	unlockedCircuits = Reader.loadUnlockedCircuits();
+	public static Set<Circuit>	new_circuits	 = new HashSet<>(unlockedCircuits);
 	
-	public static Rectangle selectionBox;
-
-	public static GamePane gp;
+	public 	static double 				tileSize 			= 0;
+	public 	static int 					numTiles 			= 3;
+	public	static Game 				currentGame;
+	public	static Map<Coord, Square> 	allSquares;
+	public	static boolean 				unlockAllCircuits 	= false;
+	public	static Text[]				side_markers		= new Text[4];
+	public	static Tutorial				tutorial; 
+	
+	public	static Level 				currentLevel;
+	private static boolean 				gameWon 			= false;
+	public	static Coord 				lastClicked 		= null;
+	public 	static GamePane 			gp;
 	
 	public GamePane() {
 		this.getStylesheets().add("res/css/GamePane.css");
 		this.setPrefSize(Gui.boardWidth - Gui.SIDE_BAR_WIDTH, Gui.boardHeight);
-
+		
 		gp = this;
 		gp.setId("main");
 		
-		selectionBox = new Rectangle();
-		selectionBox.setOpacity(0.5);
-		selectionBox.setFill(Color.RED);
+		cf.setLayoutX(0);
+		cf.setLayoutY(0);
+		this.getChildren().add(cf);
+		cf.setFill(Color.WHITE);
+		this.setOnKeyPressed(e -> {
+			cf.key_pressed(e.getCode());
+		});
+		
 	}
 	
 	public static void calcTileSize() {
@@ -111,12 +128,25 @@ public class GamePane extends Pane implements Observer {
 		currentLevel = l;
 		newGame(new Game(l.gameSize));
 		SideBarPane.textArea.setText(l.goalText);
+		
+		if(Tutorial.ALL_TUTORIALS.get(l.name) != null){
+			tutorial = Tutorial.ALL_TUTORIALS.get(l.name);
+			tutorial.start();
+		} else {
+			if(tutorial != null)
+				tutorial.end();
+			tutorial = null;
+		}
+			
+			
 	}
-
+	
 	public static void newGame(Game g) {
 		// loads new game into the gui and sets current game
 		currentGame = g;
-		g.addObserver(gp);
+		currentGame.addObserver(gp);
+		currentGame.notifyObservers(Action.NEW);
+
 		numTiles = g.n;
 		calcTileSize();
 		gp.getChildren().clear();
@@ -138,8 +168,30 @@ public class GamePane extends Pane implements Observer {
 					Piece p = new Piece(c);
 					addPiece(p, c.coord);
 				}
+		
+		for(int i = 0; i < 4; i++){
+			side_markers[i] = new Text(""+i);
+			side_markers[i].setFont(Reader.loadFont("adbxtra.ttf", 50));
+			side_markers[i].setFill(Color.WHITE);
+			gp.getChildren().add(side_markers[i]);
+		}
+		
+		update_size_markers();
 	}
 
+	public static void update_size_markers(){
+		double side_gap = 10.0;
+		double init = (Gui.boardWidth - Gui.boardHeight - Gui.SIDE_BAR_WIDTH) / 2;
+		side_markers[0].setLayoutX((Gui.boardWidth-Gui.SIDE_BAR_WIDTH)/2 -16);
+		side_markers[0].setLayoutY(GAME_MARGIN + max(0, -init) - side_gap);
+		side_markers[1].setLayoutX(GAME_MARGIN + tileSize*currentGame.n + max(0, init) -5 + side_gap);
+		side_markers[1].setLayoutY(Gui.boardHeight/2 + 15);
+		side_markers[2].setLayoutX((Gui.boardWidth-Gui.SIDE_BAR_WIDTH)/2 - 16);
+		side_markers[2].setLayoutY(GAME_MARGIN + tileSize*currentGame.n + max(0, -init) + 30 + side_gap);
+		side_markers[3].setLayoutX(GAME_MARGIN + max(0, init) - side_gap - 30);
+		side_markers[3].setLayoutY(Gui.boardHeight/2 + 15);
+	}
+	
 	public static void incSize(int newSize) {
 		// increments size of board
 		if (newSize > Game.MAX_TILES || newSize == numTiles)
@@ -181,7 +233,7 @@ public class GamePane extends Pane implements Observer {
 				if (c != null)
 					g.add(c, c.coord);
 			}
-
+		
 		currentGame = g;
 		g.addObserver(gp);
 	}
@@ -219,6 +271,7 @@ public class GamePane extends Pane implements Observer {
 
 				s.initialise();
 			}
+		
 		allSquares = temp;
 		currentGame = g;
 		g.addObserver(gp);
@@ -237,6 +290,7 @@ public class GamePane extends Pane implements Observer {
 				s.initialise();
 				allSquares.put(s.coord, s);
 			}
+		update_size_markers();
 	}
 
 	public static void resizeWidth() {
@@ -251,6 +305,7 @@ public class GamePane extends Pane implements Observer {
 				Square s = (Square) n;
 				s.initialise();
 			}
+		update_size_markers();
 	}
 
 	public static Square getClosest(double x, double y) {
@@ -264,24 +319,43 @@ public class GamePane extends Pane implements Observer {
 		return closest;
 	}
 
-	public static void setTrail(Coord start, Coord finish){
+	public static void setTrail(Coord start, Coord finish){		
 		if(start.equals(finish))
 			return;
 		
 		allSquares.values().forEach(s -> s.revertColor());
 		
-		GameNavigator gn = new GameNavigator(currentGame);
+		PathFinder gn = new PathFinder(currentGame);		
+		
 		List<Coord> trail = gn.getTrail(start, finish);
+		
 		if(trail == null){
 			allSquares.get(start).setFill(Square.SELECTED);
 			allSquares.get(finish).setFill(Square.SELECTED);
-		} else {
+		} else
 			trail.forEach(c-> allSquares.get(c).setFill(Square.SELECTED));
-		}	
+	}
+	
+	public static void add_cable_path(Coord start, Coord finish){
+		if(start.equals(finish))
+			return;
+		
+		allSquares.values().forEach(s -> s.revertColor());
+		
+		PathFinder gn = new PathFinder(currentGame);
+		
+		List<Cable> path = gn.create_cable_list(start, finish);
+		
+		if(path == null){
+			allSquares.get(start).setFill(Square.SELECTED);
+			allSquares.get(finish).setFill(Square.SELECTED);
+		} else
+			path.forEach(c -> addPiece(new Piece(c), c.coord));
 	}
 	
 	@Override
 	public void update(Observable game, Object arg) {
+		System.out.println("updated game causght in gamepane");
 		if(currentLevel.isComplete(currentGame)){
 			onLevelCompletion();
 			gameWon = true;
@@ -293,6 +367,8 @@ public class GamePane extends Pane implements Observer {
 		WinMessage wm = new WinMessage(currentLevel, currentGame.n);
 //		Gui.gamePane.getChildren().add(wm);
 //		wm.toFront();
+		new_circuits.clear();
+		new_circuits.addAll(currentLevel.circuitRewards);
 		currentLevel.onCompletion();
 	}
 }
