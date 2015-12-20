@@ -1,6 +1,6 @@
 package circuits;
 
-import abedgui.Square;
+import graphics.Square;
 
 public class Coord{
 	public static Coord NULL = new Coord(-1, -1);

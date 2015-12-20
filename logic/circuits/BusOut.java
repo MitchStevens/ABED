@@ -35,6 +35,7 @@ public class BusOut extends Bus{
 		case "Output":
 		case "Bus":
 		case "Super":
+		case "Cable":
 		case "Right":
 		case "Left":
 			return init(tbr);

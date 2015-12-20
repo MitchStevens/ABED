@@ -14,13 +14,6 @@ import logic.Game;
 import logic.Reader;
 
 public class Circuit extends Observable{
-	public static final String[] circuitTypes = new String[] {
-		"Basic Circuits",
-		"Single Circuits",
-		"Dual Circuits",
-		"Quad Circuits",
-		"User Created"
-	};
 	
 	public static 	Map<String, Circuit> 	allCircuits;
 	public 			int 					inputs = 0, outputs = 0;
@@ -259,7 +252,7 @@ public class Circuit extends Observable{
 				out += "0,";
 			}
 		
-		name += in+";"+out+";";
+		tbr += in+";"+out+";";
 		
 		for (Evaluator e : evals)
 			tbr += e.logic + ",";

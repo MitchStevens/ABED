@@ -1,5 +1,8 @@
 package logic;
 
+import graphics.PieceImage;
+
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,12 +21,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import panes.LevelSelectPane;
 import circuits.Cable;
 import circuits.Circuit;
 import circuits.Coord;
 import circuits.Input;
 import circuits.Output;
-import abedgui.PieceImage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
@@ -83,16 +94,55 @@ public class Reader {
 	}
 
 	public static List<Level> loadLevels(){
+		File file = new File("src/res/level_data/level_data.xml");
 		List<Level> tbr = new ArrayList<Level>();
 		
-		for(int i = 0; i < levelList.length; i++){
-			List<String> strs = readFile("level_data/"+levelList[i]);
-			for(int j = 0; j < strs.size(); j++)
-				tbr.add(new Level(strs.get(j), new Coord(i, j)));
+		try{
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder builder = factory.newDocumentBuilder();
+			Document doc = builder.parse(file);
 			
-		}
+			//what does this line do? research.
+			doc.getDocumentElement().normalize();
+			
+			NodeList level_sets = doc.getElementsByTagName("level_set");
+			for(int i = 0; i < level_sets.getLength(); i++){
+				Level.LEVEL_TITLES.add(((Element)level_sets.item(i)).getAttribute("name"));
+				NodeList levels = ((Element)level_sets.item(i)).getElementsByTagName("level");
+				
+				for(int j = 0; j < levels.getLength(); j++){
+					Level l = new Level();
+					
+					Node node = levels.item(j);
+					Element e = (Element)node;
+					
+					l.name = e.getAttribute("name");
+					l.objective = Circuit.allCircuits.get(get_elem(e, "objective"));
+					get_elems(e, "circuit_reward").forEach(s -> l.circuitRewards.add(Circuit.allCircuits.get(s)));
+					l.levelRewards = get_elems(e, "level_reward");
+					l.instructionText = get_elem(e, "instruction_text");
+					l.completionText = get_elem(e, "completion_text");
+					l.gameSize = Integer.parseInt(get_elem(e, "min_game_size"));
+					l.tuple = new Coord(i, j);
+					
+					tbr.add(l);
+				}
+			}
+			
+		} catch (Exception e){}
 		
 		return tbr;
+	}
+	
+	private static String get_elem(Element e, String tag){
+		return e.getElementsByTagName(tag).item(0).getTextContent();
+	}
+	
+	private static List<String> get_elems(Element e, String tag){
+		List<String> list = new ArrayList<>();
+		for(int i = 0; i < e.getElementsByTagName(tag).getLength(); i++)
+			list.add(e.getElementsByTagName(tag).item(i).getTextContent());
+		return list;
 	}
 	
 	public static ObservableSet<Level> loadUnlockedLevels(){

@@ -1,4 +1,7 @@
-package abedgui;
+package panes;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import circuits.Circuit;
 import panes.*;
@@ -31,12 +34,11 @@ public class Gui extends Application {
 
 	public 				Group 			root;
 	private				Scene 			scene;
-	public static 		SideBarPane 	sideBar;
-	public static 		GamePane 		abedPane;
-	public static 		BorderPane 		gamePane;
-	public static 		TitlePane 		titlePane;
-	public static 		LevelSelectPane levelSelectPane;
+	
+	public static 		Map<String, ScreenPane> screens = new HashMap<>();
+	
 	public static 		Pane 			mainPane;
+	
 	public static 		Gui 			g;
 
 	@Override
@@ -56,27 +58,32 @@ public class Gui extends Application {
 	private void initaliseBoard() {
 		mainPane = new StackPane();
 
-		titlePane = new TitlePane();
-		levelSelectPane = new LevelSelectPane();
+		TitlePane titlePane = new TitlePane();
+		screens.put("title_pane", titlePane);
 		
-		sideBar = new SideBarPane();
-		abedPane = new GamePane();
-
-		gamePane = new BorderPane();
-		gamePane.setLeft(abedPane);
-		gamePane.setCenter(sideBar);
+		LevelSelectPane levelSelectPane = new LevelSelectPane();
+		screens.put("level_select_pane", levelSelectPane);
+		
+		GamePane gamePane = new GamePane();
+		screens.put("game_pane", gamePane);
+		
+		AboutPane aboutPane = new AboutPane();
+		screens.put("about_pane", aboutPane);
 		
 		mainPane.getChildren().add(titlePane);
 		root.getChildren().add(mainPane);
-		GamePane.newGame(new Game(7));
+		CircuitPane.newGame(new Game(7));
 
 		windowResizeListeners();
 	}
 
-	public static void setCurrentPane(Pane p){
+	public static void setCurrentPane(String s){
 		//fix this you damn fool
 		mainPane.getChildren().clear();
-		mainPane.getChildren().add(p);
+		if(screens.containsKey(s)){
+			mainPane.getChildren().add((Node) screens.get(s));
+			screens.get(s).onFocus();
+		}
 	}
 	
 	private void windowResizeListeners() {
@@ -86,7 +93,7 @@ public class Gui extends Application {
 					ObservableValue<? extends Number> observableValue,
 					Number oldSceneWidth, Number newSceneWidth) {
 				boardWidth = (double) newSceneWidth;
-				GamePane.resizeWidth();
+				CircuitPane.on_resize();
 				//LevelSelectPane.onResize();
 			}
 		});
@@ -96,7 +103,7 @@ public class Gui extends Application {
 					ObservableValue<? extends Number> observableValue,
 					Number oldSceneHeight, Number newSceneHeight) {
 				boardHeight = (double) newSceneHeight;
-				GamePane.resizeHeight();
+				CircuitPane.on_resize();
 				//LevelSelectPane.onResize();
 			}
 		});

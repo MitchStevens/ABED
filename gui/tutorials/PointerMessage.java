@@ -1,7 +1,7 @@
 package tutorials;
 
-import panes.GamePane;
-import abedgui.Gui;
+import panes.CircuitPane;
+import panes.Gui;
 
 import com.sun.javafx.tk.FontMetrics;
 
@@ -62,7 +62,7 @@ public class PointerMessage extends Pane implements Message{
 		this.setLayoutX(pos[0]);
 		this.setLayoutY(pos[1]);
 		
-		GamePane.gp.getChildren().add(this);
+		CircuitPane.cp.getChildren().add(this);
 		
 		FadeTransition fade_in = new FadeTransition(Duration.seconds(2), this);
 		fade_in.setFromValue(0.0);
@@ -76,7 +76,7 @@ public class PointerMessage extends Pane implements Message{
 		fade_out.setFromValue(1.0);
 		fade_out.setToValue(0.0);
 		fade_out.setOnFinished(e -> {
-			GamePane.gp.getChildren().remove(this);
+			CircuitPane.cp.getChildren().remove(this);
 		});
 		fade_out.play();
 	}

@@ -1,7 +1,7 @@
 package tutorials;
 
-import panes.GamePane;
-import abedgui.Gui;
+import panes.CircuitPane;
+import panes.Gui;
 
 import com.sun.javafx.tk.FontMetrics;
 
@@ -45,7 +45,7 @@ public class SlideMessage extends Pane implements Message{
 
 	@Override
 	public void display(Double[] pos) {
-		GamePane.gp.getChildren().add(this);
+		CircuitPane.cp.getChildren().add(this);
 		
 		TranslateTransition slide_in = new TranslateTransition(Duration.seconds(2), this);
 		slide_in.setFromX(Gui.boardWidth - Gui.SIDE_BAR_WIDTH - w);

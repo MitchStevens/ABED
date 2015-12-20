@@ -1,4 +1,4 @@
-package abedgui;
+package graphics;
 
 import java.util.List;
 import java.util.Map;
@@ -10,7 +10,7 @@ import circuits.BusOut;
 import circuits.Cable;
 import circuits.Circuit;
 import circuits.Input;
-import panes.GamePane;
+import panes.CircuitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
@@ -40,7 +40,7 @@ public class PieceImage extends Pane implements Observer{
 		this.c = c;
 		c.addObserver(this);
 		
-		size = GamePane.tileSize;
+		size = CircuitPane.tileSize;
 		this.setPrefSize(size, size);
 
 		node = new ImageView(ALL_IMAGES.get(c.name.replaceAll("[0-9]", "")));
@@ -60,14 +60,14 @@ public class PieceImage extends Pane implements Observer{
 		case "Merge":  case "Merge2":  case "Merge4":
 		case "Branch": case "Branch2": case "Branch4":
 		case "Cross_Over":
-			setNodeSize(GamePane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
 			break;
 		case "Input":
 			if (((Input) c).value)
 				node.setImage(ALL_IMAGES.get("InputOn"));
 			else
 				node.setImage(ALL_IMAGES.get("InputOff"));
-			setNodeSize(GamePane.tileSize * INPUT_NODE_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
 			break;
 		case "Output":
@@ -75,7 +75,7 @@ public class PieceImage extends Pane implements Observer{
 				node.setImage(ALL_IMAGES.get("OutputOn"));
 			else
 				node.setImage(ALL_IMAGES.get("OutputOff"));
-			setNodeSize(GamePane.tileSize * INPUT_NODE_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
 			break;
 		case "Display":
@@ -84,14 +84,14 @@ public class PieceImage extends Pane implements Observer{
 				if (c.flattenInputs().get(i))
 					num += (int) Math.pow(2, i);
 			node.setImage(ALL_IMAGES.get("Display" + num));
-			setNodeSize(GamePane.tileSize * INPUT_NODE_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
 		case "Cable":
-			setNodeSize(GamePane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
 			drawNodeCable(((Cable)c).get_output_num());
 			break;
 		default:
-			setNodeSize(GamePane.tileSize * NODE_AS_PERCENTAGE);
+			setNodeSize(CircuitPane.tileSize * NODE_AS_PERCENTAGE);
 			break;
 		}
 	}
@@ -182,7 +182,7 @@ public class PieceImage extends Pane implements Observer{
 	}
 
 	public void onResize(Circuit c) {
-		size = GamePane.tileSize;
+		size = CircuitPane.tileSize;
 		this.setPrefSize(size, size);
 
 		drawNode();

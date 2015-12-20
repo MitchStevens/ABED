@@ -4,7 +4,6 @@ import java.util.Random;
 
 import controls.Scramble;
 import controls.Typer;
-import abedgui.Gui;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -14,11 +13,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import logic.Reader;
 
-public class TitlePane extends VBox {
+public class TitlePane extends VBox implements ScreenPane {
 	private 		Font 		adbxtsc = Reader.loadFont("adbxtsc.ttf", 300);
 	private 		Font 		adbxtra = Reader.loadFont("adbxtra.ttf", 50);
 	private 		Font 		TYPER_FONT = Reader.loadFont("adbxtra.ttf", 90);
+	private final	int			SPEED = 50;
 	private final 	String 		ver 	= "2.0";
+	private final	Scramble 	subtitle;
+	private final	Typer[]		typers;	
 	private final 	String[] 	txt 	= new String[] {
 		"Binary operations galore!",
 		"I'm not confusing, you're just stupid!",
@@ -36,35 +38,55 @@ public class TitlePane extends VBox {
 	public TitlePane() {
 		this.getStylesheets().add(Reader.loadCSS("TitlePane.css"));
 		this.setMinSize(Gui.boardWidth, Gui.boardHeight);
-		this.setPadding(new Insets(10, 10, 10, 10));
 		
 		Label title = new Label("ABED");
 		title.setFont(adbxtsc);
 		title.setAlignment(Pos.CENTER);
 
 		Random r = new Random();
-		Scramble subtitle = new Scramble(txt[r.nextInt(txt.length)]);
+		subtitle = new Scramble(txt[r.nextInt(txt.length)]);
 		subtitle.setFont(adbxtra);
 		subtitle.setWrapText(true);
 		subtitle.setPrefWidth(Gui.boardWidth);
 		subtitle.setAlignment(Pos.TOP_LEFT);
 		subtitle.play();
 		
-		Typer play_game = new Typer("> Play Game");
-		play_game.setFont(TYPER_FONT);
-		play_game.setOnMouseClicked(e -> {
-			Gui.setCurrentPane(Gui.levelSelectPane);
+		typers = new Typer[3];
+		
+		typers[0] = new Typer("> Play Game", SPEED);
+		typers[0].setFont(TYPER_FONT);
+		typers[0].setOnMouseClicked(e -> {
+			Gui.setCurrentPane("level_select_pane");
 		});
-		play_game.play();
+		typers[0].play();
 		
-		Typer sand_box = new Typer("> Sandbox");
-		sand_box.setFont(TYPER_FONT);
-		sand_box.play();
+		typers[1] = new Typer("> Sandbox", SPEED);
+		typers[1].setFont(TYPER_FONT);
+		typers[1].setOnMouseClicked(e -> {
+			CircuitPane.unlockAllCircuits = true;
+			Gui.setCurrentPane("game_pane");
+		});
+		typers[1].play();
 		
-		Typer about = new Typer("> About");
-		about.setFont(TYPER_FONT);
-		about.play();
+		typers[2] = new Typer("> About", SPEED);
+		typers[2].setFont(TYPER_FONT);
+		typers[2].setOnMouseClicked(e -> {
+			Gui.setCurrentPane("about_pane");
+		});
+		typers[2].play();
 		
-		this.getChildren().addAll(title, subtitle, play_game, sand_box, about);
+		this.getChildren().addAll(title, subtitle, typers[0], typers[1], typers[2]);
+		this.setPadding(new Insets(30, 30, 30, 30));
+		this.setSpacing(40);
 	}
+
+	@Override
+	public void onFocus() {
+		subtitle.play();
+		for(Typer t : typers)
+			t.play();
+	}
+
+	@Override
+	public void offFocus() {}
 }

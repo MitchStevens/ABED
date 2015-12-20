@@ -1,3 +1,0 @@
-Introduction to BabyTown;Bus;Bus,Or;Make a Left Here;Make a circuit with an input on side 3 and an output at side 1. The circuit should output ON when the input is ON, and OFF when the input is OFF. Hint: Two not gates can cancel each other out.;4
-Make a Left Here;Left;Left,Right;Circuits on Circuits?;Create a Left using or. Right is given to you on completion;3
-Circuits on Circuits?;Nor;Nor,Super,Cross_Over,Corner_Cut;Something tricky comes your way.;Make a Nor;4

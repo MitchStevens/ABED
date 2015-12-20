@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import panes.GamePane;
+import panes.CircuitPane;
 import circuits.Circuit;
 import circuits.Coord;
 import javafx.collections.FXCollections;
@@ -16,17 +16,18 @@ import javafx.collections.ObservableSet;
 
 public class Level {
 	public static 	List<Level> 			ALL_LEVELS;
+	public static 	List<String>			LEVEL_TITLES = new ArrayList<>();
 	public static 	ObservableSet<Level> 	unlockedLevels;
 	//public static ObservableSet<Level> completedLevels = FXCollections.observableSet();
 	
-	public			String 					datum;
-	public 			String 					name;
-	public 			Circuit 				objective;
-	public 			List<Circuit> 			circuitRewards;
-	public 			List<String> 			levelRewards;
-	public 			String 					goalText;
-	public 			Integer 				gameSize;
-	public 			Coord 					tuple;
+	public 			String 			name			= "";
+	public 			Circuit 		objective		= null;
+	public 			List<Circuit> 	circuitRewards	= new ArrayList<>();
+	public 			List<String> 	levelRewards	= new ArrayList<>();
+	public 			String 			instructionText	= "";
+	public 			String 			completionText	= "";
+	public 			Integer 		gameSize		= 0;
+	public 			Coord 			tuple			= null;
 	
 	static {
 		ALL_LEVELS = Reader.loadLevels();
@@ -34,26 +35,26 @@ public class Level {
 	}
 	
 	public Level(){}
-	public Level(String datum, Coord coord) {
-		//NAME;objective;circuitRewards;levelRewards;goalText;optGame Size
-		this.datum = datum;
-		String[] data = datum.split(";");
-		name = data[0];
-		objective = Circuit.allCircuits.get(data[1]);
-		
-		circuitRewards = new ArrayList<>();
-		for (String s : data[2].split(","))
-			circuitRewards.add(Circuit.allCircuits.get(s));
-		
-		levelRewards = new ArrayList<>();
-		for(String s : data[3].split(","))
-			levelRewards.add(s);
-
-		goalText = data[4];
-		gameSize = Integer.parseInt(data[5]);
-		
-		tuple = coord;
-	}
+//	public Level(String datum, Coord coord) {
+//		//NAME;objective;circuitRewards;levelRewards;goalText;optGame Size
+//		this.datum = datum;
+//		String[] data = datum.split(";");
+//		name = data[0];
+//		objective = Circuit.allCircuits.get(data[1]);
+//		
+//		circuitRewards = new ArrayList<>();
+//		for (String s : data[2].split(","))
+//			circuitRewards.add(Circuit.allCircuits.get(s));
+//		
+//		levelRewards = new ArrayList<>();
+//		for(String s : data[3].split(","))
+//			levelRewards.add(s);
+//
+//		goalText = data[4];
+//		gameSize = Integer.parseInt(data[5]);
+//		
+//		tuple = coord;
+//	}
 	
 	public static Level nextLevel(Level l){
 		//returns level after l. If l is the last level in a set, return null.
@@ -70,13 +71,9 @@ public class Level {
 				.collect(toList());
 	}
 	
-	public Level(Circuit c){
-		objective = c;
-	}
-	
 	public void onCompletion(){
 		for(Circuit c : circuitRewards)
-			GamePane.unlockedCircuits.add(c);
+			CircuitPane.unlockedCircuits.add(c);
 		
 		for(String s : levelRewards){
 			List<Level> list = search( lvl -> {return lvl.name.equals(s);} );
@@ -98,7 +95,8 @@ public class Level {
 		tbr.objective 		= this.objective;
 		tbr.circuitRewards 	= this.circuitRewards;
 		tbr.levelRewards 	= this.levelRewards;
-		tbr.goalText 		= this.goalText;
+		tbr.instructionText = this.instructionText;
+		tbr.completionText	= this.completionText;
 		tbr.gameSize 		= this.gameSize;
 		return tbr;
 	}
@@ -110,8 +108,9 @@ public class Level {
 		hash *= 3*objective.hashCode();
 		hash *= 5*circuitRewards.hashCode();
 		hash *= 7*levelRewards.hashCode();
-		hash *= 11*goalText.hashCode();
-		hash *= 13*gameSize.hashCode();
+		hash *= 11*instructionText.hashCode();
+		hash *= 13*completionText.hashCode();
+		hash *= 17*gameSize.hashCode();
 		return hash;
 	}
 	
@@ -123,13 +122,20 @@ public class Level {
 		if(!this.objective.equals(l.objective)) 			return false;
 		if(!this.circuitRewards.equals(l.circuitRewards)) 	return false;
 		if(!this.levelRewards.equals(l.levelRewards)) 		return false;
-		if(!this.goalText.equals(l.goalText)) 				return false;
+		if(!this.instructionText.equals(l.instructionText)) return false;
+		if(!this.completionText.equals(l.completionText)) 	return false;
 		if(!this.gameSize.equals(l.gameSize)) 				return false;
 		return true;
 	}
 	
 	@Override
 	public String toString(){
-		return name;
+		return 	"{name: "+ name +"}, " +
+				"{objective: "+ objective +"}, " +
+				"{circuitRewards: "+ circuitRewards +"}, " +
+				"{levelRewards: "+ levelRewards +"}, " +
+				"{instructionText: "+ instructionText +"}, " +
+				"{completionText: "+ completionText +"}, " +
+				"{gameSize: "+ gameSize +"}";
 	}
 }

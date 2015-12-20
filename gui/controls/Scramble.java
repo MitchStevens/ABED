@@ -27,7 +27,7 @@ public class Scramble extends Label {
 		Timeline timeline = new Timeline();
 		timeline.setDelay(Duration.millis(800));
         KeyFrame keyFrame = new KeyFrame(
-                Duration.millis(100),
+                Duration.millis(50),
                 event -> {
                     if (i.get() > text.length()) {
                         timeline.stop();

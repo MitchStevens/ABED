@@ -1,24 +1,12 @@
 #main {
-}
-
-.label {
-	-fx-text-fill: #000000;
-}
-
-.combo-box {
-	-fx-graphic-hpos: right;
-	-fx-graphic-vpos: top;
-	-fx-graphic-text-gap: 2px;
-	-fx-text-fill: #FF0000;
-	-fx-fill: #9FFCFC;
-	-fx-background-color: #121212;
+	
 }
 
 #typer {
-	-fx-text-fill: black;
-	-fx-padding: 10;
+	-fx-fill: black;
+	-fx-padding: 20;
 }
 
 #typer:hover {
-	-fx-text-fill: #32CD32;
+	-fx-fill: #32CD32;
 }

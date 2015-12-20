@@ -2,7 +2,7 @@ package tutorials;
 
 import java.util.function.Predicate;
 
-import abedgui.Gui;
+import panes.Gui;
 import javafx.scene.layout.Pane;
 
 public class Step {

@@ -8,11 +8,10 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.function.Predicate;
 
-import abedgui.Gui;
-
 import com.sun.javafx.tk.FontMetrics;
 
-import panes.GamePane;
+import panes.CircuitPane;
+import panes.Gui;
 import javafx.animation.FadeTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -52,7 +51,7 @@ public class Tutorial implements Observer {
 	
 	public void end(){
 		for(Step s : steps)
-			GamePane.gp.getChildren().remove(s);		
+			CircuitPane.cp.getChildren().remove(s);		
 	}
 	
 	@Override

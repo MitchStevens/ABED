@@ -1,4 +1,4 @@
-package abedgui;
+package controls;
 
 import java.util.ArrayList;
 import java.util.List;

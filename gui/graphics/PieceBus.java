@@ -1,4 +1,4 @@
-package abedgui;
+package graphics;
 
 import java.util.Observable;
 import java.util.Observer;
@@ -10,7 +10,7 @@ import circuits.BusIn;
 import circuits.BusOut;
 import circuits.Circuit;
 import circuits.Cable;
-import panes.GamePane;
+import panes.CircuitPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
@@ -39,14 +39,14 @@ public class PieceBus extends Pane{
 		this.b = piece_image.c.buses.get(dir);
 		
 		busImage = new ImageView();
-		busImage.setFitHeight(GamePane.tileSize * 0.5);
-		busImage.setFitWidth(GamePane.tileSize * BUS_AS_PERCENTAGE);
+		busImage.setFitHeight(CircuitPane.tileSize * 0.5);
+		busImage.setFitWidth(CircuitPane.tileSize * BUS_AS_PERCENTAGE);
 		this.getChildren().add(busImage);
 
 		fixture = new Pane();
 		fixture.setStyle("-fx-background-color: #45535A;");
-		fixture.setPrefSize(GamePane.tileSize * BUS_AS_PERCENTAGE,
-				GamePane.tileSize * BUS_AS_PERCENTAGE * (3.0 / 9.0));
+		fixture.setPrefSize(CircuitPane.tileSize * BUS_AS_PERCENTAGE,
+				CircuitPane.tileSize * BUS_AS_PERCENTAGE * (3.0 / 9.0));
 		if(b == null)
 			fixture.setVisible(false);
 		this.getChildren().add(fixture);
@@ -65,7 +65,7 @@ public class PieceBus extends Pane{
 			lights = new Rectangle[b.size];
 		}
 		
-		double lightSize = GamePane.tileSize * BUS_AS_PERCENTAGE / 9.0;
+		double lightSize = CircuitPane.tileSize * BUS_AS_PERCENTAGE / 9.0;
 		double init = (5 - lights.length) * lightSize;
 		
 		for (int i = 0; i < b.size; i++) {
@@ -87,13 +87,13 @@ public class PieceBus extends Pane{
 	}
 	
 	public void onResize() {
-		busImage.setFitHeight(GamePane.tileSize * 0.5);
-		busImage.setFitWidth(GamePane.tileSize * BUS_AS_PERCENTAGE);
+		busImage.setFitHeight(CircuitPane.tileSize * 0.5);
+		busImage.setFitWidth(CircuitPane.tileSize * BUS_AS_PERCENTAGE);
 
-		fixture.setPrefSize(GamePane.tileSize * BUS_AS_PERCENTAGE,
-				GamePane.tileSize * BUS_AS_PERCENTAGE * (3.0 / 9.0));
+		fixture.setPrefSize(CircuitPane.tileSize * BUS_AS_PERCENTAGE,
+				CircuitPane.tileSize * BUS_AS_PERCENTAGE * (3.0 / 9.0));
 
-		double lightSize = GamePane.tileSize * BUS_AS_PERCENTAGE / 9.0;
+		double lightSize = CircuitPane.tileSize * BUS_AS_PERCENTAGE / 9.0;
 		double init = (5 - lights.length) * lightSize;
 		for (int i = 0; i < lights.length; i++) {
 			lights[i].setX(init + lightSize*2*i);

@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 import logic.Game;
 import circuits.Input;
 import circuits.Output;
-import panes.GamePane;
+import panes.CircuitPane;
 
 public class Tute1 extends Tutorial{
 
@@ -41,7 +41,7 @@ public class Tute1 extends Tutorial{
 	};
 	
 	public Tute1(){
-		super(GamePane.currentGame);
+		super(CircuitPane.currentGame);
 		
 		List<Predicate<Action>> step_preds = new ArrayList<>();
 		step_preds.add( a -> (a == Action.ADD && a.c instanceof Input));

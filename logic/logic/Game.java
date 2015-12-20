@@ -9,6 +9,7 @@ import tutorials.Action;
 import circuits.*;
 import static eval.Evaluator.init;
 import static java.util.stream.Collectors.toList;
+import static java.lang.Math.min;
 
 public class Game extends Observable{
 	/* There are many operations involving circuits on a given game (add, remove, rotate, move)
@@ -46,6 +47,17 @@ public class Game extends Observable{
 			c.setRot(Integer.parseInt(cData[1]));
 			this.add(c, cData[2], cData[3]);
 		}
+	}
+	
+	public void set_size(int size){
+		Circuit[][] grid = new Circuit[size][size];
+		
+		for(int i = 0; i < min(size, n)-1; i++)
+			for(int j = 0; j < min(size, n)-1; j++)
+				grid[i][j] = tileGrid[i][j];
+		
+		tileGrid = grid;
+		n = size;
 	}
 
 	private boolean add(Circuit c, String i, String j) {

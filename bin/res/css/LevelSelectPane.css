@@ -1,3 +1,10 @@
+/*
+@font-face {
+	font-family: adbxtra;
+	src: url("../../res/fonts/adbxtra.ttf");
+}
+*/
+
 #main {
 	-fx-padding: 10;
 }
@@ -10,27 +17,15 @@
 	-fx-background-color: gainsboro ;
 }
 
-.label {
-	-fx-text-fill: #000000;
+#unlocked {
+	-fx-fill: black;
+	-fx-padding: 10;
 }
 
-.label:hover {
-	
+#unlocked:hover {
+	-fx-fill: #32CD32;
 }
 
-.label:pressed {
-	
-}
-
-.button:focused{
-	
-}
-
-.combo-box {
-	-fx-graphic-hpos: right;
-	-fx-graphic-vpos: top;
-	-fx-graphic-text-gap: 2px;
-	-fx-text-fill: #FF0000;
-	-fx-fill: #9FFCFC;
-	-fx-background-color: #121212;
+#locked {
+	-fx-fill: grey;
 }

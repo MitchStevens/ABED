@@ -2,10 +2,10 @@ package controls;
 
 import java.util.Random;
 
-import abedgui.Gui;
 import circuits.Circuit;
 import eval.Evaluator;
-import panes.GamePane;
+import panes.CircuitPane;
+import panes.Gui;
 import javafx.animation.FadeTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,14 +26,6 @@ public class WinMessage extends VBox {
 	private final static double PADDING_GAP 	= 30;
 	private final static Font 	MESSAGE_FONT 	= Reader.loadFont("Aux DotBitC.ttf", 20);
 	
-	
-	private final static String[] words = new String[]{
-		"yes", "you", "did", "thing", "affermative",
-		"truly", "expectations", "great", "wow",
-		"finally", "correct", "success", "overwhelming",
-		"absolute", "glory", "amazement", "acheive",
-		"prosperity", "victory", "triumph"
-	};
 	
 	private final static String[] messages = new String[]{
 		"You are so handsome!",
@@ -109,7 +101,7 @@ public class WinMessage extends VBox {
 		b1.setFont(MESSAGE_FONT);
 		b1.setOnAction(e -> {
 			if(next != null){
-				GamePane.setLevel(next);
+				CircuitPane.setLevel(next);
 				kill();
 			}
 		});
@@ -121,7 +113,7 @@ public class WinMessage extends VBox {
 		b2.setAlignment(Pos.CENTER);
 		b2.setFont(MESSAGE_FONT);
 		b2.setOnAction(e -> {
-			Gui.setCurrentPane(Gui.levelSelectPane);
+			Gui.setCurrentPane("level_select_pane");
 			kill();
 		});
 		buttons.getChildren().add(b2);

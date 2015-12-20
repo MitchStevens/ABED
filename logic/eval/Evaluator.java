@@ -94,11 +94,8 @@ public class Evaluator {
 		
 		for (int i = 0; i < 1000; i++) {
 			List<Boolean> b = Bus.randomBus(8);
-			System.out.println(b);
-			if (this.eval(b) != e.eval(b)) {
-				System.out.println("evals "+ this.toString() +", "+ e.toString() +"are not equiv");
+			if (this.eval(b) != e.eval(b))
 				return false;
-			}
 		}
 		return true;
 	}

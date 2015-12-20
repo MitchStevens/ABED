@@ -1,9 +1,9 @@
-package abedgui;
+package graphics;
 
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import panes.GamePane;
+import panes.CircuitPane;
 import circuits.BusIn;
 import circuits.Cable;
 
@@ -28,7 +28,7 @@ public class PieceToggleableBus extends PieceBus {
 		
 		lights = new Rectangle[capacity];
 		
-		double lightSize = GamePane.tileSize * BUS_AS_PERCENTAGE / 9.0;
+		double lightSize = CircuitPane.tileSize * BUS_AS_PERCENTAGE / 9.0;
 		double init = (5 - lights.length) * lightSize;
 		
 		for (int i = 0; i < capacity; i++) {

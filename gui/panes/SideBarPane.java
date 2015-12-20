@@ -1,13 +1,13 @@
 package panes;
 
+import graphics.Piece;
+import graphics.PieceImage;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import controls.Incrementor;
 import circuits.Circuit;
-import abedgui.Gui;
-import abedgui.Piece;
-import abedgui.PieceImage;
 import javafx.collections.ListChangeListener;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.HPos;
@@ -52,7 +52,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		defWidth = Gui.SIDE_BAR_WIDTH;
 		this.getStylesheets().add("res/css/SideBarGui.css");
 		this.setPrefWidth(defWidth);
-		GamePane.unlockedCircuits.addListener(this);
+		CircuitPane.unlockedCircuits.addListener(this);
 
 		updateCircuits();
 		
@@ -61,7 +61,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		cmb.setId("combobox");
 		cmb.getItems().addAll(Game.ALL_GAMES.keySet());
 		cmb.setOnAction(e -> {
-			GamePane.newGame(Game.ALL_GAMES.get(cmb.getValue()));
+			CircuitPane.newGame(Game.ALL_GAMES.get(cmb.getValue()));
 		});
 		sb.add(new Label("Set Game"), 0, 1);
 		GridPane.setHalignment(cmb, HPos.RIGHT);
@@ -70,12 +70,12 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		inc = new Incrementor(Game.MIN_TILES, Game.MAX_TILES);
 		inc.setWidth1(defWidth / 2);
 		inc.setOnInc(e -> {
-			GamePane.incSize(GamePane.numTiles + 1);
+			CircuitPane.incSize(CircuitPane.numTiles + 1);
 		});
 		inc.setOnDec(e -> {
-			GamePane.decSize(GamePane.numTiles - 1);
+			CircuitPane.decSize(CircuitPane.numTiles - 1);
 		});
-		inc.set(GamePane.numTiles);
+		inc.set(CircuitPane.numTiles);
 		inc.setAlignment(Pos.CENTER_RIGHT);
 		sb.add(new Label("Set Size"), 0, 2);
 		sb.add(inc, 1, 2);
@@ -88,22 +88,10 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		sb.add(textArea, 0, 3);
 		SideBarPane.setColumnSpan(textArea, 2);
 
-		ComboBox<String> cmbo = new ComboBox<>();
-		cmbo.setPrefWidth(defWidth / 2);
-		cmbo.setId("combobox");
-		cmbo.getItems().addAll(Circuit.allCircuits.keySet());
-		cmbo.setOnAction(e -> {
-			GamePane.currentLevel = new Level(Circuit.allCircuits.get(cmbo
-					.getValue()));
-		});
-		sb.add(new Label("Set Objective"), 0, 4);
-		GridPane.setHalignment(cmbo, HPos.RIGHT);
-		sb.add(cmbo, 1, 4);
-
 		Button b1 = new Button("Gate toCircuit()");
 		b1.setPrefWidth(defWidth);
 		b1.setOnMouseClicked(e -> {
-			Circuit c = GamePane.currentGame.toCircuit();
+			Circuit c = CircuitPane.currentGame.toCircuit();
 			System.out.println(c.toString());
 		});
 		sb.add(b1, 0, 5, 2, 1);
@@ -112,7 +100,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		Button b2 = new Button("Gate toString()");
 		b2.setPrefWidth(defWidth);
 		b2.setOnMouseClicked(e -> {
-			System.out.println(GamePane.currentGame.toString());
+			System.out.println(CircuitPane.currentGame.toString());
 		});
 		sb.add(b2, 0, 6, 2, 1);
 		SideBarPane.setColumnSpan(b2, 2);
@@ -120,7 +108,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		Button b3 = new Button("isLevelComplete");
 		b3.setPrefWidth(defWidth);
 		b3.setOnMouseClicked(e -> {
-			System.out.println(GamePane.currentLevel.isComplete(GamePane.currentGame));
+			System.out.println(CircuitPane.currentLevel.isComplete(CircuitPane.currentGame));
 		});
 		sb.add(b3, 0, 7, 2, 1);
 		SideBarPane.setColumnSpan(b3, 2);
@@ -128,7 +116,7 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		Button b4 = new Button("Print Game");
 		b4.setPrefWidth(defWidth);
 		b4.setOnMouseClicked(e -> {
-			GamePane.currentGame.printGame();
+			CircuitPane.currentGame.printGame();
 		});
 		sb.add(b4, 0, 8, 2, 1);
 		SideBarPane.setColumnSpan(b4, 2);
@@ -136,32 +124,32 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 		Button b5 = new Button("Clear Game");
 		b5.setPrefWidth(defWidth);
 		b5.setOnMouseClicked(e -> {
-			GamePane.newGame(new Game(GamePane.numTiles));
+			CircuitPane.newGame(new Game(CircuitPane.numTiles));
 		});
 		sb.add(b5, 0, 9, 2, 1);
 		SideBarPane.setColumnSpan(b5, 2);
 	}
 	
 	public void updateCircuits(){
-		if(GamePane.unlockAllCircuits)
+		if(CircuitPane.unlockAllCircuits)
 			for(Circuit c : Circuit.allCircuits.values())
-				GamePane.unlockedCircuits.add(c);
+				CircuitPane.unlockedCircuits.add(c);
 		
 		TreeItem<Node> root = new TreeItem<>(new Label("Gates"));
 		
-		List<TreeItem<Node>> headers = new ArrayList<>(Circuit.circuitTypes.length);
-		for(int i = 0; i < Circuit.circuitTypes.length; i++) headers.add(null);
+		List<TreeItem<Node>> headers = new ArrayList<>(Level.LEVEL_TITLES.size());
+		for(int i = 0; i < Level.LEVEL_TITLES.size(); i++) headers.add(null);
 		
-		for(Circuit c : GamePane.unlockedCircuits)
+		for(Circuit c : CircuitPane.unlockedCircuits)
 			if(headers.get(c.type) == null){
-				Label headLabel = new Label(Circuit.circuitTypes[c.type]);
+				Label headLabel = new Label(Level.LEVEL_TITLES.get(c.type));
 				headLabel.setFont(DEF_FONT);
 				headers.set(c.type, new TreeItem<>(headLabel));
 			}
 
-		for (Circuit c : GamePane.unlockedCircuits) {
+		for (Circuit c : CircuitPane.unlockedCircuits) {
 			HBox hbox = new HBox();
-			if(GamePane.new_circuits.contains(c))
+			if(CircuitPane.new_circuits.contains(c))
 				hbox.setStyle("-fx-background-color: DDFEFE;");
 			
 			Label l = new Label(c.name);
@@ -179,13 +167,13 @@ public class SideBarPane extends GridPane implements SetChangeListener<Circuit> 
 			hbox.getChildren().add(l);
 
 			hbox.setOnMouseClicked(e -> {
-				GamePane.addPiece(new Piece(c.clone()));
+				CircuitPane.addPiece(new Piece(c.clone()));
 			});
 
 			TreeItem<Node> label = new TreeItem<>(hbox);
 
 			if(headers.get(c.type) == null){
-				Label headLabel = new Label(Circuit.circuitTypes[c.type]);
+				Label headLabel = new Label(Level.LEVEL_TITLES.get(c.type));
 				headLabel.setFont(DEF_FONT);
 				root.getChildren().add(new TreeItem<>(headLabel));
 			}
