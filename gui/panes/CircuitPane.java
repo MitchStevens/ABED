@@ -10,32 +10,17 @@ import java.util.Observer;
 import java.util.Set;
 
 import controls.CircuitFinder;
-import controls.WinMessage;
 import tutorials.Action;
 import tutorials.Tute1;
 import tutorials.Tutorial;
-import circuits.BusIn;
-import circuits.BusOut;
-import circuits.Cable;
-import circuits.Circuit;
-import circuits.Coord;
-import eval.Evaluator;
+import circuits.*;
 import graphics.Piece;
 import graphics.Square;
-import javafx.animation.FadeTransition;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
-import javafx.geometry.Insets;
-import javafx.geometry.Point2D;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
-import javafx.util.Duration;
 import logic.Game;
 import logic.Level;
 import logic.PathFinder;
@@ -396,7 +381,8 @@ public class CircuitPane extends Pane implements Observer{
 	
 	public static void onLevelCompletion(){
 		if(gameWon) return;
-		WinMessage wm = new WinMessage(currentLevel, currentGame.n);
+		((WinPane)Gui.screens.get("win_pane")).set_level(currentLevel, currentGame.n);
+		Gui.setCurrentPane("win_pane");
 //		Gui.gamePane.getChildren().add(wm);
 //		wm.toFront();
 		new_circuits.clear();

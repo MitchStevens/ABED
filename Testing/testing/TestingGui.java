@@ -44,10 +44,8 @@ public class TestingGui extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
-//		add_note(3);
-//		set_message(2);
-		add_typer();
-		add_spin();
+		
+		
 	}
 	
 	public void add_note(int i){
@@ -64,7 +62,7 @@ public class TestingGui extends Application{
 	}
 	
 	private void add_typer(){
-		Typer ty = new Typer("B04T5 4ND H035");
+		Typer ty = new Typer("B04T5 4ND H035", 30);
 		ty.setLayoutX(300);
 		ty.setLayoutY(300);
 		root.getChildren().add(ty);

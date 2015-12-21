@@ -56,9 +56,9 @@ public class Level {
 //		tuple = coord;
 //	}
 	
-	public static Level nextLevel(Level l){
+	public Level nextLevel(){
 		//returns level after l. If l is the last level in a set, return null.
-		Coord nextTuple = new Coord(l.tuple.i, l.tuple.j + 1);
+		Coord nextTuple = new Coord(tuple.i, tuple.j + 1);
 		List<Level> nextList = search(lvl -> { return lvl.tuple.equals(nextTuple); });
 		if(!nextList.isEmpty())
 			return nextList.get(0);

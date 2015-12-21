@@ -1,0 +1,28 @@
+#main {
+	-fx-padding: 10;
+}
+
+.label {
+	-fx-text-fill: #000000;
+}
+
+.label:hover {
+	
+}
+
+.label:pressed {
+	
+}
+
+.button:focused{
+	
+}
+
+.combo-box {
+	-fx-graphic-hpos: right;
+	-fx-graphic-vpos: top;
+	-fx-graphic-text-gap: 2px;
+	-fx-text-fill: #FF0000;
+	-fx-fill: #9FFCFC;
+	-fx-background-color: #121212;
+}

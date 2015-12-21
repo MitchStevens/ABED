@@ -70,6 +70,9 @@ public class Gui extends Application {
 		AboutPane aboutPane = new AboutPane();
 		screens.put("about_pane", aboutPane);
 		
+		WinPane winPane = new WinPane();
+		screens.put("win_pane", winPane);
+		
 		mainPane.getChildren().add(titlePane);
 		root.getChildren().add(mainPane);
 		CircuitPane.newGame(new Game(7));
