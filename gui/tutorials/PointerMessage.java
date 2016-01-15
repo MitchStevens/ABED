@@ -5,6 +5,7 @@ import panes.Gui;
 
 import com.sun.javafx.tk.FontMetrics;
 
+import data.Reader;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
@@ -15,7 +16,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import logic.Reader;
 
 public class PointerMessage extends Pane implements Message{
 	public final static Color	DEF_COLOR = Color.web("#DDFEFE");

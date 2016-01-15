@@ -15,19 +15,32 @@ public class Cable extends Circuit {
 	public			boolean[] output_toggle;
 	
 	public Cable(){
-		super("Cable;0,0,0,1;1,1,1,0;0");
+		super("CABLE;0,0,0,1;1,1,1,0;0");
+		this.name = "CABLE";
 		this.capacity = 1;
 		this.output_toggle = new boolean[]{false, true, false};
+		this.type = 0;
 	}
 	
 	public Cable(String datum){
 		super(datum);
 	}
 	
-	public Cable(int capacity){
-		super("Cable;0,0,0,1;0,1,0,0;0");
-		this.capacity = capacity;
+	public Cable(int output_num){
+		super("CABLE;0,0,0,1;1,1,1,0;0");
+		this.name = "CABLE";
+		this.capacity = 1;
+		this.output_toggle = new boolean[]{false, false, false};
+		output_toggle[0] = (output_num & 1) == 1;
+		output_toggle[1] = (output_num & 2) == 2;
+		output_toggle[2] = (output_num & 4) == 4;
+		this.type = 0;
 	}
+	
+//	public Cable(int output_num, int capacity){
+//		super("CABLE;0,0,0,1;0,1,0,0;0");
+//		this.capacity = capacity;
+//	}
 	
 	public void toggle_output(int dir){
 		output_toggle[dir] ^= true;
@@ -62,9 +75,13 @@ public class Cable extends Circuit {
 		return num;
 	}
 
+	public String getData() {
+		return "CABLE" +get_output_num()+ "," + rot + "," + coord.i + "," + coord.j;
+	}
+	
 	@Override
 	public Cable clone() {
-		return new Cable();
+		return new Cable(get_output_num());
 	}
 	
 }

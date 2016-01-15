@@ -36,10 +36,10 @@ public class Evaluator {
 
 		for (String s : tokStr) {
 			switch (s) {
-			case "&":
+			case "x":
 				tokens.add(Operation.and);
 				continue;
-			case "|":
+			case "+":
 				tokens.add(Operation.or);
 				continue;
 			case "~":

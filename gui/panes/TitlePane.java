@@ -4,6 +4,7 @@ import java.util.Random;
 
 import controls.Scramble;
 import controls.Typer;
+import data.Reader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -11,7 +12,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import logic.Reader;
 
 public class TitlePane extends VBox implements ScreenPane {
 	private 		Font 		adbxtsc = Reader.loadFont("adbxtsc.ttf", 300);

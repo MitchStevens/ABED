@@ -15,10 +15,12 @@ public class Input extends Circuit {
 	public Input() {
 		super();
 		this.initData = "";
-		this.name = "Input";
+		this.name = "INPUT";
 		this.evals = new ArrayList<>();
 		initBuses("0,0,0,0", "0,1,0,0");
+		
 		this.rot = 0;
+		this.type = 0;
 	}
 
 	public void setValue(Boolean b) {
@@ -36,7 +38,7 @@ public class Input extends Circuit {
 	public Integer input_num(){
 		int count = 0;
 		for(int i = 0; i < 4; i++)
-			for(Circuit c : game.circuitsOnEdge(i, "Input")){
+			for(Circuit c : game.circuitsOnEdge(i, "INPUT")){
 				if(c == this)
 					return count;
 				else

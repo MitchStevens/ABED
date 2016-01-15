@@ -5,11 +5,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Map;
 
-import logic.Reader;
-
 import org.junit.Test;
 
 import circuits.Circuit;
+import data.Reader;
 
 public class TestingReader {
 

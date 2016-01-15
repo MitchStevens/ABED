@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<root>
+<circuit name="BUS"/>
+<circuit name="AND"/>
+<circuit name="INPUT"/>
+<circuit name="NOR"/>
+<circuit name="OUTPUT"/>
+<circuit name="OR"/>
+<circuit name="NAND"/>
+<circuit name="NOT"/>
+</root>

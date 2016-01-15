@@ -8,14 +8,13 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Queue;
 
+import data.Reader;
 import eval.Evaluator;
 import javafx.collections.ObservableSet;
 import logic.Game;
-import logic.Reader;
 
 public class Circuit extends Observable{
 	
-	public static 	Map<String, Circuit> 	allCircuits;
 	public 			int 					inputs = 0, outputs = 0;
 	public 			int 					type = 0;
 	public 			String 					name = "";
@@ -30,17 +29,12 @@ public class Circuit extends Observable{
 	// evals.size should be the same as outputBus.size
 	public 			List<List<String>> 		evalStrings = null;
 	
-	static {
-		//loading circuits working correctly
-		allCircuits = Reader.loadCircuits();
-	}
-	
 	//Only use this constructor when creating a new circuit from a class.
 	public Circuit(){}
 	
 	public Circuit(String datum) {
+		//this.initData = datum;
 		// NAME;INPUTS;OUTPUTS;EVALS
-		this.initData = datum;
 		String[] data = datum.split(";");
 		this.name = data[0];
 		this.evals = new ArrayList<>();
@@ -48,6 +42,17 @@ public class Circuit extends Observable{
 			for (String s : data[3].split(","))
 				evals.add(new Evaluator(s));
 		initBuses(data[1], data[2]);
+		this.rot = 0;
+		coord = Coord.NULL;
+	}
+	
+	public Circuit(String name, String inputs, String outputs, String evals){
+		this.initData = name +";"+ inputs +";"+ outputs +";"+ evals;
+		this.name = name;
+		this.evals = new ArrayList<>();
+		for(String s : evals.split(","))
+			this.evals.add(new Evaluator(s));
+		initBuses(inputs, outputs);
 		this.rot = 0;
 		coord = Coord.NULL;
 	}
@@ -160,7 +165,7 @@ public class Circuit extends Observable{
 
 	@Override
 	public Circuit clone() {
-		return new Circuit(initData);
+		return new Circuit(this.initData);
 	}
 
 	@Override
@@ -169,8 +174,6 @@ public class Circuit extends Observable{
 			return false;
 		Circuit c = (Circuit) o;
 		if (!name.equals(c.name))
-			return false;
-		if (!initData.equals(c.initData))
 			return false;
 		if (coord.i != null)
 			if (!coord.i.equals(c.coord.i))
@@ -258,4 +261,33 @@ public class Circuit extends Observable{
 			tbr += e.logic + ",";
 		return tbr;
 	}
+	
+	public String toXML(){
+		String tbr = "<circuit_name=\""+ this.name +"\" ";
+		
+		tbr += "inputs=\"";
+		for(int dir = 0; dir < 4; dir++)
+			tbr += (this.buses.get(dir) instanceof BusIn ? this.buses.get(dir).size : 0) +",";
+		tbr += "\" ";
+		
+		tbr += "outputs=\"";
+		for(int dir = 0; dir < 4; dir++)
+			tbr += (this.buses.get(dir) instanceof BusOut ? this.buses.get(dir).size : 0) +",";
+		tbr += "\" ";
+		
+		tbr += "evals=\"";
+		for(int i = 0; i < evals.size(); i++)
+			tbr += evals.get(i).logic;
+		tbr += "\" \\>";
+		
+		return tbr;
+	}
+	
+	/*		<circuit name="DISPLAY"
+					inputs="0,0,4,0"
+					outputs="0,0,0,0"
+					evals="">
+			</circuit>
+	 */
+	
 }

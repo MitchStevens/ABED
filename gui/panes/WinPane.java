@@ -1,6 +1,7 @@
 package panes;
 
 import circuits.Circuit;
+import data.Reader;
 import graphics.PieceImage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,7 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import logic.Level;
-import logic.Reader;
 
 public class WinPane extends BorderPane implements ScreenPane {
 	private static final Font	TITLE_FONT 		= Reader.loadFont("adbxtsc.ttf", 55);
@@ -118,7 +118,7 @@ public class WinPane extends BorderPane implements ScreenPane {
 			circ_box.setAlignment(Pos.TOP_CENTER);
 			circ_box.setPadding(new Insets(10, 10, 10, 10));
 			
-			ImageView image = new ImageView(PieceImage.ALL_IMAGES.get(c.name));
+			ImageView image = new ImageView(Reader.ALL_IMAGES.get(c.name));
 			image.prefHeight(circ_size);
 			image.prefWidth(circ_size);
 			

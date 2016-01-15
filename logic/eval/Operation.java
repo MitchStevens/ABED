@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Stack;
 
 import circuits.Circuit;
+import data.Reader;
 
 public class Operation extends Token {
 	private			String 		name;
@@ -48,7 +49,7 @@ public class Operation extends Token {
 			stack.push(new Flag(!l.get(0).get(list)));
 			return;
 		default:
-			Circuit c = Circuit.allCircuits.get(name).clone();
+			Circuit c = Reader.ALL_CIRCUITS.get(name).clone();
 			if (c != null) {
 				l = popList(stack, c.inputs);
 				List<Boolean> b = new ArrayList<>();

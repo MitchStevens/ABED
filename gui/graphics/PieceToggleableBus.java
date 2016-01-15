@@ -6,10 +6,10 @@ import javafx.scene.shape.Rectangle;
 import panes.CircuitPane;
 import circuits.BusIn;
 import circuits.Cable;
+import data.Reader;
 
 public class PieceToggleableBus extends PieceBus {
 	final public static double DISABLED_OPACITY = 0.15;
-	
 	
 	private int capacity;
 	
@@ -45,11 +45,8 @@ public class PieceToggleableBus extends PieceBus {
 	}
 	
 	public void toggle_bus(){
-		System.out.println("Bus "+dir+" was toggled.");
-		
 		if(!(piece_image.c.buses.get(dir) instanceof BusIn))
 			((Cable)piece_image.c).toggle_output(dir);
-		
 		update();
 	}
 	
@@ -69,7 +66,7 @@ public class PieceToggleableBus extends PieceBus {
 		String piece_id = "PipeOut_Off";
 		if(output_value)
 			piece_id = (b instanceof BusIn ? "PipeIn" : "PipeOut")+"_"+(b.or() ? "On" : "Off");
-		busImage.setImage(PieceImage.ALL_IMAGES.get(piece_id));
+		busImage.setImage(Reader.ALL_IMAGES.get(piece_id));
 		
 	}
 

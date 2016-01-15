@@ -10,6 +10,7 @@ import circuits.BusOut;
 import circuits.Cable;
 import circuits.Circuit;
 import circuits.Input;
+import data.Reader;
 import panes.CircuitPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,13 +18,11 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
-import logic.Reader;
 import static circuits.Circuit.mod4;
 
 public class PieceImage extends Pane implements Observer{
 	// name sucks I know. Change by right clicking on the class and clicking
 	// refactor > rename.
-	public static Map<String, Image> ALL_IMAGES;
 	final double NODE_AS_PERCENTAGE = 0.5;
 	final double INPUT_NODE_AS_PERCENTAGE = 0.7;
 	
@@ -31,10 +30,6 @@ public class PieceImage extends Pane implements Observer{
 	ImageView node;
 	PieceBus[] buses;
 	Circuit c;
-
-	static {
-		ALL_IMAGES = Reader.loadImages();
-	}
 	
 	public PieceImage(Circuit c) {
 		this.c = c;
@@ -43,7 +38,7 @@ public class PieceImage extends Pane implements Observer{
 		size = CircuitPane.tileSize;
 		this.setPrefSize(size, size);
 
-		node = new ImageView(ALL_IMAGES.get(c.name.replaceAll("[0-9]", "")));
+		node = new ImageView(Reader.ALL_IMAGES.get(c.name.replaceAll("[0-9]", "")));
 		drawNode();
 
 		addPieceBuses(c);
@@ -53,28 +48,28 @@ public class PieceImage extends Pane implements Observer{
 
 	private void drawNode() {
 		switch (c.name) {
-		case "Bus": break;
-		case "Left":   case "Left2":   case "Left4":
-		case "Right":  case "Right2":  case "Right4":
-		case "Super":  case "Super2":  case "Super4":
-		case "Merge":  case "Merge2":  case "Merge4":
-		case "Branch": case "Branch2": case "Branch4":
-		case "Cross_Over":
+		case "BUS": break;
+		case "LEFT":   case "LEFT2":   case "LEFT4":
+		case "RIGHT":  case "RIGHT2":  case "RIGHT4":
+		case "SUPER":  case "SUPER2":  case "SUPER4":
+		case "MERGE":  case "MERGE2":  case "MERGE4":
+		case "BRANCH": case "BRANCH2": case "BRANCH4":
+		case "CROSS OVER":
 			setNodeSize(CircuitPane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
 			break;
-		case "Input":
+		case "INPUT":
 			if (((Input) c).value)
-				node.setImage(ALL_IMAGES.get("InputOn"));
+				node.setImage(Reader.ALL_IMAGES.get("InputOn"));
 			else
-				node.setImage(ALL_IMAGES.get("InputOff"));
+				node.setImage(Reader.ALL_IMAGES.get("InputOff"));
 			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
 			break;
-		case "Output":
+		case "OUTPUT":
 			if (c.flattenInputs().get(0))
-				node.setImage(ALL_IMAGES.get("OutputOn"));
+				node.setImage(Reader.ALL_IMAGES.get("OutputOn"));
 			else
-				node.setImage(ALL_IMAGES.get("OutputOff"));
+				node.setImage(Reader.ALL_IMAGES.get("OutputOff"));
 			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
 			break;
@@ -83,10 +78,10 @@ public class PieceImage extends Pane implements Observer{
 			for (int i = 0; i < 4; i++)
 				if (c.flattenInputs().get(i))
 					num += (int) Math.pow(2, i);
-			node.setImage(ALL_IMAGES.get("Display" + num));
+			node.setImage(Reader.ALL_IMAGES.get("Display" + num));
 			setNodeSize(CircuitPane.tileSize * INPUT_NODE_AS_PERCENTAGE);
 			node.setRotate(mod4(-c.rot) * 90);
-		case "Cable":
+		case "CABLE":
 			setNodeSize(CircuitPane.tileSize * PieceBus.BUS_AS_PERCENTAGE);
 			drawNodeCable(((Cable)c).get_output_num());
 			break;
@@ -100,38 +95,39 @@ public class PieceImage extends Pane implements Observer{
 		//beacuse putting a switch inside a switch is just poor form
 		switch(output_num){
 		case 0:
-			node.setImage(ALL_IMAGES.get("nub"));
+			node.setImage(Reader.ALL_IMAGES.get("nub"));
 			node.setRotate(0);
 			break;
 		case 1:
-			node.setImage(ALL_IMAGES.get("Left"));
+			node.setImage(Reader.ALL_IMAGES.get("LEFT"));
 			node.setRotate(0);
 			break;
 		case 2:
-			node.setImage(ALL_IMAGES.get("Straight"));
+			node.setImage(Reader.ALL_IMAGES.get("Straight"));
 			node.setRotate(0);
 			break;
 		case 3:
-			node.setImage(ALL_IMAGES.get("Merge"));
+			node.setImage(Reader.ALL_IMAGES.get("MERGE"));
 			node.setRotate(0);
 			break;
 		case 4:
-			node.setImage(ALL_IMAGES.get("Right"));
+			node.setImage(Reader.ALL_IMAGES.get("RIGHT"));
 			node.setRotate(0);
 			break;
 		case 5:
-			node.setImage(ALL_IMAGES.get("Merge"));
+			node.setImage(Reader.ALL_IMAGES.get("MERGE"));
 			node.setRotate(-90);
 			break;
 		case 6:
-			node.setImage(ALL_IMAGES.get("Merge"));
+			node.setImage(Reader.ALL_IMAGES.get("MERGE"));
 			node.setRotate(180);
 			break;
 		case 7:
-			node.setImage(ALL_IMAGES.get("Super"));
+			node.setImage(Reader.ALL_IMAGES.get("SUPER"));
 			node.setRotate(0);
 			break;
 		}
+		node.toFront();
 	}
 	
 	public void setNodeSize(double nodeSize) {
@@ -145,7 +141,7 @@ public class PieceImage extends Pane implements Observer{
 		buses = new PieceBus[4];
 		
 		switch(c.name){
-		case "Cable":			
+		case "CABLE":
 			for (int dir = 0; dir <= 2; dir++){
 				buses[dir] = new PieceToggleableBus(this, dir);
 				buses[dir].setRotate(dir * 90);

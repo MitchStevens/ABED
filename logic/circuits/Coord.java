@@ -14,6 +14,13 @@ public class Coord{
 		this.j = j;
 	}
 	
+	public Coord(String str){
+		//"i, j"
+		String[] data = str.split(",");
+		this.i = Integer.parseInt(data[i]);
+		this.j = Integer.parseInt(data[j]);
+	}
+	
 	public void set(int i, int j){
 		this.i = i;
 		this.j = j;

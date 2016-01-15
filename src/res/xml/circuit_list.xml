@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+	<category name="Basic">
+		<circuit name="BUS" 	inputs="0,0,0,1" outputs="0,1,0,0" evals="0" />
+		<circuit name="LEFT" 	inputs="0,0,0,1" outputs="1,0,0,0" evals="0" />
+		<circuit name="RIGHT" 	inputs="0,0,0,1" outputs="0,0,1,0" evals="0" />
+		<circuit name="NOT" 	inputs="0,0,0,1" outputs="0,1,0,0" evals="0 ~" />
+		<circuit name="OR" 		inputs="1,0,0,1" outputs="0,1,0,0" evals="0 1 +" />
+		<circuit name="NOR" 	inputs="1,0,0,1" outputs="0,1,0,0" evals="0 1 + ~" />
+		<circuit name="AND" 	inputs="1,0,0,1" outputs="0,1,0,0" evals="0 1 x" />
+		<circuit name="NAND" 	inputs="1,0,0,1" outputs="0,1,0,0" evals="0 1 x ~" />
+	</category>
+	<category name="Single">
+		<circuit name="SUPER" 		inputs="0,0,0,1" outputs="1,1,1,0" evals="0,0,0" />
+		<circuit name="XOR" 		inputs="1,0,0,1" outputs="0,1,0,0" evals="0 1 ~ x 0 ~ 1 x +" />
+		<circuit name="HALF ADDER" 	inputs="1,0,0,1" outputs="0,1,1,0" evals="0 1 XOR,0 1 x" />
+		<circuit name="CORNER CUT" 	inputs="1,0,0,1" outputs="0,1,1,0" evals="0,1" />
+		<circuit name="CROSS OVER" 	inputs="1,0,0,1" outputs="0,1,1,0" evals="1,0" />
+	</category>
+	<category name="Dual">
+		<circuit name="BUS2" 		inputs="0,0,0,2" outputs="0,2,0,0" evals="1,0" />
+		<circuit name="LEFT2" 		inputs="0,0,0,2" outputs="0,2,0,0" evals="1,0" />
+		<circuit name="RIGHT" 		inputs="0,0,0,2" outputs="0,2,0,0" evals="1,0" />
+		<circuit name="MERGE2" 		inputs="1,0,0,1" outputs="0,2,0,0" evals="0,1" />
+		<circuit name="BRANCH2" 	inputs="0,0,0,2" outputs="1,1,0,0" evals="1,0" />
+		<circuit name="SUPER2" 		inputs="0,2,2,2" outputs="2,2,2,0" evals="0,1,1,0,0,1" />
+		<circuit name="FULL ADDER" 	inputs="1,0,0,2" outputs="0,1,1,0" evals="0 1 XOR" />
+	</category>
+	<category name="Quad">
+		<circuit name="BUS4" 	inputs="0,0,0,4" outputs="0,4,0,0" evals="3,2,1,0" />
+		<circuit name="LEFT4" 	inputs="0,0,0,4" outputs="4,0,0,0" evals="3,2,1,0" />
+		<circuit name="RIGHT4" 	inputs="0,0,0,4" outputs="0,0,4,0" evals="3,2,1,0" />
+		<circuit name="MERGE4" 	inputs="" 		 outputs="" 	   evals="" />
+		<circuit name="BRANCH4" inputs="0,0,0,4" outputs="2,2,0,0" evals="3,2,1,0" />
+		<circuit name="SUPER4" 	inputs="0,0,0,4" outputs="4,4,4,0" evals="3,2,1,0,3,2,1,0,3,2,1,0" />
+		<circuit name="DISPLAY" inputs="0,0,4,0" outputs="0,0,0,0" evals="" />
+	</category>
+	<category name="Unaccessible">
+		<circuit name="CABLE0"	inputs="0,0,0,1" outputs="0,0,0,0" evals="0" />
+		<circuit name="CABLE1"	inputs="0,0,0,1" outputs="1,0,0,0" evals="0" />
+		<circuit name="CABLE2"	inputs="0,0,0,1" outputs="0,1,0,0" evals="0" />
+		<circuit name="CABLE3"	inputs="0,0,0,1" outputs="1,1,0,0" evals="0,0" />
+		<circuit name="CABLE4"	inputs="0,0,0,1" outputs="0,0,1,0" evals="0" />
+		<circuit name="CABLE5"	inputs="0,0,0,1" outputs="1,0,1,0" evals="0,0" />
+		<circuit name="CABLE6"	inputs="0,0,0,1" outputs="0,1,1,0" evals="0,0" />
+		<circuit name="CABLE7"	inputs="0,0,0,1" outputs="1,1,1,0" evals="0,0,0" />
+	</category>
+</root>

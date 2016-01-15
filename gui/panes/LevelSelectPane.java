@@ -7,6 +7,7 @@ import java.util.Random;
 import controls.Typer;
 import tutorials.*;
 import circuits.Circuit;
+import data.Reader;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +27,6 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import logic.Level;
-import logic.Reader;
 
 public class LevelSelectPane extends Pane implements SetChangeListener<Level>, ScreenPane {
 	private static final double COL_WIDTH 	= 1.0/3.0;
@@ -40,11 +40,8 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 	public LevelSelectPane() {
 		this.setId("main");
 		this.getStylesheets().add(Reader.loadCSS("LevelSelectPane.css"));
-		Level.unlockedLevels.addListener(this);
-		//Level.completedLevels.addListener(this);
-		
-		this.setOnInputMethodTextChanged(e -> {System.out.print("focus");});
-		
+		Reader.unlocked_levels.addListener(this);
+		//Level.completedLevels.addListener(this);		
 		init();
 	}
 	
@@ -53,7 +50,7 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 		wrapper = new HBox();
 		wrapper.setPrefHeight(Gui.boardHeight);
 		
-		for(int i = 0; i < Level.LEVEL_TITLES.size(); i++)
+		for(int i = 0; i < Reader.LEVEL_CATEGORIES.size(); i++)
 			wrapper.getChildren().add(createLevelColumn(i));
 		
 		this.getChildren().add(wrapper);
@@ -63,12 +60,12 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 		VBox tbr = new VBox();
 		levelColumns.add(tbr);
 		
-		Label title = new Label(num+". "+Level.LEVEL_TITLES.get(num));
+		Label title = new Label(num+". "+Reader.LEVEL_CATEGORIES.get(num));
 		title.setFont(TITLE_FONT);
 		tbr.getChildren().add(title);
 		
 		for(Level l : Level.search( lvl -> {return lvl.tuple.i == num;} )){
-			Pane p = createLevelBox(l, num+"."+l.tuple.j+": "+l.name, Level.unlockedLevels.contains(l));
+			Pane p = createLevelBox(l, num+"."+l.tuple.j+": "+l.name, Reader.unlocked_levels.contains(l));
 			tbr.getChildren().add(p);
 		}
 		

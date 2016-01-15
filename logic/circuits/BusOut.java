@@ -32,20 +32,20 @@ public class BusOut extends Bus{
 				tbr += b.outputAsString()+" ";
 		
 		switch (c.name) {
-		case "Output":
-		case "Bus":
-		case "Super":
-		case "Cable":
-		case "Right":
-		case "Left":
+		case "OUTPUT":
+		case "BUS":
+		case "SUPER":
+		case "CABLE":
+		case "RIGHT":
+		case "LEFT":
 			return init(tbr);
-		case "And":
-			return tbr + "&";
-		case "Or":
-			return tbr + "|";
-		case "Not":
+		case "AND":
+			return tbr + "x";
+		case "OR":
+			return tbr + "+";
+		case "NOT":
 			return tbr + "~";
-		case "Input":
+		case "INPUT":
 			return ((Input)c).input_num()+"";
 		default:
 			if(c.outputs <= 1)

@@ -10,6 +10,7 @@ import circuits.BusIn;
 import circuits.BusOut;
 import circuits.Circuit;
 import circuits.Cable;
+import data.Reader;
 import panes.CircuitPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Border;
@@ -116,7 +117,7 @@ public class PieceBus extends Pane{
 			lights[i].setFill(b.get(i) ? LIGHT_ON : LIGHT_OFF);
 
 		String piece_id = (b instanceof BusIn ? "PipeIn" : "PipeOut")+"_"+(b.or() ? "On" : "Off");
-		busImage.setImage(PieceImage.ALL_IMAGES.get(piece_id));
+		busImage.setImage(Reader.ALL_IMAGES.get(piece_id));
 		
 	}
 }

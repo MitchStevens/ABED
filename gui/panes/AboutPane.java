@@ -1,5 +1,6 @@
 package panes;
 
+import data.Reader;
 import graphics.PieceImage;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -10,7 +11,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import logic.Reader;
 
 public class AboutPane extends Pane implements ScreenPane {
 	private static final double TEXT_PANE_WIDTH = 700.0;
@@ -21,7 +21,7 @@ public class AboutPane extends Pane implements ScreenPane {
 	BorderPane main = new BorderPane();
 	Pane left_border, right_border;
 	VBox vbox = new VBox();
-	Image border = PieceImage.ALL_IMAGES.get("border");
+	Image border = Reader.ALL_IMAGES.get("border");
 	
 	public AboutPane(){
 		this.getStylesheets().add(Reader.loadCSS("AboutPane.css"));

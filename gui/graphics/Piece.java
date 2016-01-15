@@ -6,6 +6,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import circuits.Circuit;
+import data.Reader;
 import panes.CircuitPane;
 import panes.Gui;
 import javafx.animation.RotateTransition;
@@ -16,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import logic.Reader;
 
 public class Piece extends Pane{
 	private static final 	double 				FONT_CONST 	= 0.15;
@@ -35,7 +35,7 @@ public class Piece extends Pane{
 	private 				Text 				gateName 	= new Text();
 	private 				Text 				delete;
 	private 				Text 				duplicate;
-	private					Text				rotate;
+	//private					Text				rotate;
 	
 	public Piece(Circuit c) {
 		this.c = c;		
@@ -61,10 +61,10 @@ public class Piece extends Pane{
 		gateName.setLayoutY(CircuitPane.tileSize);
 		this.getChildren().add(gateName);
 
-		rotate = new Text("R");
-		rotate.setLayoutX(CircuitPane.tileSize - 10);
-		rotate.setLayoutY(CircuitPane.tileSize - 10);
-		this.getChildren().add(rotate);
+//		rotate = new Text("R");
+//		rotate.setLayoutX(CircuitPane.tileSize - 10);
+//		rotate.setLayoutY(CircuitPane.tileSize - 10);
+//		this.getChildren().add(rotate);
 
 		setEvents();
 	}
@@ -110,10 +110,10 @@ public class Piece extends Pane{
 			event.consume();
 		});
 
-		rotate.setOnMouseClicked(event -> {
-			CircuitPane.rotatePiece(c.coord, -1);
-			event.consume();
-		});
+//		rotate.setOnMouseClicked(event -> {
+//			CircuitPane.rotatePiece(c.coord, -1);
+//			event.consume();
+//		});
 
 		duplicate.setOnMouseClicked(event -> {
 			CircuitPane.addPiece(new Piece(c.clone()));
@@ -150,8 +150,8 @@ public class Piece extends Pane{
 			
 		gateName.setLayoutY(CircuitPane.tileSize);
 
-		rotate.setLayoutX(CircuitPane.tileSize - 30);
-		rotate.setLayoutY(CircuitPane.tileSize - 30);
+//		rotate.setLayoutX(CircuitPane.tileSize - 30);
+//		rotate.setLayoutY(CircuitPane.tileSize - 30);
 	}
 
 	@Override

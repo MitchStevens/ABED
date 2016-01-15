@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import com.sun.javafx.tk.FontMetrics;
 
+import data.Reader;
 import panes.CircuitPane;
 import panes.Gui;
 import javafx.animation.FadeTransition;
@@ -20,7 +21,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import logic.Game;
-import logic.Reader;
 
 public class Tutorial implements Observer {	
 	int current_step = 0;

@@ -10,16 +10,12 @@ import java.util.function.Predicate;
 import panes.CircuitPane;
 import circuits.Circuit;
 import circuits.Coord;
+import data.Reader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableSet;
 
 public class Level {
-	public static 	List<Level> 			ALL_LEVELS;
-	public static 	List<String>			LEVEL_TITLES = new ArrayList<>();
-	public static 	ObservableSet<Level> 	unlockedLevels;
-	//public static ObservableSet<Level> completedLevels = FXCollections.observableSet();
-	
 	public 			String 			name			= "";
 	public 			Circuit 		objective		= null;
 	public 			List<Circuit> 	circuitRewards	= new ArrayList<>();
@@ -28,11 +24,6 @@ public class Level {
 	public 			String 			completionText	= "";
 	public 			Integer 		gameSize		= 0;
 	public 			Coord 			tuple			= null;
-	
-	static {
-		ALL_LEVELS = Reader.loadLevels();
-		unlockedLevels = Reader.loadUnlockedLevels();
-	}
 	
 	public Level(){}
 //	public Level(String datum, Coord coord) {
@@ -66,19 +57,21 @@ public class Level {
 	}
 	
 	public static List<Level> search(Predicate<Level> p){
-		return ALL_LEVELS.stream()
+		return Reader.ALL_LEVELS
+				.values()
+				.stream()
 				.filter(p)
 				.collect(toList());
 	}
 	
 	public void onCompletion(){
 		for(Circuit c : circuitRewards)
-			CircuitPane.unlockedCircuits.add(c);
+			Reader.unlocked_circuits.add(c);
 		
 		for(String s : levelRewards){
 			List<Level> list = search( lvl -> {return lvl.name.equals(s);} );
 			if(!list.isEmpty())
-				Level.unlockedLevels.add(list.get(0));
+				Reader.unlocked_levels.add(list.get(0));
 		}
 		
 		//completedLevels.add(this);
@@ -116,7 +109,7 @@ public class Level {
 	
 	@Override
 	public boolean equals(Object o){
-		if(!(o instanceof Level)) 							return false;
+		if(!(o instanceof Level))							return false;
 		Level l = (Level)o;
 		if(!this.name.equals(l.name))						return false;
 		if(!this.objective.equals(l.objective)) 			return false;

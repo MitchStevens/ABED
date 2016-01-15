@@ -7,6 +7,7 @@ import java.util.Observable;
 
 import tutorials.Action;
 import circuits.*;
+import data.Reader;
 import static eval.Evaluator.init;
 import static java.util.stream.Collectors.toList;
 import static java.lang.Math.min;
@@ -20,14 +21,9 @@ public class Game extends Observable{
 	
 	public final 	static 	int 				MIN_TILES = 3;
 	public final 	static 	int 				MAX_TILES = 10;
-	public 			static 	Map<String, Game> 	ALL_GAMES;	
 	private 				Circuit[][] 		tileGrid;
 	public 					int 				n;
 	public 					String 				name;
-	
-	static {
-		ALL_GAMES = Reader.loadGames();
-	}
 	
 	public Game(int n) {
 		name = "NAMELESS_GAME";
@@ -43,10 +39,15 @@ public class Game extends Observable{
 		this.tileGrid = new Circuit[n][n];
 		for (int i = 2; i < data.length; i++) {
 			String[] cData = data[i].split(",");
-			Circuit c = Circuit.allCircuits.get(cData[0]).clone();
+			Circuit c = Reader.ALL_CIRCUITS.get(cData[0]).clone();
 			c.setRot(Integer.parseInt(cData[1]));
 			this.add(c, cData[2], cData[3]);
 		}
+	}
+	
+	public Game(String name, int n){
+		this.name = name;
+		this.n = n;
 	}
 	
 	public void set_size(int size){
@@ -207,7 +208,7 @@ public class Game extends Observable{
 		List<Circuit> temp;
 
 		for (int dir = 0; dir < 4; dir++) {
-			temp = circuitsOnEdge(dir, "Input");
+			temp = circuitsOnEdge(dir, "INPUT");
 			
 			if(temp.size() > 1) return null;
 			
@@ -217,7 +218,7 @@ public class Game extends Observable{
 		tbr = init(tbr) + ";";
 
 		for (int dir = 0; dir < 4; dir++) {
-			temp = circuitsOnEdge(dir, "Output");
+			temp = circuitsOnEdge(dir, "OUTPUT");
 			
 			if(temp.size() > 1) return null;
 			
@@ -230,7 +231,6 @@ public class Game extends Observable{
 			//String logic = c.outputAsString(1);
 			tbr += c.buses.get(3).outputAsString() + ",";
 		}
-		System.out.println(init(tbr));
 		return new Circuit(init(tbr));
 	}
 
@@ -348,13 +348,32 @@ public class Game extends Observable{
 
 	@Override
 	public String toString() {
-		// NAME;SIZE;cNAME,ROT,iPos,jPos;cNAME,ROT,iPos,jPos;...
-		String tbr = name + ";" + n + ";";
-		Circuit c = null;
-		for (int j = 0; j < n; j++)
-			for (int i = 0; i < n; i++)
-				if ((c = tileGrid[i][j]) != null)
-					tbr += c.getData() + ";";
+//		// NAME;SIZE;cNAME,ROT,iPos,jPos;cNAME,ROT,iPos,jPos;...
+//		String tbr = name + ";" + n + ";";
+//		Circuit c = null;
+//		for (int j = 0; j < n; j++)
+//			for (int i = 0; i < n; i++)
+//				if ((c = tileGrid[i][j]) != null)
+//					tbr += c.getData() + ";";
+//		return tbr;
+		return toXML();
+	}
+	
+	public String toXML(){
+		String tbr = "<game name=\""+ name +"\" size=\""+ n +"\">\n";
+		for(int i = 0; i < n; i++)
+			for(int j = 0; j < n; j++)
+				if(tileGrid[i][j] != null){
+					Circuit c = tileGrid[i][j];
+					tbr += "\t<circuit name=\""+ c.name +"\" pos=\""+ c.coord.i +","+ c.coord.j +"\" rot=\""+ c.rot +"\" />\n";
+				}
+		tbr += "</game>";
 		return tbr;
 	}
+	
+	/*<game name="Lefty Game" size="3">
+		<circuit name="INPUT" pos="1,0" rot="1" />
+		<circuit name="LEFT" pos="1,1" rot="1" />
+		<circuit name="OUTPUT" pos="2,1" rot="0" />
+	</game>*/
 }

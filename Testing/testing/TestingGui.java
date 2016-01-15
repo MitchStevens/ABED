@@ -8,6 +8,7 @@ import graphics.Square;
 import org.junit.Test;
 
 import panes.Gui;
+import controls.CircuitFinder;
 import controls.Typer;
 import tutorials.SlideMessage;
 import tutorials.Tutorial;
@@ -44,7 +45,9 @@ public class TestingGui extends Application{
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		
+		CircuitFinder cf = new CircuitFinder();
 		
+		root.getChildren().add(cf);
 		
 	}
 	

@@ -5,6 +5,7 @@ import panes.Gui;
 
 import com.sun.javafx.tk.FontMetrics;
 
+import data.Reader;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
 import javafx.scene.Group;
@@ -14,7 +15,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import logic.Reader;
 
 public class SlideMessage extends Pane implements Message{
 	

@@ -14,6 +14,8 @@ import tutorials.Action;
 import tutorials.Tute1;
 import tutorials.Tutorial;
 import circuits.*;
+import data.Reader;
+import data.Writer;
 import graphics.Piece;
 import graphics.Square;
 import javafx.collections.ObservableSet;
@@ -24,17 +26,13 @@ import javafx.scene.text.Text;
 import logic.Game;
 import logic.Level;
 import logic.PathFinder;
-import logic.Reader;
 import static java.lang.Math.*;
 
 public class CircuitPane extends Pane implements Observer{
 	public final static double 			GAME_MARGIN 		= 50;
 	public final static double 			GAP 				= 0;
 	
-	private static CircuitFinder		cf					= new CircuitFinder("");
-	
-	public static ObservableSet<Circuit> 	unlockedCircuits = Reader.loadUnlockedCircuits();
-	public static Set<Circuit>				new_circuits	 = new HashSet<>(unlockedCircuits);
+	private static CircuitFinder		cf					= new CircuitFinder();
 	
 	public 	static double 				tileSize 			= 0;
 	public 	static int 					numTiles 			= 3;
@@ -59,7 +57,7 @@ public class CircuitPane extends Pane implements Observer{
 		cf.setLayoutX(0);
 		cf.setLayoutY(0);
 		this.getChildren().add(cf);
-		cf.setFill(Color.WHITE);
+		//cf.setFill(Color.WHITE);
 		this.setOnKeyPressed(e -> {
 			cf.key_pressed(e.getCode());
 		});
@@ -118,9 +116,10 @@ public class CircuitPane extends Pane implements Observer{
 	}
 
 	public static void setLevel(Level l) {
+		System.out.println(l);
 		currentLevel = l;
 		newGame(new Game(l.gameSize));
-		SideBarPane.textArea.setText(l.instructionText);
+		SideBarInfo.textArea.setText(l.instructionText);
 		
 //		if(Tutorial.ALL_TUTORIALS.get(l.name) != null){
 //			tutorial = Tutorial.ALL_TUTORIALS.get(l.name);
@@ -182,7 +181,7 @@ public class CircuitPane extends Pane implements Observer{
 		gameWon = false;
 		
 		allSquares = new HashMap<>();
-		SideBarPane.inc.set(numTiles);
+		SideBarGame.inc.set(numTiles);
 		
 		update_squares();
 
@@ -371,7 +370,6 @@ public class CircuitPane extends Pane implements Observer{
 	
 	@Override
 	public void update(Observable game, Object arg) {
-		System.out.println("updated game causght in gamepane");
 		if(currentLevel == null) return;
 		if(currentLevel.isComplete(currentGame)){
 			onLevelCompletion();
@@ -385,8 +383,8 @@ public class CircuitPane extends Pane implements Observer{
 		Gui.setCurrentPane("win_pane");
 //		Gui.gamePane.getChildren().add(wm);
 //		wm.toFront();
-		new_circuits.clear();
-		new_circuits.addAll(currentLevel.circuitRewards);
+		Reader.new_circuits.clear();
+		Reader.new_circuits.addAll(currentLevel.circuitRewards);
 		currentLevel.onCompletion();
 	}
 }

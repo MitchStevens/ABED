@@ -16,9 +16,9 @@ import circuits.BusIn;
 import circuits.Circuit;
 import circuits.Input;
 import circuits.Output;
+import data.Reader;
 import eval.Evaluator;
 import logic.Game;
-import logic.Reader;
 
 public class TestingSingleBusLogic {
 	String[] evalTrue = new String[] { "0 ~", "0 1 |", "1 ~ ~", "1 1 &",

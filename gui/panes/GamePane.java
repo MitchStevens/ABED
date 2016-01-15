@@ -6,7 +6,7 @@ public class GamePane extends BorderPane implements ScreenPane {
 
 	public GamePane(){
 		this.setLeft(new CircuitPane());
-		this.setCenter(new SideBarPane());
+		this.setCenter(new SideBar());
 	}
 	
 	@Override

@@ -3,7 +3,10 @@ package panes;
 import java.util.HashMap;
 import java.util.Map;
 
+
 import circuits.Circuit;
+import data.Reader;
+import data.Writer;
 import panes.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
@@ -22,7 +25,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import logic.Game;
-import logic.Reader;
 
 public class Gui extends Application {
 	public final static double 			SIDE_BAR_WIDTH = 300;
@@ -53,9 +55,15 @@ public class Gui extends Application {
 		primaryStage.setMinWidth(MIN_WIDTH);
 		primaryStage.show();
 		g = this;
+		
+		primaryStage.setOnCloseRequest(e -> {
+			Writer.save_all();
+		});
 	}
 	
 	private void initaliseBoard() {
+		Reader.readAll();
+		
 		mainPane = new StackPane();
 
 		TitlePane titlePane = new TitlePane();
