@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
+	<game name="test1" size="3">
+		<circuit name="input"	pos="1,0" rot="0"/>
+		<circuit name="not"		pos="1,0" rot="0"/>
+		<circuit name="NOT"		pos="1,0" rot="0"/>
+	</game>
 	<game name="Lefty Game" size="3">
 		<circuit name="INPUT" 	pos="1,0" rot="1" />
 		<circuit name="LEFT" 	pos="1,1" rot="1" />

@@ -1,0 +1,11 @@
+<root>
+	<operation name="bus"		logic="0"/>
+	<operation name="not" 		logic="0~"/>
+	<operation name="or"		logic="01+"/>
+	<operation name="and"		logic="01x"/>
+	<operation name="xor"		logic="01~x0~1x+"/>
+	<operation name="half_adder" logic="01(xor)01x"/>
+	
+	<operation name="bus"		logic="0"/>
+	<operation name="super"		logic="000"/>
+</root>

@@ -1,15 +1,16 @@
-package panes;
-
-import graphics.Piece;
-import graphics.PieceImage;
+package gui.panes;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import controls.Incrementor;
-import circuits.Circuit;
+import core.game.Gate;
+import core.game.Game;
+import core.logic.Level;
 import data.Reader;
 import data.Writer;
+import gui.controls.Incrementor;
+import gui.graphics.Piece;
+import gui.graphics.PieceImage;
 import javafx.collections.ListChangeListener;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.HPos;
@@ -32,10 +33,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import logic.Game;
-import logic.Level;
 
-public class SideBarGame extends VBox implements SetChangeListener<Circuit> {
+public class SideBarGame extends VBox implements SetChangeListener<Gate> {
 	private final double 			ICON_SIZE 	= 20;
 
 	public static SideBarGame 		sbg;
@@ -91,14 +90,14 @@ public class SideBarGame extends VBox implements SetChangeListener<Circuit> {
 		Button b2 = new Button("Back to Menu");
 		b2.setPrefWidth(defWidth);
 		b2.setOnMouseClicked(e -> {
-			Gui.setCurrentPane("level_select_pane");
+			Gui.set_pane("level_select_pane");
 		});
 		sbg.getChildren().add(b2);
 	}
 	
 	public void updateCircuits(){
 		if(CircuitPane.unlockAllCircuits)
-			for(Circuit c : Reader.ALL_CIRCUITS.values())
+			for(Gate c : Reader.ALL_CIRCUITS.values())
 				Reader.unlocked_circuits.add(c);
 		
 		TreeItem<Node> root = new TreeItem<>(new Label("Gates"));
@@ -107,7 +106,7 @@ public class SideBarGame extends VBox implements SetChangeListener<Circuit> {
 		for(int i = 0; i < Reader.CIRCUIT_CATEGORIES.size(); i++)
 			headers.add(null);
 		
-		for(Circuit c : Reader.unlocked_circuits){
+		for(Gate c : Reader.unlocked_circuits){
 			if(headers.get(c.type) == null){
 				Label headLabel = new Label(Reader.CIRCUIT_CATEGORIES.get(c.type));
 				headLabel.setFont(DEF_FONT);
@@ -115,7 +114,7 @@ public class SideBarGame extends VBox implements SetChangeListener<Circuit> {
 			}
 		}
 
-		for (Circuit c : Reader.unlocked_circuits) {
+		for (Gate c : Reader.unlocked_circuits) {
 			HBox hbox = new HBox();
 			if(Reader.new_circuits.contains(c))
 				hbox.setStyle("-fx-background-color: DDFEFE;");
@@ -158,7 +157,7 @@ public class SideBarGame extends VBox implements SetChangeListener<Circuit> {
 	}
 
 	@Override
-	public void onChanged( SetChangeListener.Change<? extends Circuit> arg0) {
+	public void onChanged( SetChangeListener.Change<? extends Gate> arg0) {
 		updateCircuits();
 	}
 

@@ -1,14 +1,14 @@
-package graphics;
+package gui.graphics;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import circuits.Circuit;
+import core.game.Gate;
 import data.Reader;
-import panes.CircuitPane;
-import panes.Gui;
+import gui.panes.CircuitPane;
+import gui.panes.Gui;
 import javafx.animation.RotateTransition;
 import javafx.scene.*;
 import javafx.scene.image.*;
@@ -22,7 +22,7 @@ public class Piece extends Pane{
 	private static final 	double 				FONT_CONST 	= 0.15;
 	
 	public 					PieceImage 			image;
-	public 					Circuit 			c;
+	public 					Gate 			c;
 
 	//saves on font reading time by caching all the fonts.
 	public static 			Map<Integer, Font> 	fontMap		= new HashMap<>();
@@ -37,7 +37,7 @@ public class Piece extends Pane{
 	private 				Text 				duplicate;
 	//private					Text				rotate;
 	
-	public Piece(Circuit c) {
+	public Piece(Gate c) {
 		this.c = c;		
 		image = new PieceImage(c);
 		image.setRotate(c.rot*90);

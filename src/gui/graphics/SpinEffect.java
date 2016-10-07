@@ -1,4 +1,4 @@
-package graphics;
+package gui.graphics;
 
 import javafx.animation.*;
 import javafx.scene.image.Image;

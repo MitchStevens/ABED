@@ -1,8 +1,9 @@
-package panes;
+package gui.panes;
 
-import circuits.Circuit;
+import core.game.Gate;
+import core.logic.Level;
 import data.Reader;
-import graphics.PieceImage;
+import gui.graphics.PieceImage;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -16,7 +17,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
-import logic.Level;
 
 public class WinPane extends BorderPane implements ScreenPane {
 	private static final Font	TITLE_FONT 		= Reader.loadFont("adbxtsc.ttf", 55);
@@ -78,14 +78,14 @@ public class WinPane extends BorderPane implements ScreenPane {
 			Level next = l.nextLevel();
 			if(next != null){
 				CircuitPane.setLevel(next);
-				Gui.setCurrentPane("game_pane");
+				Gui.set_pane("game_pane");
 			}
 		});
 		
 		Button back = new Button("(B) Back to Menu");
 		back.setFont(BUTTON_FONT);
 		back.setOnAction(e -> {
-			Gui.setCurrentPane("level_select_pane");
+			Gui.set_pane("level_select_pane");
 		});
 		
 		buttons.getChildren().addAll(next_level, back);
@@ -113,7 +113,7 @@ public class WinPane extends BorderPane implements ScreenPane {
 		sidebar.getChildren().addAll(message, seperator, you_win);
 		
 		double circ_size = SIDEBAR_WIDTH*Gui.boardWidth/2;
-		for(Circuit c : l.circuitRewards){			
+		for(Gate c : l.circuitRewards){			
 			VBox circ_box = new VBox();
 			circ_box.setAlignment(Pos.TOP_CENTER);
 			circ_box.setPadding(new Insets(10, 10, 10, 10));

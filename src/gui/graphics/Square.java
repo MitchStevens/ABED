@@ -3,12 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package graphics;
+package gui.graphics;
 
-import circuits.Circuit;
-import circuits.Coord;
-import panes.CircuitPane;
-import panes.Gui;
 import javafx.animation.FillTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -17,6 +13,11 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import static java.lang.Math.max;
+
+import core.game.Gate;
+import core.game.Coord;
+import gui.panes.CircuitPane;
+import gui.panes.Gui;
 
 /**
  * @author Mitch
@@ -109,7 +110,7 @@ public class Square extends Region{
 	public void set_chevron(int dir){
 		remove_chevron();
 		
-		dir = Circuit.mod4(dir);
+		dir = Gate.mod4(dir);
 		
 		double t = CircuitPane.tileSize;
 		chevron = new Polygon(new double[]{

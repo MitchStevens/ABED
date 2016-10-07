@@ -8,8 +8,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import circuits.BusIn;
-import circuits.BusOut;
+import core.circuits.BusIn;
+import core.circuits.BusOut;
+import core.game.Direction;
 
 public class TestingBus {
 	private List<Boolean> a00 = new ArrayList<>();
@@ -27,17 +28,14 @@ public class TestingBus {
 	
 	@Test
 	public void basicTest(){
-		BusIn in = new BusIn(null, 2, 0);
-		BusOut out = new BusOut(null, 2, 0);
-		assertEquals(out.toBooleanList(), a00);
-		out.setOutput(a01);
-		assertEquals(in.toBooleanList(), a00);
-		
-		out.tryCouple(in);
-		assertEquals(in.toBooleanList(), a01);
+		BusIn in = new BusIn(null, 2, Direction.UP);
+		BusOut out = new BusOut(null, 0, Direction.UP);
+		assertEquals(out.to_list(), a00);
+		out.set_outputs(a01);
+		assertEquals(in.to_list(), a00);
 		
 		out.uncouple();
-		assertEquals(in.toBooleanList(), a00);
+		assertEquals(in.to_list(), a00);
 	} 
 	
 	

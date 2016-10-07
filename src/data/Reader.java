@@ -13,6 +13,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,11 +36,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import circuits.Cable;
-import circuits.Circuit;
-import circuits.Coord;
-import circuits.Input;
-import circuits.Output;
+import core.game.Gate;
+import core.game.Game;
+import core.logic.Level;
+import core.tokens.Composite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.scene.image.Image;
@@ -46,158 +47,235 @@ import javafx.scene.image.PixelReader;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.text.Font;
-import logic.Game;
-import logic.Level;
 
 public class Reader {
-	public static 	Map<String, Circuit> 	ALL_CIRCUITS		= new LinkedHashMap<>();
-	public static 	Map<String, Image> 		ALL_IMAGES			= new HashMap<>();
-	public static 	Map<String, Game> 		ALL_GAMES			= new HashMap<>();
-	public static	Map<String, Level>		ALL_LEVELS			= new LinkedHashMap<>();
-	//public static 	List<Level> 			ALL_LEVELS			= new ArrayList<>();
+	//Files
+	private final static String COMPOSITES_DOC = "composite_list";
+	
+	//Unmodifiable lists
+	public static Map<String, Gate> 		GATES;
+	public static Map<String, Image> 		IMAGES;
+	public static Map<String, Game> 		GAMES;
+	public static Map<String, Level>		LEVELS;
+	public static Map<String, Composite>	COMPOSITES;
 	
 	public static	List<String>	CIRCUIT_CATEGORIES	= new ArrayList<>();
 	public static 	List<String>	LEVEL_CATEGORIES	= new ArrayList<>();
 	
 	public static 	ObservableSet<Level> 	unlocked_levels		= FXCollections.observableSet();
-	public static 	ObservableSet<Circuit> 	unlocked_circuits 	= FXCollections.observableSet();
-	public static	List<Circuit>			new_circuits		= new ArrayList<>();
+	public static 	ObservableSet<Gate> 	unlocked_circuits 	= FXCollections.observableSet();
+	public static	List<Gate>			new_circuits		= new ArrayList<>();
 	
-	private static final String circuitUnlocked = "circuitsUnlocked.dolphin";
-	private final static String levelUnlocked = "levelsUnlocked.dolphin";
-	private final static String gameList = "GameList.dolphin";
-	
-	public static void readAll() {
-		readCircuits();
-		readUnlockedCircuits();
-		readLevels();
-		readUnlockedLevels();
-		readGames();
-		readImages();
+	static {
+//		read_circuits();
+//		read_images();
+//		read_games();
+//		read_levels();
+		read_composites();
+//		read_unlocked_circuits();
+//		read_unlocked_levels();
 	}
 	
-	//xml complient
-	public static void  readCircuits() {
-		ALL_CIRCUITS.put("INPUT",  	new Input());
-		ALL_CIRCUITS.put("OUTPUT", 	new Output());
-		ALL_CIRCUITS.put("CABLE", 	new Cable());
+	public static Composite get_composite(String key){
+		if(COMPOSITES.containsKey(key))
+			return COMPOSITES.get(key);
+		else
+			return null;
+	}
+	
+	public static Gate get_circuit(String key){
+		if(GATES.containsKey(key))
+			return GATES.get(key).clone();
+		else
+			return null;
+	}
+	
+	public static Image get_image(String key){
+		return IMAGES.get(key);
+	}
+	
+//	public static Game get_game(String key){
+//		if(ALL_GAMES.containsKey(key))
+//			return ALL_GAMES.get(key).clone();
+//		else
+//			return null;
+//	}
+	
+	/**
+	 * Reads in all the circuits and saves them in the hashmap 'ALL_CIRCUITS'.
+	 * */
+//	private static void read_circuits() {
+//		Map<String, Gate> map = new HashMap<>();
+//		
+//		map.put("INPUT",  	new Input());
+//		map.put("OUTPUT", 	new Output());
+//		map.put("CABLE", 	new Cable());
+//		
+//		Document doc = get_XML_doc("circuit_list");
+//		
+//		try{
+//			//what does this line do? research.
+//			doc.getDocumentElement().normalize();
+//			
+//			NodeList category = doc.getElementsByTagName("category");
+//			
+//			for(int i = 0; i < category.getLength(); i++){
+//				CIRCUIT_CATEGORIES.add(((Element)category.item(i)).getAttribute("name"));
+//				NodeList circuits = ((Element)category.item(i)).getElementsByTagName("circuit");
+//				
+//				for(int j = 0; j < circuits.getLength(); j++){
+//					Node node = circuits.item(j);
+//					Element e = (Element)node;
+//					
+//					String name 	= e.getAttribute("name");
+//					String inputs 	= e.getAttribute("inputs");
+//					String outputs 	= e.getAttribute("outputs");
+//					String evals 	= e.getAttribute("evals");
+//					
+//					Gate c = new Gate(name, inputs, outputs, evals);
+//					c.type = i;
+//					
+//					map.put(name, c);
+//				}
+//			}
+//			
+//		} catch (Exception e){
+//			
+//		}
+//		
+//		ALL_GATES = Collections.unmodifiableMap(map);
+//		
+//	}
+	
+	/**
+	 * Reads in all the circuits and saves them in the hashmap 'ALL_OPERATIONS'.
+	 * */
+	private static void read_composites() {
+		Map<String, Composite> map = new HashMap<>();
+		String[] names = null, logics = null;
 		
-		Document doc = get_XML_doc("circuit_list");
+		Document doc = get_XML_doc(COMPOSITES_DOC);
 		
 		try{
 			//what does this line do? research.
 			doc.getDocumentElement().normalize();
 			
-			NodeList category = doc.getElementsByTagName("category");
-			
-			for(int i = 0; i < category.getLength(); i++){
-				CIRCUIT_CATEGORIES.add(((Element)category.item(i)).getAttribute("name"));
-				NodeList circuits = ((Element)category.item(i)).getElementsByTagName("circuit");
-				
-				for(int j = 0; j < circuits.getLength(); j++){
-					Node node = circuits.item(j);
-					Element e = (Element)node;
-					
-					String name 	= e.getAttribute("name");
-					String inputs 	= e.getAttribute("inputs");
-					String outputs 	= e.getAttribute("outputs");
-					String evals 	= e.getAttribute("evals");
-					
-					Circuit c = new Circuit(name, inputs, outputs, evals);
-					c.type = i;
-					
-					ALL_CIRCUITS.put(name, c);
-				}
+			NodeList ops = doc.getElementsByTagName("operation");
+			names  = new String[ops.getLength()];
+			logics = new String[ops.getLength()];
+			for(int i = 0; i < ops.getLength(); i++){
+				Element e = (Element)ops.item(i);
+				names[i] = e.getAttribute("name");
+				logics[i] = e.getAttribute("logic");
+				map.put(names[i], new Composite());
 			}
 			
-		} catch (Exception e){}
+		} catch(NullPointerException npe){
+			System.out.println("Couldn't read in operations.");
+			npe.printStackTrace();
+		}
 		
+		COMPOSITES = Collections.unmodifiableMap(map);
+		for(int i = 0; i < map.size(); i++)
+			COMPOSITES.get(names[i]).set_logic(logics[i]);		
 	}
 	
 	//xml complient
-	public static void readUnlockedCircuits(){
-		Document doc = get_XML_doc("unlocked_circuits");
-		
-		try{
-			//what does this line do? research.
-			doc.getDocumentElement().normalize();
-			
-			NodeList circuits = doc.getElementsByTagName("circuit");
-			
-			for(int i = 0; i < circuits.getLength(); i++){
-				Element e = (Element)circuits.item(i);
-				String name = e.getAttribute("name");
-				unlocked_circuits.add(ALL_CIRCUITS.get(name));
-			}
-			
-		} catch (Exception e){}
-		
-	}
+//	private static void read_unlocked_circuits(){
+//		
+//		
+//		Document doc = get_XML_doc("unlocked_circuits");
+//		
+//		try{
+//			//what does this line do? research.
+//			doc.getDocumentElement().normalize();
+//			
+//			NodeList circuits = doc.getElementsByTagName("operations");
+//			
+//			for(int i = 0; i < circuits.getLength(); i++){
+//				Element e = (Element)circuits.item(i);
+//				String name = e.getAttribute("name");
+//				unlocked_circuits.add(ALL_GATES.get(name));
+//			}
+//			
+//		} catch (Exception e){}
+//		
+//	}
 	
 	//xml complient
-	public static void readLevels(){
-		Document doc = get_XML_doc("level_list");
-		
-		try{
-			//what does this line do? research.
-			doc.getDocumentElement().normalize();
-			
-			NodeList level_sets = doc.getElementsByTagName("level_set");
-			for(int i = 0; i < level_sets.getLength(); i++){
-				LEVEL_CATEGORIES.add(((Element)level_sets.item(i)).getAttribute("name"));
-				NodeList levels = ((Element)level_sets.item(i)).getElementsByTagName("level");
-				
-				for(int j = 0; j < levels.getLength(); j++){
-					Level l = new Level();
-					
-					Node node = levels.item(j);
-					Element e = (Element)node;
-					
-					l.name = e.getAttribute("name");
-					l.objective = ALL_CIRCUITS.get(get_elem(e, "objective"));
-					
-					for(Node n : get_elems(e, "circuit_reward"))
-						l.circuitRewards.add(ALL_CIRCUITS.get(((Element)n).getTextContent()));
-					
-					for(Node n : get_elems(e, "level_reward"))
-						l.levelRewards.add(((Element)n).getTextContent());
-
-					l.instructionText = get_elem(e, "instruction_text");
-					l.completionText = get_elem(e, "completion_text");
-					l.gameSize = Integer.parseInt(get_elem(e, "min_game_size"));
-					l.tuple = new Coord(i, j);
-					
-					ALL_LEVELS.put(l.name, l);
-				}
-			}
-			
-		} catch (Exception e){}
-	}
+//	private static void read_levels(){
+//		Map<String, Level> map = new HashMap<>();
+//		
+//		Document doc = get_XML_doc("level_list");
+//		
+//		try{
+//			//what does this line do? research.
+//			doc.getDocumentElement().normalize();
+//			
+//			NodeList level_sets = doc.getElementsByTagName("level_set");
+//			for(int i = 0; i < level_sets.getLength(); i++){
+//				LEVEL_CATEGORIES.add(((Element)level_sets.item(i)).getAttribute("name"));
+//				NodeList levels = ((Element)level_sets.item(i)).getElementsByTagName("level");
+//				
+//				for(int j = 0; j < levels.getLength(); j++){
+//					Level l = new Level();
+//					
+//					Node node = levels.item(j);
+//					Element e = (Element)node;
+//					
+//					l.name = e.getAttribute("name");
+//					l.objective = ALL_GATES.get(get_elem(e, "objective"));
+//					
+//					for(Node n : get_elems(e, "circuit_reward"))
+//						l.circuitRewards.add(ALL_CIRCUITS.get(((Element)n).getTextContent()));
+//					
+//					for(Node n : get_elems(e, "level_reward"))
+//						l.levelRewards.add(((Element)n).getTextContent());
+//
+//					l.instructionText = get_elem(e, "instruction_text");
+//					l.completionText = get_elem(e, "completion_text");
+//					l.gameSize = Integer.parseInt(get_elem(e, "min_game_size"));
+//					l.tuple = new Coord(i, j);
+//					
+//					map.put(l.name, l);
+//				}
+//			}
+//			
+//		} catch (Exception e){}
+//		
+//		ALL_LEVELS = Collections.unmodifiableMap(map);
+//	}
 	
-	public static Document get_XML_doc(String file){
+	private static Document get_XML_doc(String file){
+		File f = new File("src/res/xml/"+ file +".xml");
 		try{
-			File f = new File("src/res/xml/"+ file +".xml");
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document doc = builder.parse(f);
 			return doc;
-		}catch(SAXException | IOException | ParserConfigurationException e){
-			return null;
+		}catch(SAXException e){
+			System.err.println("The xml file "+ f.toString() +" has syntax errors.");
+		}catch(IOException e){
+			System.err.println("An IO error occured when trying to read file from "+ f.toString() +".");
+		}catch(ParserConfigurationException e){
+			System.err.println("The xml file "+ f.toString() +" has a serious configuration error.");
 		}
+		
+		return null;
 	}
 	
-	public static String get_elem(Element e, String tag){
+	private static String get_elem(Element e, String tag){
 		return e.getElementsByTagName(tag).item(0).getTextContent();
 	}
 	
-	public static List<Node> get_elems(Element e, String tag){
+	private static List<Node> get_elems(Element e, String tag){
 		List<Node> list = new ArrayList<>();
 		for(int i = 0; i < e.getElementsByTagName(tag).getLength(); i++)
 			list.add(e.getElementsByTagName(tag).item(i));
 		return list;
 	}
 	
-	public static void readUnlockedLevels(){
+	private static void read_unlocked_levels(){
 		Document doc = get_XML_doc("unlocked_levels");
 		
 		try{
@@ -209,47 +287,49 @@ public class Reader {
 			for(int i = 0; i < circuits.getLength(); i++){
 				Element e = (Element)circuits.item(i);
 				String name = e.getAttribute("name");
-				unlocked_levels.add(ALL_LEVELS.get(name));
+				unlocked_levels.add(LEVELS.get(name));
 			}
 			
 		} catch (Exception e){}
 	}
 	
-	public static void readGames() {
-		Document doc = get_XML_doc("game_list");
-		
-		try{
-			//what does this line do? research.
-			doc.getDocumentElement().normalize();
-			
-			NodeList games = doc.getElementsByTagName("game");
-			for(int i = 0; i < games.getLength(); i++){
-				Element e = (Element)games.item(i);
-				String name = ((Element)games.item(i)).getAttribute("name");
-				int n = Integer.parseInt(e.getAttribute("size"));
-				Game g = new Game(name, n);
-				for(Node node : get_elems(e, "circuit")){
-					Element circ_data = (Element)node;
-					Circuit c = ALL_CIRCUITS.get(circ_data.getAttribute("name")).clone();
-					Coord coord = new Coord(circ_data.getAttribute("pos"));
-					int rot = Integer.parseInt(circ_data.getAttribute("rot"));
-					c.setRot(rot);
-					g.add(c, coord);
-				}
-				
-			}
-			
-		} catch (Exception e){}
-		
-//		for (String s : readFile("data/"+gameList)) {
-//			Game g = new Game(s);
-//			ALL_GAMES.put(g.name, g);
-//		}
-		
-		
-	}
+//	private static void read_games() {
+//		Map<String, Game> map = new HashMap<>();
+//		Document doc = get_XML_doc("game_list");
+//		
+//		try{
+//			//what does this line do? research.
+//			doc.getDocumentElement().normalize();
+//			
+//			NodeList games = doc.getElementsByTagName("game");
+//			for(int i = 0; i < games.getLength(); i++){
+//				Element e = (Element)games.item(i);
+//				String name = ((Element)games.item(i)).getAttribute("name");
+//				int n = Integer.parseInt(e.getAttribute("size"));
+//				Game g = new Game(name, n);
+//				for(Node node : get_elems(e, "circuit")){
+//					Element circ_data = (Element)node;
+//					Circuit c = ALL_CIRCUITS.get(circ_data.getAttribute("name")).clone();
+//					Coord coord = new Coord(circ_data.getAttribute("pos"));
+//					int rot = Integer.parseInt(circ_data.getAttribute("rot"));
+//					c.setRot(rot);
+//					g.add(c, coord);
+//				}
+//				
+//			map.put(g.name, g);
+//				
+//			}
+//			
+//		} catch (Exception e){}
+//		
+//		ALL_GAMES = Collections.unmodifiableMap(map);
+//		
+//		
+//	}
 
-	public static void readImages() {
+	private static void read_images() {
+		Map<String, Image> map = new HashMap<>();
+		
 		Path p = FileSystems.getDefault().getPath("src/res/images/");
 		try {
 			Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
@@ -258,7 +338,7 @@ public class Reader {
 						BasicFileAttributes attrs) throws IOException {
 					Image image = new Image(new FileInputStream(path.toFile()));
 					String name = path.toFile().getName();
-					ALL_IMAGES.put(name.substring(0, name.length() - 4),
+					map.put(name.substring(0, name.length() - 4),
 							resample(image));
 					return FileVisitResult.CONTINUE;
 				}
@@ -267,10 +347,11 @@ public class Reader {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		IMAGES = Collections.unmodifiableMap(map);
 	}
 	
 	// taken from https://gist.github.com/jewelsea/5415891
-	public static Image resample(Image input) {
+	private static Image resample(Image input) {
 		final int W = (int) input.getWidth();
 		final int H = (int) input.getHeight();
 		final int S = 5;

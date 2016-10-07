@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import logic.Game;
-import circuits.Input;
-import circuits.Output;
-import panes.CircuitPane;
+import actions.Action;
+import core.circuits.Input;
+import core.circuits.Output;
+import core.game.Game;
+import gui.panes.CircuitPane;
 
 public class Tute1 extends Tutorial{
 

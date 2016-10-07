@@ -2,7 +2,8 @@ package tutorials;
 
 import java.util.function.Predicate;
 
-import panes.Gui;
+import actions.Action;
+import gui.panes.Gui;
 import javafx.scene.layout.Pane;
 
 public class Step {

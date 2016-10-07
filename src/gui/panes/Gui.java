@@ -1,35 +1,24 @@
-package panes;
+package gui.panes;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
-import circuits.Circuit;
+import core.game.Game;
 import data.Reader;
 import data.Writer;
-import panes.*;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import logic.Game;
 
 public class Gui extends Application {
 	public final static double 			SIDE_BAR_WIDTH = 300;
 	public final static double 			MIN_WIDTH = 800;
 	public final static double 			MIN_HEIGHT = 600;
+	public final static String			VERSION = "1.0";
 
 	public static 		double 			boardWidth = 1024;
 	public static 		double 			boardHeight = 768;
@@ -40,55 +29,43 @@ public class Gui extends Application {
 	public static 		Map<String, ScreenPane> screens = new HashMap<>();
 	
 	public static 		Pane 			mainPane;
-	
 	public static 		Gui 			g;
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("ABED");
+	public void start(Stage stage) throws Exception {
+		stage.setTitle("ABED: Version "+ VERSION);
 		root = new Group();
 		scene = new Scene(root, boardWidth, boardHeight);
 
-		initaliseBoard();
-		primaryStage.setScene(scene);
-		primaryStage.setMinHeight(MIN_HEIGHT);
-		primaryStage.setMinWidth(MIN_WIDTH);
-		primaryStage.show();
+		initalise_board();
+		stage.setScene(scene);
+		stage.setMinHeight(MIN_HEIGHT);
+		stage.setMinWidth(MIN_WIDTH);
+		stage.show();
 		g = this;
 		
-		primaryStage.setOnCloseRequest(e -> {
+		stage.setOnCloseRequest(e -> {
 			Writer.save_all();
 		});
 	}
 	
-	private void initaliseBoard() {
-		Reader.readAll();
-		
+	private void initalise_board() {	
 		mainPane = new StackPane();
 
-		TitlePane titlePane = new TitlePane();
-		screens.put("title_pane", titlePane);
+		screens.put("title_pane", new TitlePane());
+		screens.put("level_select_pane", new LevelSelectPane());
+		screens.put("game_pane", new GamePane());
+		screens.put("about_pane", new AboutPane());
+		screens.put("win_pane", new WinPane());
 		
-		LevelSelectPane levelSelectPane = new LevelSelectPane();
-		screens.put("level_select_pane", levelSelectPane);
-		
-		GamePane gamePane = new GamePane();
-		screens.put("game_pane", gamePane);
-		
-		AboutPane aboutPane = new AboutPane();
-		screens.put("about_pane", aboutPane);
-		
-		WinPane winPane = new WinPane();
-		screens.put("win_pane", winPane);
-		
-		mainPane.getChildren().add(titlePane);
+		mainPane.getChildren().add((Node) screens.get("title_pane"));
 		root.getChildren().add(mainPane);
 		CircuitPane.newGame(new Game(7));
 
-		windowResizeListeners();
+		resize_listeners();
 	}
 
-	public static void setCurrentPane(String s){
+	public static void set_pane(String s){
 		//fix this you damn fool
 		mainPane.getChildren().clear();
 		if(screens.containsKey(s)){
@@ -97,7 +74,7 @@ public class Gui extends Application {
 		}
 	}
 	
-	private void windowResizeListeners() {
+	private void resize_listeners() {
 		scene.widthProperty().addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(

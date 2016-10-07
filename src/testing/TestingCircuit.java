@@ -1,26 +1,40 @@
-package testing;
+package testing;r0
 
 import static org.junit.Assert.*;
-import logic.Game;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
-import circuits.Circuit;
-import circuits.Coord;
+import core.game.Gate;
+import core.game.Circuit;
+import core.game.Coord;
+import core.game.Game;
+import data.Reader;
 
 public class TestingCircuit {
 	
 	@Test
-	public void equiv_test(){
-		Game g = new Game(4);
-		g.add(Circuit.allCircuits.get("Input").clone(),  new Coord(0, 1));
-		g.add(Circuit.allCircuits.get("Not").clone(),    new Coord(1, 1));
-		g.add(Circuit.allCircuits.get("Not").clone(),    new Coord(2, 1));
-		g.add(Circuit.allCircuits.get("Output").clone(), new Coord(3, 1));
-		g.printGame();
-		
-		assertTrue(g.toCircuit().equiv(Circuit.allCircuits.get("Bus").clone()));
-		assertFalse(g.toCircuit().equiv(Circuit.allCircuits.get("Not").clone()));
+	public void TEST_init(){
+		Circuit c = new Circuit();
+		c.
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

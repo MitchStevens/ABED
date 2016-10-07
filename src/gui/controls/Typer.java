@@ -1,4 +1,4 @@
-package controls;
+package gui.controls;
 
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;

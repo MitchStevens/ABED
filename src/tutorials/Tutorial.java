@@ -10,9 +10,11 @@ import java.util.function.Predicate;
 
 import com.sun.javafx.tk.FontMetrics;
 
+import actions.Action;
+import core.game.Game;
 import data.Reader;
-import panes.CircuitPane;
-import panes.Gui;
+import gui.panes.CircuitPane;
+import gui.panes.Gui;
 import javafx.animation.FadeTransition;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -20,7 +22,6 @@ import javafx.scene.shape.Polygon;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import logic.Game;
 
 public class Tutorial implements Observer {	
 	int current_step = 0;

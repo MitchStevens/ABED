@@ -1,38 +1,34 @@
-package panes;
+package gui.panes;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Set;
 
-import controls.CircuitFinder;
-import tutorials.Action;
-import tutorials.Tute1;
+import actions.Action;
+import core.circuits.BusIn;
+import core.circuits.BusOut;
+import core.circuits.Cable;
+import core.game.Gate;
+import core.game.Coord;
+import core.game.Game;
+import core.logic.Level;
+import core.logic.PathFinder;
 import tutorials.Tutorial;
-import circuits.*;
 import data.Reader;
-import data.Writer;
-import graphics.Piece;
-import graphics.Square;
-import javafx.collections.ObservableSet;
+import gui.graphics.Piece;
+import gui.graphics.Square;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import logic.Game;
-import logic.Level;
-import logic.PathFinder;
+
 import static java.lang.Math.*;
 
 public class CircuitPane extends Pane implements Observer{
 	public final static double 			GAME_MARGIN 		= 50;
 	public final static double 			GAP 				= 0;
-	
-	private static CircuitFinder		cf					= new CircuitFinder();
 	
 	public 	static double 				tileSize 			= 0;
 	public 	static int 					numTiles 			= 3;
@@ -54,14 +50,6 @@ public class CircuitPane extends Pane implements Observer{
 		cp = this;
 		cp.setId("main");
 		
-		cf.setLayoutX(0);
-		cf.setLayoutY(0);
-		this.getChildren().add(cf);
-		//cf.setFill(Color.WHITE);
-		this.setOnKeyPressed(e -> {
-			cf.key_pressed(e.getCode());
-		});
-		
 	}
 	
 	public static void calcTileSize() {
@@ -72,12 +60,10 @@ public class CircuitPane extends Pane implements Observer{
 	public static void set_sandbox_mode(boolean b){
 		if(b ==  unlockAllCircuits)
 			return;
-		
-		
 	}
 	
 	public static void addPiece(Piece p) {
-		Coord coord = currentGame.nextOpen();
+		Coord coord = currentGame.next_open();
 		if (coord != null)
 			addPiece(p, coord);
 	}
@@ -94,7 +80,7 @@ public class CircuitPane extends Pane implements Observer{
 	}
 
 	public static void movePiece(Piece p, Coord coord) {
-		if (currentGame.circuitAtPos(coord) == null
+		if (currentGame.circuit_at_pos(coord) == null
 				&& allSquares.get(coord).loc != 2) {
 			currentGame.remove(p.c.coord);
 			currentGame.add(p.c, coord);
@@ -140,7 +126,7 @@ public class CircuitPane extends Pane implements Observer{
 			if(currentLevel.objective.buses.get(side) == null)
 				continue;
 			else if(currentLevel.objective.buses.get(side) instanceof BusIn)
-				set_chevrons_on_side(side, Circuit.mod4(side - 2));
+				set_chevrons_on_side(side, Gate.mod4(side - 2));
 			else if(currentLevel.objective.buses.get(side) instanceof BusOut)
 				set_chevrons_on_side(side, side);
 		}
@@ -185,10 +171,10 @@ public class CircuitPane extends Pane implements Observer{
 		
 		update_squares();
 
-		Circuit c = null;
+		Gate c = null;
 		for (int j = 0; j < numTiles; j++)
 			for (int i = 0; i < numTiles; i++)
-				if ((c = currentGame.circuitAtPos(new Coord(i, j))) != null) {
+				if ((c = currentGame.circuit_at_pos(new Coord(i, j))) != null) {
 					Piece p = new Piece(c);
 					addPiece(p, c.coord);
 				}
@@ -235,11 +221,11 @@ public class CircuitPane extends Pane implements Observer{
 		
 		//delete circuits on edges from game
 		for(int i = 0; i < oldSize; i++)
-			if(currentGame.circuitAtPos(new Coord(i, oldSize-1)) != null)
+			if(currentGame.circuit_at_pos(new Coord(i, oldSize-1)) != null)
 				currentGame.remove(new Coord(i, oldSize-1));
 		
 		for(int j = 0; j < oldSize; j++)
-			if(currentGame.circuitAtPos(new Coord(oldSize-1, j)) != null)
+			if(currentGame.circuit_at_pos(new Coord(oldSize-1, j)) != null)
 				currentGame.remove(new Coord(oldSize-1, j));
 		
 		currentGame.set_size(newSize);
@@ -380,7 +366,7 @@ public class CircuitPane extends Pane implements Observer{
 	public static void onLevelCompletion(){
 		if(gameWon) return;
 		((WinPane)Gui.screens.get("win_pane")).set_level(currentLevel, currentGame.n);
-		Gui.setCurrentPane("win_pane");
+		Gui.set_pane("win_pane");
 //		Gui.gamePane.getChildren().add(wm);
 //		wm.toFront();
 		Reader.new_circuits.clear();

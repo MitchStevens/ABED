@@ -1,4 +1,4 @@
-package controls;
+package gui.controls;
 
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;

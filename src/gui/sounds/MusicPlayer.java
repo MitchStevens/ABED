@@ -1,4 +1,4 @@
-package sounds;
+package gui.sounds;
 
 public class MusicPlayer {
 	

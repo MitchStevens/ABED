@@ -1,13 +1,14 @@
-package panes;
+package gui.panes;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import controls.Typer;
+import core.game.Gate;
+import core.logic.Level;
 import tutorials.*;
-import circuits.Circuit;
 import data.Reader;
+import gui.controls.Typer;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -26,7 +27,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
-import logic.Level;
 
 public class LevelSelectPane extends Pane implements SetChangeListener<Level>, ScreenPane {
 	private static final double COL_WIDTH 	= 1.0/3.0;
@@ -83,7 +83,7 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 			t.setId("unlocked");
 			t.setOnMouseClicked(e -> {
 				CircuitPane.setLevel(l);
-				Gui.setCurrentPane("game_pane");
+				Gui.set_pane("game_pane");
 			});
 		} else {
 			t.setId("locked");

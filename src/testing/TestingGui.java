@@ -1,26 +1,18 @@
 package testing;
 
-import static org.junit.Assert.assertTrue;
-import graphics.PieceImage;
-import graphics.SpinEffect;
-import graphics.Square;
+import gui.controls.Typer;
+import gui.graphics.SpinEffect;
+import gui.panes.Gui;
 
-import org.junit.Test;
-
-import panes.Gui;
-import controls.CircuitFinder;
-import controls.Typer;
+import data.Reader;
 import tutorials.SlideMessage;
-import tutorials.Tutorial;
 import tutorials.PointerMessage;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 public class TestingGui extends Application{
@@ -44,10 +36,6 @@ public class TestingGui extends Application{
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
-		
-		CircuitFinder cf = new CircuitFinder();
-		
-		root.getChildren().add(cf);
 		
 	}
 	
@@ -73,8 +61,8 @@ public class TestingGui extends Application{
 	}
 	
 	private void add_spin(){
-		Image a = PieceImage.ALL_IMAGES.get("And");
-		Image b = PieceImage.ALL_IMAGES.get("Or");
+		Image a = Reader.ALL_IMAGES.get("And");
+		Image b = Reader.ALL_IMAGES.get("Or");
 		
 		SpinEffect s = new SpinEffect(a, b);
 		root.getChildren().add(s);

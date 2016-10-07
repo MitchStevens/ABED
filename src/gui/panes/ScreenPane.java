@@ -1,4 +1,4 @@
-package panes;
+package gui.panes;
 
 public interface ScreenPane {
 	

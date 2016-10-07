@@ -1,37 +1,12 @@
-package tutorials;
+package actions;
 
-import circuits.Circuit;
+import core.game.Gate;
 
-public enum Action {
-	ADD, REMOVE, MOVE, ROTATE, NEW; 
-	Circuit c;
+public abstract class Action {
 	
-	public static Action add(Circuit c){
-		Action t = Action.ADD;
-		t.c = c;
-		return t;
+	public Action(){
+		ActionRecorder.add_action(this);
 	}
 	
-	public static Action remove(Circuit c){
-		Action t = Action.REMOVE;
-		t.c = c;
-		return t;
-	}
-	
-	public static Action move(Circuit c){
-		Action t = Action.MOVE;
-		t.c = c;
-		return t;
-	}
-	
-	public static Action rotate(Circuit c){
-		Action t = Action.ROTATE;
-		t.c = c;
-		return t;
-	}
-	
-	@Override
-	public String toString(){
-		return "A "+c.name+" was just "+this.name()+"D at position "+c.coord.toString();
-	}
+	public abstract String discription();
 }

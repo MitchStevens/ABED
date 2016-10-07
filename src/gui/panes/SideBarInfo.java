@@ -1,4 +1,4 @@
-package panes;
+package gui.panes;
 
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -13,8 +13,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import logic.Game;
-import circuits.Circuit;
+import core.game.Gate;
+import core.game.Game;
 import data.Reader;
 import data.Writer;
 

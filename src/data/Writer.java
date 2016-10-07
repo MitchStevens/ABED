@@ -14,10 +14,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import circuits.BusIn;
-import circuits.BusOut;
-import circuits.Circuit;
-import logic.Level;
+import core.circuits.BusIn;
+import core.circuits.BusOut;
+import core.game.Gate;
+import core.logic.Level;
 
 public class Writer {
 	
@@ -39,7 +39,7 @@ public class Writer {
 			while(root.hasChildNodes())
 				root.removeChild(root.getFirstChild());
 			
-			for(Circuit c : Reader.unlocked_circuits){
+			for(Gate c : Reader.unlocked_circuits){
 				Element e = doc.createElement("circuit");
 				e.setAttribute("name", c.name);
 				root.appendChild(e);
@@ -93,7 +93,7 @@ public class Writer {
 
     }
 	
-public static void unlock_level(Circuit c){
+public static void unlock_level(Gate c){
 		
 		try{
 			File f = new File("src/res/xml/unlocked_circuits.xml");
@@ -121,7 +121,7 @@ public static void unlock_level(Circuit c){
 
     }
 	
-	public static void write_circuit(Circuit c){
+	public static void write_circuit(Gate c){
 		
 		try{
 			File f = new File("src/res/xml/user_circuits.xml");
@@ -146,7 +146,7 @@ public static void unlock_level(Circuit c){
 
     }
 	
-	public static Element circuit_to_XML(Document doc, Circuit c){
+	public static Element circuit_to_XML(Document doc, Gate c){
 		Element circuit = doc.createElement("circuit");
 		circuit.setAttribute("name", c.name);
 		String ins = "", outs = "", evals = "";

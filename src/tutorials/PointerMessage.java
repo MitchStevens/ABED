@@ -1,11 +1,10 @@
 package tutorials;
 
-import panes.CircuitPane;
-import panes.Gui;
-
 import com.sun.javafx.tk.FontMetrics;
 
 import data.Reader;
+import gui.panes.CircuitPane;
+import gui.panes.Gui;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;

@@ -1,12 +1,10 @@
-package graphics;
+package gui.graphics;
 
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
-import panes.CircuitPane;
-import circuits.BusIn;
-import circuits.Cable;
+import core.circuits.BusIn;
+import core.circuits.Cable;
 import data.Reader;
+import gui.panes.CircuitPane;
 
 public class PieceToggleableBus extends PieceBus {
 	final public static double DISABLED_OPACITY = 0.15;
@@ -57,16 +55,13 @@ public class PieceToggleableBus extends PieceBus {
 		this.setOpacity( output_value ? 1.0 : DISABLED_OPACITY);
 		
 		for (int i = 0; i < lights.length; i++){
-			if(output_value)
-				lights[i].setFill(b.get(i) ? LIGHT_ON : LIGHT_OFF);
-			else
-				lights[i].setFill(LIGHT_OFF);
+			lights[i].setFill(b.get(i) && output_value ? LIGHT_ON : LIGHT_OFF);
 		}
 		
 		String piece_id = "PipeOut_Off";
 		if(output_value)
 			piece_id = (b instanceof BusIn ? "PipeIn" : "PipeOut")+"_"+(b.or() ? "On" : "Off");
-		busImage.setImage(Reader.ALL_IMAGES.get(piece_id));
+		bus_image.setImage(Reader.get_image(piece_id));
 		
 	}
 

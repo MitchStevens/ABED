@@ -1,10 +1,10 @@
-package panes;
+package gui.panes;
 
 import java.util.Random;
 
-import controls.Scramble;
-import controls.Typer;
 import data.Reader;
+import gui.controls.Scramble;
+import gui.controls.Typer;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -56,7 +56,7 @@ public class TitlePane extends VBox implements ScreenPane {
 		typers[0] = new Typer("> Play Game", SPEED);
 		typers[0].setFont(TYPER_FONT);
 		typers[0].setOnMouseClicked(e -> {
-			Gui.setCurrentPane("level_select_pane");
+			Gui.set_pane("level_select_pane");
 		});
 		typers[0].play();
 		
@@ -64,14 +64,14 @@ public class TitlePane extends VBox implements ScreenPane {
 		typers[1].setFont(TYPER_FONT);
 		typers[1].setOnMouseClicked(e -> {
 			CircuitPane.unlockAllCircuits = true;
-			Gui.setCurrentPane("game_pane");
+			Gui.set_pane("game_pane");
 		});
 		typers[1].play();
 		
 		typers[2] = new Typer("> About", SPEED);
 		typers[2].setFont(TYPER_FONT);
 		typers[2].setOnMouseClicked(e -> {
-			Gui.setCurrentPane("about_pane");
+			Gui.set_pane("about_pane");
 		});
 		typers[2].play();
 		
