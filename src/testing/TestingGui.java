@@ -1,5 +1,6 @@
 package testing;
 
+import gui.controls.Scoreboard;
 import gui.controls.Typer;
 import gui.graphics.SpinEffect;
 import gui.panes.Gui;
@@ -10,6 +11,7 @@ import tutorials.PointerMessage;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -33,9 +35,10 @@ public class TestingGui extends Application{
 		primaryStage.setTitle("Testing");
 		root = new Group();
 		scene = new Scene(root, 1024 - Gui.SIDE_BAR_WIDTH, 768);
-
 		primaryStage.setScene(scene);
 		primaryStage.show();
+		
+		add_scoreboard();
 		
 	}
 	
@@ -60,14 +63,26 @@ public class TestingGui extends Application{
 		ty.play();
 	}
 	
-	private void add_spin(){
-		Image a = Reader.ALL_IMAGES.get("And");
-		Image b = Reader.ALL_IMAGES.get("Or");
+	private void add_scoreboard(){
+		double h = 800;
+		Scoreboard sc = new Scoreboard(h, "0123456789", "777");
+		root.getChildren().add(sc);
+//		sc.add_sym('f');
+//		sc.add_sym('u');
 		
-		SpinEffect s = new SpinEffect(a, b);
-		root.getChildren().add(s);
-		s.play();
+		Button b = new Button("do");
+		b.setLayoutY(h);
+		root.getChildren().add(b);
 	}
+	
+//	private void add_spin(){
+//		Image a = Reader.ALL_IMAGES.get("And");
+//		Image b = Reader.ALL_IMAGES.get("Or");
+//		
+//		SpinEffect s = new SpinEffect(a, b);
+//		root.getChildren().add(s);
+//		s.play();
+//	}
 	
 	public static void open() {
 		Application.launch();

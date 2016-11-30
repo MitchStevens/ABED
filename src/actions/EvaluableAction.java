@@ -2,7 +2,7 @@ package actions;
 
 import core.game.Coord;
 
-public class EvaluableAction extends Action {
+public class EvaluableAction implements Action {
 	private String type;
 	private String name;
 	private Coord c1, c2;

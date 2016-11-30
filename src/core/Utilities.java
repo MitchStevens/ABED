@@ -2,6 +2,7 @@ package core;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import core.tokens.Flag;
@@ -97,5 +98,16 @@ public abstract class Utilities {
 		for(char c : s.toCharArray())
 			acc += toInt(c);
 		return acc;
+	}
+	
+	public static String rand_str(int n){
+		Random r = new Random();
+		char[] chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890_".toCharArray();
+		int len = chars.length;
+		String s = "";
+		
+		for(int i = 0; i < n; i++)
+			s += chars[r.nextInt(len)];
+		return s;
 	}
 }

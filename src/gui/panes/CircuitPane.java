@@ -1,5 +1,6 @@
 package gui.panes;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,17 +8,17 @@ import java.util.Observable;
 import java.util.Observer;
 
 import actions.Action;
-import core.circuits.BusIn;
-import core.circuits.BusOut;
-import core.circuits.Cable;
-import core.game.Gate;
+import actions.PieceAction;
+import core.eval.Function;
+import core.eval.Operation;
 import core.game.Coord;
+import core.game.Direction;
 import core.game.Game;
 import core.logic.Level;
 import core.logic.PathFinder;
 import tutorials.Tutorial;
 import data.Reader;
-import gui.graphics.Piece;
+import gui.graphics.NodePiece;
 import gui.graphics.Square;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -27,350 +28,373 @@ import javafx.scene.text.Text;
 import static java.lang.Math.*;
 
 public class CircuitPane extends Pane implements Observer{
-	public final static double 			GAME_MARGIN 		= 50;
-	public final static double 			GAP 				= 0;
+	public final static double 			GAME_MARGIN 	= 50;
+	public final static double 			GAP 			= 0;
 	
-	public 	static double 				tileSize 			= 0;
-	public 	static int 					numTiles 			= 3;
-	public	static Game 				currentGame;
-	public	static Map<Coord, Square> 	allSquares;
-	public	static boolean 				unlockAllCircuits 	= false;
-	public	static Text[]				side_markers		= new Text[4];
-	public	static Tutorial				tutorial; 
+	public 	static double 				tile_size 		= 0;
+	public	static Game 				game;
+	public	static int					num_tiles		= 3;
+	public	static Map<Coord, Square> 	squares = new HashMap<>();
+	private static Map<Coord, NodePiece> node_pieces = new HashMap<>();
+	//private static Map<Coord, EdgePiece> edge_pieces = new HashMap<>();	
+	public	static Text[]				side_markers	= new Text[4];
+	//public	static Tutorial				tutorial;
 	
-	public	static Level 				currentLevel;
-	private static boolean 				gameWon 			= false;
-	public	static Coord 				lastClicked 		= null;
+//	private static boolean 				gameWon 		= false;
+//	public	static Coord 				lastClicked 	= null;
 	public 	static CircuitPane 			cp;
 	
 	public CircuitPane() {
-		this.getStylesheets().add("res/css/GamePane.css");
-		this.setPrefSize(Gui.boardWidth - Gui.SIDE_BAR_WIDTH, Gui.boardHeight);
-		
+		this.getStylesheets().add("res/css/GamePane.css");		
 		cp = this;
+		cp.prefHeightProperty().bind(Gui.BOARD_HEIGHT);
+		cp.prefHeightProperty().addListener( (num) -> { update(); } );
+		cp.prefWidthProperty().bind(Gui.BOARD_WIDTH.subtract(Gui.SIDE_BAR_WIDTH));
+		cp.prefWidthProperty().addListener( (num) -> { update(); } );
 		cp.setId("main");
-		
 	}
 	
-	public static void calcTileSize() {
-		tileSize = (min(Gui.boardHeight, Gui.boardWidth - Gui.SIDE_BAR_WIDTH)
-				- 2 * GAME_MARGIN - (numTiles - 1) * GAP) / numTiles;
-	}
-
-	public static void set_sandbox_mode(boolean b){
-		if(b ==  unlockAllCircuits)
-			return;
-	}
-	
-	public static void addPiece(Piece p) {
-		Coord coord = currentGame.next_open();
-		if (coord != null)
-			addPiece(p, coord);
-	}
-
-	public static void addPiece(Piece p, Coord coord) {
-		currentGame.add(p.c, coord);
-		p.setLayoutX(allSquares.get(coord).getLayoutX());
-		p.setLayoutY(allSquares.get(coord).getLayoutY());
-		cp.getChildren().add(p);
-	}
-
-	public static void rotatePiece(Coord coord, int rot) {
-		currentGame.rotate(coord, rot);
-	}
-
-	public static void movePiece(Piece p, Coord coord) {
-		if (currentGame.circuit_at_pos(coord) == null
-				&& allSquares.get(coord).loc != 2) {
-			currentGame.remove(p.c.coord);
-			currentGame.add(p.c, coord);
-			p.setLayoutX(allSquares.get(coord).getLayoutX());
-			p.setLayoutY(allSquares.get(coord).getLayoutY());
-		} else {
-			p.setLayoutX(allSquares.get(p.c.coord).getLayoutX());
-			p.setLayoutY(allSquares.get(p.c.coord).getLayoutY());
-		}
-	}
-
-	public void removePiece(Piece p) {
-		currentGame.remove(p.c.coord);
-		this.getChildren().remove(p);
-	}
-
-	public static void togglePiece(Piece p) {
-		currentGame.toggle(p.c.coord);
-	}
-
-	public static void setLevel(Level l) {
-		System.out.println(l);
-		currentLevel = l;
-		newGame(new Game(l.gameSize));
-		SideBarInfo.textArea.setText(l.instructionText);
-		
-//		if(Tutorial.ALL_TUTORIALS.get(l.name) != null){
-//			tutorial = Tutorial.ALL_TUTORIALS.get(l.name);
-//			tutorial.start();
-//		} else {
-//			if(tutorial != null)
-//				tutorial.end();
-//			tutorial = null;
-//		}
-		
-		set_chevrons();
-	}
-	
-	private static void set_chevrons(){
-		if(currentLevel == null) return;
-		
-		for(int side = 0; side < 4; side++){
-			if(currentLevel.objective.buses.get(side) == null)
-				continue;
-			else if(currentLevel.objective.buses.get(side) instanceof BusIn)
-				set_chevrons_on_side(side, Gate.mod4(side - 2));
-			else if(currentLevel.objective.buses.get(side) instanceof BusOut)
-				set_chevrons_on_side(side, side);
-		}
-	}
-	
-	private static void set_chevrons_on_side(int side, int dir){
-		int n = numTiles;
-		
-		switch(side){
-		case 0:
-			for(int i = 1; i < n-1; i++)
-				allSquares.get(new Coord(i, 0)).set_chevron(dir);
-			break;
-		case 1:
-			for(int j = 1; j < n-1; j++)
-				allSquares.get(new Coord(n-1, j)).set_chevron(dir);
-			break;
-		case 2:
-			for(int i = 1; i < n-1; i++)
-				allSquares.get(new Coord(i, n-1)).set_chevron(dir);
-			break;
-		case 3:
-			for(int j = 1; j < n-1; j++)
-				allSquares.get(new Coord(0, j)).set_chevron(dir);
-			break;
-		}
-	}
-	
-	public static void newGame(Game g) {
-		// loads new game into the gui and sets current game
-		currentGame = g;
-		currentGame.addObserver(cp);
-		currentGame.notifyObservers(Action.NEW);
-
-		numTiles = g.n;
-		calcTileSize();
-		cp.getChildren().clear();
-		gameWon = false;
-		
-		allSquares = new HashMap<>();
-		SideBarGame.inc.set(numTiles);
-		
-		update_squares();
-
-		Gate c = null;
-		for (int j = 0; j < numTiles; j++)
-			for (int i = 0; i < numTiles; i++)
-				if ((c = currentGame.circuit_at_pos(new Coord(i, j))) != null) {
-					Piece p = new Piece(c);
-					addPiece(p, c.coord);
-				}
-		
-		for(int i = 0; i < 4; i++){
-			side_markers[i] = new Text(""+i);
-			side_markers[i].setFont(Reader.loadFont("adbxtra.ttf", 50));
-			side_markers[i].setFill(Color.WHITE);
-			cp.getChildren().add(side_markers[i]);
-		}
-		
+	private static void update(){
 		update_size_markers();
+		update_squares();
+	}
+	
+	public static void calc_tile_size() {
+		double short_edge = min(cp.getPrefHeight(), cp.getPrefWidth());
+		tile_size = (short_edge - 2*GAME_MARGIN - (num_tiles-1)*GAP) / num_tiles;
+	}
+	
+	public static void add_piece(Operation op) {
+		Coord coord = game.next_open();
+		if (coord != null)
+			add_piece(op, coord);
+	}
+
+	public static void add_piece(Operation op, Coord c) {
+		game.add(op, c);
+		NodePiece p = new NodePiece((String)game.twin_map.equiv(c));
+		node_pieces.put(c, p);
+		p.change_pos(squares.get(c));
+		cp.getChildren().add(p);
+		Action a = new PieceAction(PieceAction.Type.ADD, op, c);
+	}
+
+	public static void rotate_piece(Coord coord, int rot) {
+		game.rotate(coord, rot);
+		Action a = new PieceAction(PieceAction.Type.ROTATE, game.get_op(coord), coord, Direction.create(rot));
+	}
+
+	public static void move_piece(Coord from, Coord to) {
+		NodePiece p = node_pieces.get(from);
+		if (!game.twin_map.containsKey(to)
+				&& squares.get(to).get_loc() != Square.Location.CORNER) {
+			
+			game.move(from, to);
+			node_pieces.remove(from);
+			node_pieces.put(to, p);
+			p.change_pos(squares.get(to));
+			Action a = new PieceAction(PieceAction.Type.MOVE, game.get_op(to), from, to);
+		} else {
+			p.change_pos(squares.get(from));
+		}
+	}
+
+	public static void remove_piece(NodePiece p) {
+		Coord pos = p.get_pos();
+		String name = game.get_op(pos).get_name();
+		game.remove(pos);
+		cp.getChildren().remove(p);
+		Action a = new PieceAction(PieceAction.Type.REMOVE, name, pos);
+	}
+	
+	public static void toggle_piece(NodePiece p){
+		game.toggle(p.get_pos());
+		Action a = new PieceAction(PieceAction.Type.TOGGLE, game.get_op(p.get_pos()), p.get_pos());
+	}
+	
+//	private static void set_chevrons(){
+//		if(currentLevel == null) return;
+//		
+//		for(int side = 0; side < 4; side++){
+//			if(currentLevel.objective.buses.get(side) == null)
+//				continue;
+//			else if(currentLevel.objective.buses.get(side) instanceof BusIn)
+//				set_chevrons_on_side(side, Gate.mod4(side - 2));
+//			else if(currentLevel.objective.buses.get(side) instanceof BusOut)
+//				set_chevrons_on_side(side, side);
+//		}
+//	}
+	
+	private static void set_chevrons_on_side(Direction side, Direction dir){
+		for(Coord c : Coord.over_side(num_tiles, side))
+			squares.get(c).set_chevron(dir);
+	}
+	
+	public static void new_game(Game g) {
+		// loads new game into the gui and sets current game
+		game = g;
+		game.addObserver(cp);
+		//current_game.notifyObservers(Action.NEW);
+
+		num_tiles = g.get_size();
+		cp.getChildren().clear();
+		//gameWon = false;
+		
+		SideBarGame.inc.set(num_tiles);
+		
+		init_squares();
+
+//		Coord c;
+//		for (int j = 0; j < num_tiles; j++)
+//			for (int i = 0; i < num_tiles; i++)		
+//				if ((c = new Coord(i, j)) != null) {
+//					Piece p = new Piece((String)game.twin_map.equiv(c), c);
+//				}
+		
+		for(Direction d : Direction.values()){
+			side_markers[d.value] = new Text(""+d.value);
+			side_markers[d.value].setFont(Reader.loadFont("adbxtra.ttf", 50));
+			side_markers[d.value].setFill(Color.WHITE);
+			cp.getChildren().add(side_markers[d.value]);
+		}
+		
+		update();
 	}
 
 	public static void update_size_markers(){
-		double side_gap = 10.0;
-		double init = (Gui.boardWidth - Gui.boardHeight - Gui.SIDE_BAR_WIDTH) / 2;
-		side_markers[0].setLayoutX((Gui.boardWidth-Gui.SIDE_BAR_WIDTH)/2 -16);
-		side_markers[0].setLayoutY(GAME_MARGIN + max(0, -init) - side_gap);
-		side_markers[1].setLayoutX(GAME_MARGIN + tileSize*currentGame.n + max(0, init) -5 + side_gap);
-		side_markers[1].setLayoutY(Gui.boardHeight/2 + 15);
-		side_markers[2].setLayoutX((Gui.boardWidth-Gui.SIDE_BAR_WIDTH)/2 - 16);
-		side_markers[2].setLayoutY(GAME_MARGIN + tileSize*currentGame.n + max(0, -init) + 30 + side_gap);
-		side_markers[3].setLayoutX(GAME_MARGIN + max(0, init) - side_gap - 30);
-		side_markers[3].setLayoutY(Gui.boardHeight/2 + 15);
+		double letter = 30.0;
+		double h = cp.getPrefHeight();
+		double w = cp.getPrefWidth();
+		double init = (cp.getPrefHeight() - cp.getPrefWidth()) / 2.0;
+
+		side_markers[0].setLayoutX(w/2 - letter/2);
+		side_markers[0].setLayoutY(letter + max(0, init));
+		
+		side_markers[1].setLayoutX(w - letter);//
+		side_markers[1].setLayoutY(h/2 + letter/2);//
+		
+		side_markers[2].setLayoutX(w/2 - letter/2);//
+		side_markers[2].setLayoutY(h - max(0, init));//
+		
+		side_markers[3].setLayoutX(0);//
+		side_markers[3].setLayoutY(h/2 + 15);//
 	}
 	
-	public static void incSize(int newSize) {
-		// increments size of board
-		if (newSize > Game.MAX_TILES || newSize == numTiles)
+	public void set_num_tiles(int new_size){
+		if(new_size > Game.MAX_TILES || new_size < Game.MIN_TILES)
 			return;
-		int oldSize = numTiles;
-		numTiles = newSize;
-		calcTileSize();
-		update_squares();
+		
+		if(new_size > num_tiles){
+			add_squares(new_size);
+			inc_size(new_size);
+		}
+		else if(new_size < num_tiles){
+			remove_squares(new_size);
+			dec_size(new_size);
+		}
+		else
+			return;
+	}
+	
+	public static void inc_size(int size) {
+		// increments size of board
+		if (size > Game.MAX_TILES || size == num_tiles)
+			return;
+		
+		int oldSize = num_tiles;
+		num_tiles = size;
 
 		// reposition pieces in scene
-		for (Node n : cp.getChildren())
-			if (n instanceof Piece) {
-				Piece p = (Piece) n;
-				p.changePos(allSquares.get(p.c.coord));
-				p.onResize();
-			}
+		for(NodePiece p : node_pieces.values()){
+			p.change_pos(squares.get(p.get_pos()));
+			p.on_resize();
+		}
 		
 		//delete circuits on edges from game
 		for(int i = 0; i < oldSize; i++)
-			if(currentGame.circuit_at_pos(new Coord(i, oldSize-1)) != null)
-				currentGame.remove(new Coord(i, oldSize-1));
+			if(game.get_op(new Coord(i, oldSize-1)) != null)
+				game.remove(new Coord(i, oldSize-1));
 		
 		for(int j = 0; j < oldSize; j++)
-			if(currentGame.circuit_at_pos(new Coord(oldSize-1, j)) != null)
-				currentGame.remove(new Coord(oldSize-1, j));
+			if(game.get_op(new Coord(oldSize-1, j)) != null)
+				game.remove(new Coord(oldSize-1, j));
 		
-		currentGame.set_size(newSize);
+		game.set_size(size);
 	}
 
-	public static void decSize(int newSize) {
+	public static void dec_size(int newSize) {
 		// decrements size of board by one
-		if (newSize < Game.MIN_TILES || newSize == numTiles)
+		if (newSize < Game.MIN_TILES || newSize == num_tiles)
 			return;
-		numTiles = newSize;
-		calcTileSize();
+		num_tiles = newSize;
 
-		Game g = new Game(numTiles);
 		// reposition pieces+Squares in scene
 		update_squares();
-		for (Object n : cp.getChildren().toArray())
-			if (n instanceof Piece) {
-				Piece p = (Piece) n;
-				if (p.c.coord.i < numTiles && p.c.coord.j < numTiles) {
-					p.changePos(allSquares.get(p.c.coord));
-					p.onResize();
-					g.add(p.c, p.c.coord);
-				} else {
-					cp.removePiece(p);
-				}
-				p.changePos(allSquares.get(p.c.coord));
+		for(NodePiece p : node_pieces.values()){
+			if(p.get_pos().is_within(newSize)){
+				p.change_pos(squares.get(p.get_pos()));
+			} else {
+				game.remove(p.get_pos());
+				cp.remove_piece(p);
 			}
+		}
 		
-		currentGame.set_size(newSize);
+		game.set_size(newSize);
 	}
 
 	public static void on_resize() {
-		calcTileSize();
-		cp.setPrefHeight(Gui.boardHeight);
-		cp.setPrefWidth(Gui.boardWidth - Gui.SIDE_BAR_WIDTH);
 		update_squares();
 		
 		for (Object n : cp.getChildren().toArray())
-			if (n instanceof Piece) {
-				Piece p = (Piece) n;
-				p.changePos(allSquares.get(p.c.coord));
-				p.onResize();
+			if (n instanceof NodePiece) {
+				NodePiece p = (NodePiece) n;
+				p.change_pos(squares.get(p.get_pos()));
+				p.on_resize();
 			}
 		update_size_markers();
 	}
 
+	private static void init_squares(){
+		for(Coord c : Coord.over_square(num_tiles)){
+			Square s = new Square(0, 0, c);
+			squares.put(c, s);
+			cp.getChildren().add(s);
+		}		
+	}
+	
+	private static void add_squares(int new_size){
+		int old_size = num_tiles;
+		
+		for(int i = old_size; i < new_size; i++)
+			for(int j = 0; j < old_size; j++){
+				add_square(new Coord(i, j));
+				add_square(new Coord(j, i));
+			}
+				
+		for(int i = old_size; i < new_size; i++)
+			for(int j = old_size; j < new_size; j++)
+				add_square(new Coord(i, j));
+		
+		num_tiles = new_size;
+		game.set_size(new_size);
+		update_squares();
+	}
+	
+	private static void add_square(Coord c){
+		Square s = new Square(0, 0, c);
+		squares.put(c, s);
+		cp.getChildren().add(s);
+	}
+	
+	private static void remove_squares(int new_size){
+		int old_size = num_tiles;
+		
+		for(int i = new_size; i < old_size; i++)
+			for(int j = 0; j < old_size; j++){
+				remove_square(new Coord(i, j));
+				remove_square(new Coord(j, i));
+			}
+				
+		for(int i = new_size; i < old_size; i++)
+			for(int j = new_size; j < old_size; j++)
+				remove_square(new Coord(i, j));
+		
+		num_tiles = new_size;
+		game.set_size(new_size);
+		update_squares();
+	}
+	
+	private static void remove_square(Coord c){
+		Square s = squares.remove(c);
+		cp.getChildren().remove(s);
+	}
+	
+	/**
+	 * Places and changes size of squares. Recolors if necessary.
+	 * */
 	private static void update_squares(){
-		int prev_size = (int)Math.sqrt(allSquares.size());
-		int curr_size = numTiles;
+		calc_tile_size();
+		double size = tile_size + GAP;
+		double init = (cp.getPrefWidth() - cp.getPrefHeight()) / 2.0;
 		
-		double init = (Gui.boardWidth - Gui.boardHeight - Gui.SIDE_BAR_WIDTH) / 2;
-		double t = tileSize;
+		double x, y;
+		for(Coord c : Coord.over_square(num_tiles)){
+			Square s = squares.get(c);
+			x = max(0, init)  + GAME_MARGIN + c.j*size;
+			y = max(0, -init) + GAME_MARGIN + c.i*size;
+			s.setLayoutX(x);
+			s.setLayoutY(y);
+			s.set_size(tile_size);
+			s.re_color(num_tiles);
+		}
 		
-		for(int i = 0; i < max(prev_size, curr_size); i++)
-			for(int j = 0; j < max(prev_size, curr_size); j++)
-				if( 		(i < prev_size && i < curr_size) &&
-							(j < prev_size && j < curr_size)){
-					//needs resizing and recolo0ring
-					Square s = allSquares.get(new Coord(i, j));
-					s.on_resize(init);
-				} else if(	(i >= prev_size && i < curr_size) ||
-							(j >= prev_size && j < curr_size)){
-					//needs to be made, resized and recolored					
-					double x = max(0, init) + CircuitPane.GAME_MARGIN + i
-							* (t + CircuitPane.GAP);
-					double y = max(0, -init) + CircuitPane.GAME_MARGIN + j
-							* (t + CircuitPane.GAP);
-					Square s = new Square(x, y, new Coord(i, j));
-					allSquares.put(new Coord(i, j), s);
-					cp.getChildren().add(s);
-					
-				} else if(	(i < prev_size && i >= curr_size) ||
-							(j < prev_size && j >= curr_size)){
-					//needs to be deleted
-					cp.getChildren().remove(allSquares.get(new Coord(i, j)));
-					allSquares.remove(new Coord(i, j));
-				}
-		
-		set_chevrons();
+		//set_chevrons();
 //		System.out.println("(old, new): ("+ prev_size +", "+ curr_size +")");
 //		System.out.println("num squares = "+allSquares.size());
 	}
 	
-	public static Square getClosest(double x, double y) {
+	public static Square get_closest(double x, double y) {
 		Square closest = null;
 		double minDist = Double.MAX_VALUE;
-		for (Square s : allSquares.values())
-			if (s.euclideanDistance(x, y) < minDist && s.loc != 2) {
+		for (Square s : squares.values())
+			if (s.euc_dist(x, y) < minDist && s.get_loc() != Square.Location.CORNER) {
 				closest = s;
-				minDist = s.euclideanDistance(x, y);
+				minDist = s.euc_dist(x, y);
 			}
 		return closest;
 	}
 
-	public static void setTrail(Coord start, Coord finish){		
-		if(start.equals(finish))
-			return;
-		
-		allSquares.values().forEach(s -> s.setColor());
-		
-		PathFinder gn = new PathFinder(currentGame);		
-		
-		List<Coord> trail = gn.getTrail(start, finish);
-		
-		if(trail == null){
-			allSquares.get(start).square.setFill(Square.SELECTED);
-			allSquares.get(finish).square.setFill(Square.SELECTED);
-		} else
-			trail.forEach(c-> allSquares.get(c).square.setFill(Square.SELECTED));
-	}
+//	public static void setTrail(Coord start, Coord finish){		
+//		if(start.equals(finish))
+//			return;
+//		
+//		squares.values().forEach(s -> s.setColor());
+//		
+//		PathFinder gn = new PathFinder(currentGame);		
+//		
+//		List<Coord> trail = gn.getTrail(start, finish);
+//		
+//		if(trail == null){
+//			squares.get(start).square.setFill(Square.SELECTED);
+//			squares.get(finish).square.setFill(Square.SELECTED);
+//		} else
+//			trail.forEach(c-> squares.get(c).square.setFill(Square.SELECTED));
+//	}
 	
-	public static void add_cable_path(Coord start, Coord finish){
-		if(start.equals(finish))
-			return;
-		
-		allSquares.values().forEach(s -> s.setColor());
-		
-		PathFinder gn = new PathFinder(currentGame);
-		
-		List<Cable> path = gn.create_cable_list(start, finish);
-		
-		if(path == null){
-			allSquares.get(start).square.setFill(Square.SELECTED);
-			allSquares.get(finish).square.setFill(Square.SELECTED);
-		} else
-			path.forEach(c -> addPiece(new Piece(c), c.coord));
-	}
+//	public static void add_cable_path(Coord start, Coord finish){
+//		if(start.equals(finish))
+//			return;
+//		
+//		squares.values().forEach(s -> s.setColor());
+//		
+//		PathFinder gn = new PathFinder(currentGame);
+//		
+//		List<Cable> path = gn.create_cable_list(start, finish);
+//		
+//		if(path == null){
+//			squares.get(start).square.setFill(Square.SELECTED);
+//			squares.get(finish).square.setFill(Square.SELECTED);
+//		} else
+//			path.forEach(c -> addPiece(new Piece(c), c.coord));
+//	}
 	
 	@Override
 	public void update(Observable game, Object arg) {
-		if(currentLevel == null) return;
-		if(currentLevel.isComplete(currentGame)){
-			onLevelCompletion();
-			gameWon = true;
-		}
+//		if(currentLevel == null) return;
+//		if(currentLevel.isComplete(currentGame)){
+//			onLevelCompletion();
+//			gameWon = true;
+//		}
 	}
 	
-	public static void onLevelCompletion(){
-		if(gameWon) return;
-		((WinPane)Gui.screens.get("win_pane")).set_level(currentLevel, currentGame.n);
-		Gui.set_pane("win_pane");
-//		Gui.gamePane.getChildren().add(wm);
-//		wm.toFront();
-		Reader.new_circuits.clear();
-		Reader.new_circuits.addAll(currentLevel.circuitRewards);
-		currentLevel.onCompletion();
-	}
+//	public static void onLevelCompletion(){
+//		if(gameWon) return;
+//		((WinPane)Gui.screens.get("win_pane")).set_level(currentLevel, currentGame.n);
+//		Gui.set_pane("win_pane");
+////		Gui.gamePane.getChildren().add(wm);
+////		wm.toFront();
+//		Reader.new_circuits.clear();
+//		Reader.new_circuits.addAll(currentLevel.circuitRewards);
+//		currentLevel.onCompletion();
+//	}
 }

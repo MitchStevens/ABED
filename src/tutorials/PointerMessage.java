@@ -41,7 +41,7 @@ public class PointerMessage extends Pane implements Message{
 
 	@Override
 	public void display(Double[] pos) {
-		o =  Math.signum((Gui.boardWidth - Gui.SIDE_BAR_WIDTH)/2 - pos[0]);
+		o =  Math.signum((Gui.board_width - Gui.SIDE_BAR_WIDTH)/2 - pos[0]);
 		
 		Polygon poly = new Polygon(new double[]{
 				o*(w+50), 	-h/2,

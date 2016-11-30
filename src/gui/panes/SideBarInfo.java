@@ -1,22 +1,11 @@
 package gui.panes;
 
-import javafx.geometry.HPos;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import core.game.Gate;
-import core.game.Game;
 import data.Reader;
-import data.Writer;
 
 public class SideBarInfo extends VBox {
 	public static SideBarInfo 		sbi;

@@ -25,12 +25,8 @@ public class Composite implements Token {
 	}
 	
 	public void set_logic(String logic){
-		try {
-			this.tokens = tokenize(logic);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		try { this.tokens = tokenize(logic); }
+		catch (Exception e) { e.printStackTrace(); }
 	}
 	
 	@Override
@@ -112,4 +108,8 @@ public class Composite implements Token {
 		return this.sum_outputs;
 	}
 
+	@Override
+	public String toString(){
+		return tokens.toString();
+	}
 }

@@ -15,17 +15,10 @@ public enum Direction {
 	}
 	
 	public static Direction create(int dir){
-		switch(dir){
-		case 0: return UP;
-		case 1: return RIGHT;
-		case 2: return DOWN;
-		case 3: return LEFT;
-		default: return null;
-		}
+		return Direction.values()[mod4(dir)];
 	}
 	
-	public Direction rot(int rot){
-		int dir = mod4(value + rot);
-		return Direction.create(dir);
+	public Direction add_rot(int rot){
+		return Direction.values()[mod4(value + rot)];
 	}
 }

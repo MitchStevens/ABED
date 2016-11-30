@@ -10,12 +10,15 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import core.game.Gate;
+import core.eval.Mapping;
+import core.game.Direction;
 import core.tokens.Composite;
 import data.Reader;
 
 public class TestingComposite {
-	List<Boolean> inputs;
+	final List<Boolean> TRUE   = Arrays.asList(true);
+	final List<Boolean> FALSE  = Arrays.asList(false);
+	final List<Boolean> INPUTS = Arrays.asList(false, true, false, true);
 	
 	String[] logic_str = new String[]{
 		"T", "F", "TTFT",
@@ -36,11 +39,6 @@ public class TestingComposite {
 	List<String> eval_false = new ArrayList<>(Arrays.asList(logic_false));
 	
 	@Before
-	public void init(){
-		inputs = new ArrayList<>(Arrays.asList(new Boolean[]{false, true, false, true}));
-	}
-	
-	@Before
 	public void fill_lists(){
 		for(int i = 0; i < Tests.NUM_TESTS/2; i++){
 			eval_true.add(rand_elem(eval_true)   + rand_elem(eval_true)  + "x");
@@ -51,6 +49,12 @@ public class TestingComposite {
 	}
 	
 	@Test
+	public void TEST_not(){
+		Composite not = new Composite("0~");
+		assertTrue(not.eval(FALSE).get(0));
+	}
+	
+	@Test
 	public void TEST_reading(){
 		assertTrue(Reader.COMPOSITES.size() > 0);
 	}
@@ -58,7 +62,7 @@ public class TestingComposite {
 	@Test
 	public void TEST_predefined_operations(){
 		Composite comp = new Composite("11(xor)");
-		System.out.println(comp.eval(inputs));
+		System.out.println(comp.eval(INPUTS));
 	}
 	
 	
@@ -78,23 +82,23 @@ public class TestingComposite {
 	@Test
 	public void TEST_eval_basic(){
 		Composite bus = new Composite("0");
-		assertFalse(bus.eval(inputs).pop());
+		assertFalse(bus.eval(INPUTS).pop());
 		
 		Composite not = new Composite("0~");
-		assertTrue(not.eval(inputs).pop());
+		assertTrue(not.eval(INPUTS).pop());
 		
 		Composite or = new Composite("01+");
-		assertTrue(or.eval(inputs).pop());
+		assertTrue(or.eval(INPUTS).pop());
 		
 		Composite and = new Composite("01x");
-		assertFalse(and.eval(inputs).pop());
+		assertFalse(and.eval(INPUTS).pop());
 	}
 	
 	@Test
 	public void TEST_eval_true(){
 		for(String s : eval_true){
 			Composite op = new Composite(s);
-			assertTrue("The String "+ s +" was not true.", op.eval(inputs).pop());
+			assertTrue("The String "+ s +" was not true.", op.eval(INPUTS).pop());
 		}
 	}
 	
@@ -102,7 +106,7 @@ public class TestingComposite {
 	public void TEST_eval_false(){
 		for(String s : eval_false){
 			Composite op = new Composite(s);
-			assertFalse("The String "+ s +" was not true.", op.eval(inputs).pop());
+			assertFalse("The String "+ s +" was not true.", op.eval(INPUTS).pop());
 		}
 	}
 }

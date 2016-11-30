@@ -47,17 +47,17 @@ public class SlideMessage extends Pane implements Message{
 		CircuitPane.cp.getChildren().add(this);
 		
 		TranslateTransition slide_in = new TranslateTransition(Duration.seconds(2), this);
-		slide_in.setFromX(Gui.boardWidth - Gui.SIDE_BAR_WIDTH - w);
-		slide_in.setFromY(Gui.boardHeight);
-		slide_in.setToX(Gui.boardWidth - Gui.SIDE_BAR_WIDTH - w);
-		slide_in.setToY(Gui.boardHeight - h);
+		slide_in.setFromX(Gui.board_width - Gui.SIDE_BAR_WIDTH - w);
+		slide_in.setFromY(Gui.board_height);
+		slide_in.setToX(Gui.board_width - Gui.SIDE_BAR_WIDTH - w);
+		slide_in.setToY(Gui.board_height - h);
 		
 		TranslateTransition slide_out = new TranslateTransition(Duration.seconds(2), this);
 		slide_out.setDelay(Duration.seconds(3));
-		slide_out.setFromX(Gui.boardWidth - Gui.SIDE_BAR_WIDTH - w);
-		slide_out.setFromY(Gui.boardHeight - h);
-		slide_out.setToX(Gui.boardWidth - Gui.SIDE_BAR_WIDTH - w);
-		slide_out.setToY(Gui.boardHeight);
+		slide_out.setFromX(Gui.board_width - Gui.SIDE_BAR_WIDTH - w);
+		slide_out.setFromY(Gui.board_height - h);
+		slide_out.setToX(Gui.board_width - Gui.SIDE_BAR_WIDTH - w);
+		slide_out.setToY(Gui.board_height);
 		
 		SequentialTransition st = new SequentialTransition();
 		st.getChildren().addAll(slide_in, slide_out);

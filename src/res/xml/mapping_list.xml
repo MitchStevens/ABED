@@ -1,48 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<category name="Basic">
-		<circuit name="BUS" 	inputs="0001" outputs="0100" evals="(bus)" />
-		<circuit name="LEFT" 	inputs="0001" outputs="1000" evals="(bus)" />
-		<circuit name="RIGHT" 	inputs="0001" outputs="0010" evals="(bus)" />
-		<circuit name="NOT" 	inputs="0001" outputs="0100" evals="(not)" />
-		<circuit name="OR" 		inputs="1001" outputs="0100" evals="(or)" />
-		<circuit name="NOR" 	inputs="1001" outputs="0100" evals="(nor)" />
-		<circuit name="AND" 	inputs="1001" outputs="0100" evals="(and)" />
-		<circuit name="NAND" 	inputs="1001" outputs="0100" evals="(nand)" />
-	</category>
-	<category name="Single">
-		<circuit name="SUPER" 		inputs="0001" outputs="1110" evals="(super)" />
-		<circuit name="XOR" 		inputs="1001" outputs="0100" evals="(xor)" />
-		<circuit name="HALF_ADDER" 	inputs="1001" outputs="0110" evals="(half_adder)" />
-		<circuit name="CORNER_CUT" 	inputs="1001" outputs="0110" evals="01" />
-		<circuit name="CROSS_OVER" 	inputs="1001" outputs="0110" evals="10" />
-	</category>
-	<category name="Dual">
-		<circuit name="BUS2" 		inputs="0002" outputs="0200" evals="(bus2)" />
-		<circuit name="LEFT2" 		inputs="0002" outputs="0200" evals="(bus2)" />
-		<circuit name="RIGHT" 		inputs="0002" outputs="0200" evals="(bus2)" />
-		<circuit name="MERGE2" 		inputs="1001" outputs="0200" evals="(bus2)" />
-		<circuit name="BRANCH2" 	inputs="0002" outputs="1100" evals="(bus2)" />
-		<circuit name="SUPER2" 		inputs="0222" outputs="2220" evals="(bus2)(bus2)(bus2)" />
-		<circuit name="FULL_ADDER" 	inputs="1002" outputs="0110" evals="01(xor)" />
-	</category>
-	<category name="Quad">
-		<circuit name="BUS4" 	inputs="0004" outputs="0400" evals="(bus4)" />
-		<circuit name="LEFT4" 	inputs="0004" outputs="4000" evals="(bus4)" />
-		<circuit name="RIGHT4" 	inputs="0004" outputs="0040" evals="(bus4)" />
-		<circuit name="MERGE4" 	inputs="2002" outputs="0004" evals="(bus4)" />
-		<circuit name="BRANCH4" inputs="0004" outputs="2200" evals="(bus4)" />
-		<circuit name="SUPER4" 	inputs="0004" outputs="4440" evals="(super4)" />
-		<circuit name="DISPLAY" inputs="0040" outputs="0000" evals="" />
-	</category>
-	<category name="Unaccessible">
-		<circuit name="CABLE0"	inputs="0001" outputs="0000" evals="(bus)" />
-		<circuit name="CABLE1"	inputs="0001" outputs="1000" evals="(bus)" />
-		<circuit name="CABLE2"	inputs="0001" outputs="0100" evals="(bus)" />
-		<circuit name="CABLE3"	inputs="0001" outputs="1100" evals="(bus)(bus)" />
-		<circuit name="CABLE4"	inputs="0001" outputs="0010" evals="(bus)" />
-		<circuit name="CABLE5"	inputs="0001" outputs="1010" evals="(bus)(bus)" />
-		<circuit name="CABLE6"	inputs="0001" outputs="0110" evals="(bus)(bus)" />
-		<circuit name="CABLE7"	inputs="0001" outputs="1110" evals="(bus)(bus)(bus)" />
-	</category>
+	<mapping name="BUS" 		inputs="0001" outputs="0100" evals="0" />
+	<mapping name="LEFT" 		inputs="0001" outputs="1000" evals="0" />
+	<mapping name="RIGHT" 		inputs="0001" outputs="0010" evals="0" />
+	<mapping name="NOT" 		inputs="0001" outputs="0100" evals="0" />
+	<mapping name="OR" 			inputs="1001" outputs="0100" evals="01+" />
+	<mapping name="NOR" 		inputs="1001" outputs="0100" evals="01+~" />
+	<mapping name="AND" 		inputs="1001" outputs="0100" evals="01x" />
+	<mapping name="NAND" 		inputs="1001" outputs="0100" evals="01x~" />
+	<mapping name="SUPER" 		inputs="0001" outputs="1110" evals="0,0,0" />
+	<mapping name="XOR" 		inputs="1001" outputs="0100" evals="(xor)" />
+	<mapping name="HALF_ADDER" 	inputs="1001" outputs="0110" evals="(half_adder)" />
+	<mapping name="CORNER_CUT" 	inputs="1001" outputs="0110" evals="01" />
+	<mapping name="CROSS_OVER" 	inputs="1001" outputs="0110" evals="10" />
 </root>

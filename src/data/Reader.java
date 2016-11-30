@@ -36,9 +36,13 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import core.game.Gate;
+import core.eval.Function;
+import core.eval.Mapping;
+import core.eval.Operation;
 import core.game.Game;
 import core.logic.Level;
+import core.operations.Input;
+import core.operations.Output;
 import core.tokens.Composite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
@@ -50,10 +54,12 @@ import javafx.scene.text.Font;
 
 public class Reader {
 	//Files
-	private final static String COMPOSITES_DOC = "composite_list";
+	private final static String COMPOSITES_DOC 	= "composite_list";
+	private final static String MAPPING_DOC 	= "mapping_list";
 	
 	//Unmodifiable lists
-	public static Map<String, Gate> 		GATES;
+	public static Map<String, Mapping>		MAPPINGS;
+	public static Map<String, Function>		FUNCTIONS;
 	public static Map<String, Image> 		IMAGES;
 	public static Map<String, Game> 		GAMES;
 	public static Map<String, Level>		LEVELS;
@@ -63,15 +69,13 @@ public class Reader {
 	public static 	List<String>	LEVEL_CATEGORIES	= new ArrayList<>();
 	
 	public static 	ObservableSet<Level> 	unlocked_levels		= FXCollections.observableSet();
-	public static 	ObservableSet<Gate> 	unlocked_circuits 	= FXCollections.observableSet();
-	public static	List<Gate>			new_circuits		= new ArrayList<>();
 	
 	static {
-//		read_circuits();
-//		read_images();
+		read_composites();
+		read_images();
 //		read_games();
 //		read_levels();
-		read_composites();
+		read_mappings();
 //		read_unlocked_circuits();
 //		read_unlocked_levels();
 	}
@@ -79,13 +83,6 @@ public class Reader {
 	public static Composite get_composite(String key){
 		if(COMPOSITES.containsKey(key))
 			return COMPOSITES.get(key);
-		else
-			return null;
-	}
-	
-	public static Gate get_circuit(String key){
-		if(GATES.containsKey(key))
-			return GATES.get(key).clone();
 		else
 			return null;
 	}
@@ -104,48 +101,36 @@ public class Reader {
 	/**
 	 * Reads in all the circuits and saves them in the hashmap 'ALL_CIRCUITS'.
 	 * */
-//	private static void read_circuits() {
-//		Map<String, Gate> map = new HashMap<>();
-//		
-//		map.put("INPUT",  	new Input());
-//		map.put("OUTPUT", 	new Output());
-//		map.put("CABLE", 	new Cable());
-//		
-//		Document doc = get_XML_doc("circuit_list");
-//		
-//		try{
-//			//what does this line do? research.
-//			doc.getDocumentElement().normalize();
-//			
-//			NodeList category = doc.getElementsByTagName("category");
-//			
-//			for(int i = 0; i < category.getLength(); i++){
-//				CIRCUIT_CATEGORIES.add(((Element)category.item(i)).getAttribute("name"));
-//				NodeList circuits = ((Element)category.item(i)).getElementsByTagName("circuit");
-//				
-//				for(int j = 0; j < circuits.getLength(); j++){
-//					Node node = circuits.item(j);
-//					Element e = (Element)node;
-//					
-//					String name 	= e.getAttribute("name");
-//					String inputs 	= e.getAttribute("inputs");
-//					String outputs 	= e.getAttribute("outputs");
-//					String evals 	= e.getAttribute("evals");
-//					
-//					Gate c = new Gate(name, inputs, outputs, evals);
-//					c.type = i;
-//					
-//					map.put(name, c);
-//				}
-//			}
-//			
-//		} catch (Exception e){
-//			
-//		}
-//		
-//		ALL_GATES = Collections.unmodifiableMap(map);
-//		
-//	}
+	private static void read_mappings() {
+		Map<String, Mapping> map = new HashMap<>();
+		
+		map.put("INPUT",  	new Input());
+		map.put("OUTPUT", 	new Output());
+		
+		Document doc = get_XML_doc(MAPPING_DOC);
+		
+		try{
+			doc.getDocumentElement().normalize();
+			NodeList mappings = doc.getElementsByTagName("mapping");
+			
+			String name, inputs, outputs, evals;
+			for(int i = 0; i < mappings.getLength(); i++){
+				Element e = (Element)mappings.item(i);
+				
+				name = e.getAttribute("name");
+				inputs = e.getAttribute("inputs");
+				outputs = e.getAttribute("outputs");
+				evals = e.getAttribute("evals");
+				Mapping m = new Mapping(name, inputs, outputs, evals);
+				map.put(name, m);
+			}
+		} catch (Exception e){
+			
+		}
+		
+		MAPPINGS = Collections.unmodifiableMap(map);
+		
+	}
 	
 	/**
 	 * Reads in all the circuits and saves them in the hashmap 'ALL_OPERATIONS'.

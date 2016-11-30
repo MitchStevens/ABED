@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 	<function name="funct1">
-		<operation id="in1" name="input" 	inputs="" 			outputs="and"/>
-		<operation id="in2" name="input" 	inputs="" 			outputs="and"/>
-		<operation id="and" name="and"		inputs="in2,in1" 	outputs="out"/>
-		<operation id="out"	name="output"	inputs="and"		outputs=""/>
-	</function>
-	<function name="funct2">
-		<operation id="in"	name="input"	inputs=""		outputs="not"/>
-		<operation id="not"	name="not"		inputs="in"		outputs="out"/>
-		<operation id="out"	name="output"	inputs="not"	outputs=""/>	
+		<nodes>
+			<operation id="in" 	type="input"/>
+			<operation id="out"	type="output"/>
+		</nodes>
+		<edges>
+			<edge id1="in" dir1="RIGHT" id2="out" dir2="LEFT"/>
+		</edges>
 	</function>
 </root>

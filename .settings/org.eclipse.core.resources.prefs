@@ -1,2 +1,3 @@
 eclipse.preferences.version=1
-encoding//src/gui/graphics/Piece.java=UTF-8
+encoding//src/core/game/Game.java=UTF-8
+encoding//src/gui/graphics/NodePiece.java=UTF-8

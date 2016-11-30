@@ -1,12 +1,6 @@
 package actions;
 
-import core.game.Gate;
-
-public abstract class Action {
-	
-	public Action(){
-		ActionRecorder.add_action(this);
-	}
+public interface Action {	
 	
 	public abstract String discription();
 }

@@ -68,7 +68,7 @@ public class WinPane extends BorderPane implements ScreenPane {
 		
 		Text completed_text = new Text(l.completionText);
 		completed_text.setFont(DEF_FONT);
-		completed_text.setWrappingWidth((Gui.boardWidth - 2*PADDING)*(1-SIDEBAR_WIDTH));
+		completed_text.setWrappingWidth((Gui.board_width - 2*PADDING)*(1-SIDEBAR_WIDTH));
 		
 		HBox buttons = new HBox();
 		
@@ -102,7 +102,7 @@ public class WinPane extends BorderPane implements ScreenPane {
 		
 		Text message = new Text(random_message());
 		message.setFont(SUBTITLE_FONT);
-		message.setWrappingWidth(SIDEBAR_WIDTH*(Gui.boardWidth - 2*PADDING));
+		message.setWrappingWidth(SIDEBAR_WIDTH*(Gui.board_width - 2*PADDING));
 		
 		Separator seperator = new Separator();
 		
@@ -112,7 +112,7 @@ public class WinPane extends BorderPane implements ScreenPane {
 		
 		sidebar.getChildren().addAll(message, seperator, you_win);
 		
-		double circ_size = SIDEBAR_WIDTH*Gui.boardWidth/2;
+		double circ_size = SIDEBAR_WIDTH*Gui.board_width/2;
 		for(Gate c : l.circuitRewards){			
 			VBox circ_box = new VBox();
 			circ_box.setAlignment(Pos.TOP_CENTER);

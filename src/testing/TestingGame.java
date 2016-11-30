@@ -8,58 +8,87 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import core.circuits.Input;
-import core.circuits.Output;
-import core.game.Gate;
+import core.eval.Mapping;
+import core.game.Coord;
 import core.game.Game;
+import core.operations.Input;
+import core.operations.Output;
 import data.Reader;
 
 public class TestingGame {
 	
 	@Test
-	public void addTest(){
-		Game g = new Game(3);
-		Input c1 = new Input();
-		Gate c2 = Reader.get_circuit("BUS");
-		Output c3 = new Output();
+	public void TEST_bus() throws Exception{
+		Game game = new Game(3);
+		Input in    = new Input();
+		Mapping bus = new Mapping("BUS", "0001", "0100", "0");
+		Output out  = new Output();
 		
-		g.add(c1, 0, 1);
-		g.add(c2, 1, 1);
-		g.add(c3, 2, 1);
-		//System.out.println(g.printGame());
+		game.add(in,  new Coord(1, 0));
+		game.add(bus, new Coord(1, 1));
+		game.add(out, new Coord(1, 2));
 		
-		assertFalse(c3.get());
+		game.print_game();
+		System.out.println(game.f);
 		
-		c1.toggle();
-		assertTrue(c3.get());
-		// +-+-+-+-+-+-+-+-
-		g.clear();
-		Gate not1 = Reader.get_circuit("NOT");
-		Gate not2 = Reader.get_circuit("NOT");
-		g.add(not1, 0, 0);
-		assertTrue(not1.count_outputs().get(0));
-		g.add(not2, 1, 0);
-		g.print_game();
-		assertTrue(not1.flattenOutputs().get(0));
-		assertFalse(not2.flattenOutputs().get(0));
+		Thread.sleep(300);
+		assertTrue(game.f.num_nodes() == 3);
+		assertTrue(game.f.num_edges() == 2);
+		assertFalse(out.values());
+		in.toggle();
+		
+		Thread.sleep(300);
+		assertTrue(out.values());
 	}
 	
 	@Test
-	public void removeTest(){
-		Game g = new Game(3);
-		Input c1 = new Input();
-		Gate c2 = Reader.get_circuit("BUS");
-		Output c3 = new Output();
+	public void TEST_remove(){
 		
-		g.add(c1, 0, 1);
-		g.add(c2, 1, 1);
-		g.add(c3, 2, 1);
-		//System.out.println(g.printGame());
+	}
+	
+	@Test
+	public void TEST_bus_rot() throws Exception {
+		Game game 	= new Game(3);
+		Input in	= new Input();
+		Mapping bus	= new Mapping("BUS", "0001", "0100", "0");
+		Output out	= new Output();
 		
-		assertFalse(c3.get());
+		game.add(in,  new Coord(0, 1));
+		game.add(bus, new Coord(1, 1));
+		game.add(out, new Coord(2, 1));
 		
-		c1.toggle();
-		assertTrue(c3.get());
+		game.rotate(new Coord(0, 1), 1);
+		game.rotate(new Coord(1, 1), 1);
+		game.rotate(new Coord(2, 1), 1);
+		
+		Thread.sleep(300);
+		assertTrue(game.f.num_nodes() == 3);
+		assertTrue(game.f.num_edges() == 2);
+		assertTrue(out.values());
+		in.toggle();
+	}
+	
+	@Test
+	public void TEST_not() throws Exception {
+		Game game 	= new Game(3);
+		Input in    = new Input();
+		Mapping not = new Mapping("NOT", "0001", "0100", "0~");
+		Output out  = new Output();
+		
+		game.add(in,  new Coord(1, 0));
+		game.add(not, new Coord(1, 1));
+		game.add(out, new Coord(1, 2));
+		
+		//game.print_game();
+		
+		Thread.sleep(300);
+		assertTrue(game.f.num_nodes() == 3);
+		assertTrue(game.f.num_edges() == 2);
+		assertTrue(out.values());
+		in.toggle();
+		
+		Thread.sleep(300);
+		assertFalse(out.values());
 	}
 }
 

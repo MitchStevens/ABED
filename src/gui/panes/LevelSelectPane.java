@@ -48,7 +48,7 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 	private void init(){
 		this.getChildren().clear();
 		wrapper = new HBox();
-		wrapper.setPrefHeight(Gui.boardHeight);
+		wrapper.setPrefHeight(Gui.board_height);
 		
 		for(int i = 0; i < Reader.LEVEL_CATEGORIES.size(); i++)
 			wrapper.getChildren().add(createLevelColumn(i));
@@ -77,7 +77,7 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 	private Pane createLevelBox(Level l, String s, boolean unlocked){
 		Typer t = new Typer(s, 15);
 		t.setFont(LEVEL_FONT);
-		t.setWrappingWidth(Gui.boardWidth*COL_WIDTH);
+		t.setWrappingWidth(Gui.board_width*COL_WIDTH);
 		levelTypers.add(t);
 		if(unlocked){
 			t.setId("unlocked");
@@ -97,7 +97,7 @@ public class LevelSelectPane extends Pane implements SetChangeListener<Level>, S
 	}
 	
 	public static void onResize(){
-		wrapper.setPrefHeight(Gui.boardHeight);
+		wrapper.setPrefHeight(Gui.board_height);
 	}
 
 	@Override

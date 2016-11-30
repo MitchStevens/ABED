@@ -38,7 +38,7 @@ public class Tutorial implements Observer {
 	}
 	
 	public void start(){
-		steps.get(0).m.display(new Double[]{Gui.boardWidth - Gui.SIDE_BAR_WIDTH, 30.0});
+		steps.get(0).m.display(new Double[]{Gui.board_width - Gui.SIDE_BAR_WIDTH, 30.0});
 	}
 
 	public void next_step(){
@@ -47,7 +47,7 @@ public class Tutorial implements Observer {
 			return;
 		
 		steps.get(current_step -1).m.remove();
-		steps.get(current_step).m.display(new Double[]{Gui.boardWidth - Gui.SIDE_BAR_WIDTH, 30.0});
+		steps.get(current_step).m.display(new Double[]{Gui.board_width - Gui.SIDE_BAR_WIDTH, 30.0});
 	}
 	
 	public void end(){

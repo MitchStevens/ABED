@@ -37,7 +37,7 @@ public class TitlePane extends VBox implements ScreenPane {
 
 	public TitlePane() {
 		this.getStylesheets().add(Reader.loadCSS("TitlePane.css"));
-		this.setMinSize(Gui.boardWidth, Gui.boardHeight);
+		this.setMinSize(Gui.board_width, Gui.board_height);
 		
 		Label title = new Label("ABED");
 		title.setFont(adbxtsc);
@@ -47,7 +47,7 @@ public class TitlePane extends VBox implements ScreenPane {
 		subtitle = new Scramble(txt[r.nextInt(txt.length)]);
 		subtitle.setFont(adbxtra);
 		subtitle.setWrapText(true);
-		subtitle.setPrefWidth(Gui.boardWidth);
+		subtitle.setPrefWidth(Gui.board_width);
 		subtitle.setAlignment(Pos.TOP_LEFT);
 		subtitle.play();
 		

@@ -3,13 +3,13 @@ package gui.panes;
 import java.util.ArrayList;
 import java.util.List;
 
-import core.game.Gate;
+import core.eval.Operation;
 import core.game.Game;
 import core.logic.Level;
 import data.Reader;
 import data.Writer;
 import gui.controls.Incrementor;
-import gui.graphics.Piece;
+import gui.graphics.NodePiece;
 import gui.graphics.PieceImage;
 import javafx.collections.ListChangeListener;
 import javafx.collections.SetChangeListener;
@@ -34,7 +34,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class SideBarGame extends VBox implements SetChangeListener<Gate> {
+public class SideBarGame extends VBox {
 	private final double 			ICON_SIZE 	= 20;
 
 	public static SideBarGame 		sbg;
@@ -53,25 +53,25 @@ public class SideBarGame extends VBox implements SetChangeListener<Gate> {
 		sbg.getStylesheets().add("res/css/SideBarGui.css");
 		sbg.setPrefWidth(defWidth);
 		sbg.setSpacing(10);
-		Reader.unlocked_circuits.addListener(this);
+		//Reader.unlocked_circuits.addListener(this);
 
 		gateSelector = new TreeView<>();
 		gateSelector.setShowRoot(false);
 		gateSelector.setPrefSize(defWidth, 300);
 		sbg.getChildren().add(gateSelector);
-		updateCircuits();
+		update_operations();
 
 		BorderPane box = new BorderPane();
 		
 		inc = new Incrementor(Game.MIN_TILES, Game.MAX_TILES);
 		inc.setWidth1(defWidth / 2);
 		inc.setOnInc(e -> {
-			CircuitPane.incSize(CircuitPane.numTiles + 1);
+			CircuitPane.inc_size(CircuitPane.num_tiles + 1);
 		});
 		inc.setOnDec(e -> {
-			CircuitPane.decSize(CircuitPane.numTiles - 1);
+			CircuitPane.dec_size(CircuitPane.num_tiles - 1);
 		});
-		inc.set(CircuitPane.numTiles);
+		inc.set(CircuitPane.num_tiles);
 		inc.setAlignment(Pos.CENTER_RIGHT);
 		Label l = new Label("Set Size");
 		l.setAlignment(Pos.CENTER_LEFT);
@@ -82,9 +82,9 @@ public class SideBarGame extends VBox implements SetChangeListener<Gate> {
 
 		Button b1 = new Button("Clear Game");
 		b1.setPrefWidth(defWidth);
-		b1.setOnMouseClicked(e -> {
-			CircuitPane.currentGame.clear();
-		});
+//		b1.setOnMouseClicked(e -> {
+//			CircuitPane.game.clear();
+//		});
 		sbg.getChildren().add(b1);
 
 		Button b2 = new Button("Back to Menu");
@@ -95,35 +95,20 @@ public class SideBarGame extends VBox implements SetChangeListener<Gate> {
 		sbg.getChildren().add(b2);
 	}
 	
-	public void updateCircuits(){
-		if(CircuitPane.unlockAllCircuits)
-			for(Gate c : Reader.ALL_CIRCUITS.values())
-				Reader.unlocked_circuits.add(c);
+	public void update_operations(){
+//		for(Operation op : Reader.MAPPINGS.values())
+//			Reader.unlocked_circuits.add(c);
 		
-		TreeItem<Node> root = new TreeItem<>(new Label("Gates"));
-		
-		List<TreeItem<Node>> headers = new ArrayList<>();
-		for(int i = 0; i < Reader.CIRCUIT_CATEGORIES.size(); i++)
-			headers.add(null);
-		
-		for(Gate c : Reader.unlocked_circuits){
-			if(headers.get(c.type) == null){
-				Label headLabel = new Label(Reader.CIRCUIT_CATEGORIES.get(c.type));
-				headLabel.setFont(DEF_FONT);
-				headers.set(c.type, new TreeItem<>(headLabel));
-			}
-		}
+		TreeItem<Node> root = new TreeItem<>(new Label("Operations"));
 
-		for (Gate c : Reader.unlocked_circuits) {
+		for (Operation op : Reader.MAPPINGS.values()) {
 			HBox hbox = new HBox();
-			if(Reader.new_circuits.contains(c))
-				hbox.setStyle("-fx-background-color: DDFEFE;");
 			
-			Label l = new Label(c.name);
+			Label l = new Label(op.get_name());
 			l.setFont(DEF_FONT);
 			l.setAlignment(Pos.CENTER_LEFT);
 
-			Image img = Reader.ALL_IMAGES.get(c.name);
+			Image img = Reader.IMAGES.get(op.get_name());
 			if (img != null) {
 				ImageView view = new ImageView(img);
 				view.setFitHeight(ICON_SIZE);
@@ -134,31 +119,14 @@ public class SideBarGame extends VBox implements SetChangeListener<Gate> {
 			hbox.getChildren().add(l);
 
 			hbox.setOnMouseClicked(e -> {
-				System.out.println(c.name);
-				CircuitPane.addPiece(new Piece(c.clone()));
+				System.out.println(op.get_name());
+				CircuitPane.add_piece(op.clone());
 			});
 
 			TreeItem<Node> label = new TreeItem<>(hbox);
-
-			if(headers.get(c.type) == null){
-				Label headLabel = new Label(Reader.CIRCUIT_CATEGORIES.get(c.type));
-				headLabel.setFont(DEF_FONT);
-				root.getChildren().add(new TreeItem<>(headLabel));
-			}
-			
-			headers.get(c.type).getChildren().add(label);
+			root.getChildren().add(label);
 		}
-		
-		for(TreeItem<Node> n : headers)
-			if(n != null)
-				root.getChildren().add(n);
 		
 		gateSelector.setRoot(root);
 	}
-
-	@Override
-	public void onChanged( SetChangeListener.Change<? extends Gate> arg0) {
-		updateCircuits();
-	}
-
 }

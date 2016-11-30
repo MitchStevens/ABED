@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import core.game.Gate;
+import core.eval.Function;
 import core.game.Coord;
 import core.game.Game;
 import data.Reader;
@@ -18,8 +19,8 @@ import javafx.collections.ObservableSet;
 
 public class Level {
 	public 			String 			name			= "";
-	public 			Gate 		objective		= null;
-	public 			List<Gate> 	circuitRewards	= new ArrayList<>();
+	public 			Function 		objective		= null;
+	public 			List<String> 		circuitRewards	= new ArrayList<>();
 	public 			List<String> 	levelRewards	= new ArrayList<>();
 	public 			String 			instructionText	= "";
 	public 			String 			completionText	= "";

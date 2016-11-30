@@ -1,30 +1,46 @@
-package core.eval;
+package core.operations;
 
-public class Input implements Operation {
-	private static final int[] inputs  = new int[]{0, 0, 0, 0};
-	private static final int[] outputs = new int[]{0, 1, 0, 0};
-	private boolean value;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import core.eval.Mapping;
+import core.game.Direction;
+
+public class Input extends Mapping {
+	private boolean value = false;
 	
 	public Input(){
-		
+		super("INPUT", "0000", "0100");
+		List<Boolean> outs = new ArrayList<>(Arrays.asList(false));
+		this.last_outputs.put(Direction.RIGHT, outs);
 	}
 	
-	
-	
 	@Override
-	public int[] inputs() {
-		return inputs;
+	public void toggle(){
+		value ^= true;
+		eval(null);
+		this.setChanged();
+		this.notifyObservers();
+	}
+	
+	public List<Boolean> get_values(){
+		return this.last_outputs(Direction.RIGHT);
+	}
+	
+	public int size(){
+		return 1;
 	}
 
 	@Override
-	public int[] outputs() {
-		// TODO Auto-generated method stub
-		return outputs;
+	public void eval(List<Boolean> inputs) {
+		List<Boolean> outs = new ArrayList<>(Arrays.asList(value));
+		this.last_outputs.put(Direction.RIGHT, outs);
 	}
-
+	
 	@Override
-	public void eval() {
-		// T
+	public Input clone(){
+		return new Input();
 	}
 
 }

@@ -5,35 +5,34 @@
  */
 package gui.graphics;
 
-import javafx.animation.FillTransition;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Duration;
 import static java.lang.Math.max;
 
-import core.game.Gate;
+import core.Utilities;
 import core.game.Coord;
+import core.game.Direction;
 import gui.panes.CircuitPane;
-import gui.panes.Gui;
 
 /**
  * @author Mitch
  */
 public class Square extends Region{
+	public static enum Location {CENTER, SIDE, CORNER}
+	
 	public final static Color 	DEFAULT		= Color.web("#DDFEFE");
 	public final static Color 	SIDE		= Color.web("#9FFCFC");
-	public final static Color 	CORNER		= Color.web("#000000");
+	public final static Color 	CORNER		= Color.ANTIQUEWHITE;
 	public final static Color 	SELECTED	= Color.RED;
 	public final static Color	SIDE_ALT	= Color.web("#BFFFFF");
 	
-	public 				Rectangle	square = new Rectangle();
-	public 		 		Polygon chevron;
+	private	Rectangle	square = new Rectangle();
+	private	Polygon 	chevron;
 	
-	public 				int loc 		= 0; // 0 = def, 1 = side, 2 = null
-	public 				Coord 	coord;
+	private Location loc; // 0 = def, 1 = side, 2 = null
+	public 	Coord 	 coord;
 
 	public Square(double x, double y, Coord c) {
 		coord = c;
@@ -43,7 +42,7 @@ public class Square extends Region{
 	}
 	
 	public void initialise() {
-		double t = CircuitPane.tileSize;
+		double t = CircuitPane.tile_size;
 		
 		square.setHeight(t);
 		square.setWidth(t);
@@ -52,35 +51,34 @@ public class Square extends Region{
 		
 		this.getChildren().add(square);
 		
-		loc = calc_side(CircuitPane.numTiles);
+		loc = calc_side(CircuitPane.num_tiles);
 		
-		setColor();
+//		this.setOnMouseClicked(e -> {
+//			if(CircuitPane.lastClicked == null){
+//				CircuitPane.lastClicked = this.coord;
+//				square.setFill(SELECTED);
+//			}else{
+//				if(this.coord == CircuitPane.lastClicked){
+//					CircuitPane.squares.values().forEach(s -> s.setColor());
+//					return;
+//				}else{
+//					CircuitPane.add_cable_path(CircuitPane.lastClicked, this.coord);
+//					CircuitPane.lastClicked = null;
+//					CircuitPane.squares.values().forEach(s -> s.setColor());
+//					return;
+//				}
+//			}
+//		});
 		
-		this.setOnMouseClicked(e -> {
-			if(CircuitPane.lastClicked == null){
-				CircuitPane.lastClicked = this.coord;
-				square.setFill(SELECTED);
-			}else{
-				if(this.coord == CircuitPane.lastClicked){
-					CircuitPane.allSquares.values().forEach(s -> s.setColor());
-					return;
-				}else{
-					CircuitPane.add_cable_path(CircuitPane.lastClicked, this.coord);
-					CircuitPane.lastClicked = null;
-					CircuitPane.allSquares.values().forEach(s -> s.setColor());
-					return;
-				}
-			}
-		});
-		
-		this.setOnMouseEntered(e -> {
-			if(CircuitPane.lastClicked != null)
-				CircuitPane.setTrail(CircuitPane.lastClicked, this.coord);
-		});
+//		this.setOnMouseEntered(e -> {
+//			if(CircuitPane.lastClicked != null)
+//				CircuitPane.setTrail(CircuitPane.lastClicked, this.coord);
+//		});
 	}
 	
-	public void on_resize(double init){
-		double t = CircuitPane.tileSize;
+	/*public void on_resize(){
+		double init = (CircuitPane.cp.getPrefWidth() - CircuitPane.cp.getPrefHeight()) / 2.0;
+		double t = CircuitPane.tile_size;
 		
 		double x = max(0, init) + CircuitPane.GAME_MARGIN + coord.i
 				* (t + CircuitPane.GAP);
@@ -89,30 +87,40 @@ public class Square extends Region{
 		this.setLayoutX(x);
 		this.setLayoutY(y);
 		
-		loc = calc_side(CircuitPane.numTiles);
+		loc = calc_side(CircuitPane.num_tiles);
 		setColor();		
 		
 		square.setHeight(t);
 		square.setWidth(t);
+	}*/
+	
+	public Location get_loc(){
+		return loc;
 	}
 	
-	public int calc_side(int n){
+	public void set_size(double w){
+		square.setWidth(w);
+		square.setHeight(w);
+	}
+	
+	public void re_color(int n){
+		loc = calc_side(n);
+		set_color();
+	}
+	
+	public Location calc_side(int n){
 		//re calculates what what side the square is on.
 		int num = 0;
 		if(coord.i == 0 || coord.i == n -1) num++;
 		if(coord.j == 0 || coord.j == n -1) num++;
 		
-		if(num != 1) remove_chevron();
-		
-		return num;
+		return Location.values()[num];
 	}
 	
-	public void set_chevron(int dir){
+	public void set_chevron(Direction dir){
 		remove_chevron();
 		
-		dir = Gate.mod4(dir);
-		
-		double t = CircuitPane.tileSize;
+		double t = CircuitPane.tile_size;
 		chevron = new Polygon(new double[]{
 				0, 		t,
 				0, 		t/2,
@@ -123,7 +131,7 @@ public class Square extends Region{
 			});
 		chevron.setFill(SIDE_ALT);
 		
-		chevron.setRotate(90*dir);
+		chevron.setRotate(90*dir.value);
 		this.getChildren().add(chevron);
 	}
 	
@@ -131,21 +139,21 @@ public class Square extends Region{
 		this.getChildren().remove(chevron);
 	}
 	
-	public void setColor(){
+	public void set_color(){
 		//set color to whatever it should be (based on side)
 		switch(loc){
-		case 0: 	square.setFill(DEFAULT);			break;
-		case 1: 	square.setFill(SIDE);				break;
-		case 2: 	square.setFill(CORNER);				break;
-		default: 	square.setFill(Color.TRANSPARENT); 	break;
+		case CENTER: 	square.setFill(DEFAULT);			break;
+		case SIDE: 		square.setFill(SIDE);				break;
+		case CORNER: 	square.setFill(CORNER);				break;
+		default: 		square.setFill(Color.TRANSPARENT); 	break;
 		}
 	}
 
 	// gets euclidean distance
-	public double euclideanDistance(double x, double y) {
+	public double euc_dist(double x, double y) {
 		x -= this.getLayoutX();
 		y -= this.getLayoutY();
-		return Math.sqrt(x * x + y * y);
+		return Math.sqrt(x*x + y*y);
 	}
 	
 }
