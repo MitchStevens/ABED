@@ -1,0 +1,31 @@
+/*
+@font-face {
+	font-family: adbxtra;
+	src: url("../../res/fonts/adbxtra.ttf");
+}
+*/
+
+#main {
+	-fx-padding: 10;
+}
+
+#oddPanel {
+	-fx-background-color: white;
+}
+
+#evenPanel {
+	-fx-background-color: gainsboro ;
+}
+
+#unlocked {
+	-fx-fill: black;
+	-fx-padding: 10;
+}
+
+#unlocked:hover {
+	-fx-fill: #32CD32;
+}
+
+#locked {
+	-fx-fill: grey;
+}

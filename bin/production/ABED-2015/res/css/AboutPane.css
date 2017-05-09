@@ -1,0 +1,17 @@
+#title {
+	-fx-padding: 30;
+	-fx-alignment: center
+}
+
+#subtitle {
+	-fx-text-fill: #000000;
+}
+
+#text {
+	-fx-text-fill: black;
+	-fx-padding: 50, 50, 50, 50;
+}
+
+#typer:hover {
+	-fx-text-fill: #32CD32;
+}

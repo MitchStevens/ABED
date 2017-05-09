@@ -61,6 +61,10 @@ public class Piece extends Pane{
 		gateName.setLayoutY(CircuitPane.tileSize);
 		this.getChildren().add(gateName);
 
+		duplicate.setVisible(false);
+		delete.setVisible(false);
+		gateName.setVisible(false);
+
 //		rotate = new Text("R");
 //		rotate.setLayoutX(CircuitPane.tileSize - 10);
 //		rotate.setLayoutY(CircuitPane.tileSize - 10);

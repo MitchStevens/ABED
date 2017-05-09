@@ -87,14 +87,14 @@ public class CircuitFinder extends VBox {
 		System.out.println(index);
 	}
 	
-	private List<String> get_suggestions(){
+	private List<String> get_suggestions(){ return null;/*
 		List<String> list = new ArrayList<>();
 		if(field.getText().equals("")) return list;
 		
 		for(String s : Circuit.allCircuits.keySet())
 			if(s.toLowerCase().startsWith(field.getText().toLowerCase()))
 				list.add(s);
-		return list;
+		return list;*/
 	}
 	
 	private void show_suggestions(List<String> list){

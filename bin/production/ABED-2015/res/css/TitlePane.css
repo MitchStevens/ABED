@@ -1,0 +1,12 @@
+#main {
+	
+}
+
+#typer {
+	-fx-fill: black;
+	-fx-padding: 20;
+}
+
+#typer:hover {
+	-fx-fill: #32CD32;
+}

@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <root>
+<circuit name="NOR"/>
 <circuit name="OR"/>
+<circuit name="RIGHT"/>
+<circuit name="INPUT"/>
 <circuit name="NOT"/>
-<circuit name="AND"/>
+<circuit name="LEFT"/>
+<circuit name="NAND"/>
 <circuit name="OUTPUT"/>
+<circuit name="AND"/>
 <circuit name="SUPER"/>
 <circuit name="BUS"/>
-<circuit name="INPUT"/>
-<circuit name="RIGHT"/>
-<circuit name="NAND"/>
-<circuit name="NOR"/>
-<circuit name="LEFT"/>
 </root>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<root>
+	<circuit evals="0 1 XOR 2 XOR" inputs="1,0,1,1" name="MEGA XOR" outputs="0,1,0,0"/>
+<circuit evals="0 2 XOR 1 XOR" inputs="1,0,1,1," name="NAME_WHATEVER" outputs="0,1,0,0,"/>
+<circuit evals="0 1 |" inputs="1,0,0,1," name="NAME_WHATEVER" outputs="0,1,0,0,"/>
+</root>
